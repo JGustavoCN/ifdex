@@ -1,0 +1,36 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "ifdex-app",
+          "appId": "1:1035650227632:android:8c7d3b95d7cba7afbb0a75",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "ifdex-app",
+          "configurations": {
+            "android": "1:1035650227632:android:8c7d3b95d7cba7afbb0a75",
+            "web": "1:1035650227632:web:ac91ccc0e5857d24bb0a75"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

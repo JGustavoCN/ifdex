@@ -1,0 +1,66 @@
+name: Deploy Web e Distribuir Android
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # ==========================================
+  # TAREFA 1: DEPLOY DA VERSÃO WEB
+  # ==========================================
+  build_and_deploy_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Baixar dependências
+        run: flutter pub get
+
+      - name: Compilar versão Web
+        run: flutter build web
+
+      - name: Publicar no Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v3
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_IFDEX_APP }}'
+          channelId: live
+          projectId: ifdex-app
+
+  # ==========================================
+  # TAREFA 2: DISTRIBUIÇÃO DA VERSÃO ANDROID
+  # ==========================================
+  build_and_distribute_android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Baixar dependências
+        run: flutter pub get
+
+      - name: Compilar versão Android (APK)
+        run: flutter build apk --release
+
+      - name: Instalar Firebase CLI no Servidor
+        run: npm install -g firebase-tools
+
+      - name: Enviar APK para o App Distribution
+        run: |
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+          --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} \
+          --groups "equipe-qa" \
+          --token ${{ secrets.FIREBASE_TOKEN }}

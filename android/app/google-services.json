@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1035650227632",
+    "project_id": "ifdex-app",
+    "storage_bucket": "ifdex-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1035650227632:android:8c7d3b95d7cba7afbb0a75",
+        "android_client_info": {
+          "package_name": "br.edu.ifs.ifdex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY3WvthlTvTuNkXa7viyBgnl_zOegO2hw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
