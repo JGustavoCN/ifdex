@@ -63,5 +63,5 @@ jobs:
         run: |
           firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
           --app ${{ secrets.FIREBASE_ANDROID_APP_ID }} \
-          --groups "equipe-qa" \
+          --groups "proj-mobile" \
           --token ${{ secrets.FIREBASE_TOKEN }}
