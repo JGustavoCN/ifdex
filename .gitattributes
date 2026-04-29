@@ -1,0 +1,47 @@
+# --- PADRONIZAÇÃO DE FIM DE LINHA (IFdex) ---
+# Força LF (Unix) em todos os arquivos de texto para evitar quebras no Makefile, CI/CD e Git Bash.
+* text=auto eol=lf
+
+# --- CÓDIGO FONTE FLUTTER / DART ---
+*.dart text diff=dart
+*.yaml text
+*.yml text
+*.json text
+*.arb text
+
+# --- INFRAESTRUTURA E SCRIPTS ---
+Makefile text eol=lf
+.gitignore text
+.editorconfig text
+.fvmrc text
+
+# --- ANDROID ---
+*.gradle text
+*.properties text
+*.xml text
+gradlew text eol=lf
+*.bat text eol=crlf
+
+# --- iOS / macOS ---
+*.pbxproj text
+*.xcworkspacedata text
+Podfile text
+*.sh text eol=lf
+
+# --- DOCUMENTAÇÃO ---
+*.md text
+*.txt text
+
+# --- BINÁRIOS (O Git nunca deve tentar converter ou mesclar) ---
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.ttf binary
+*.otf binary
+*.jks binary
+*.keystore binary
+*.p12 binary
