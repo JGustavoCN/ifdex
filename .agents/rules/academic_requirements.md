@@ -6,7 +6,7 @@ description: Regras estritas do professor para a Consolidação Eixo 1.
 
 # Regras Acadêmicas: Consolidação Eixo 1 (Projeto Integrador)
 
-Estas regras são estritas e foram extraídas diretamente dos documentos de avaliação do professor. Elas devem ser seguidas em toda a base de código do projeto CertiVault para garantir a nota máxima (10,0 pontos no total, somando a APO e a Consolidação).
+Estas regras são estritas e foram extraídas diretamente dos documentos de avaliação do professor. Elas devem ser seguidas em toda a base de código do projeto IFdex para garantir a nota máxima (10,0 pontos no total, somando a APO e a Consolidação).
 
 ## 1. Estrutura de Dados e Estado
 - **Armazenamento Local:** Os dados do aplicativo devem ser obrigatoriamente armazenados e manipulados em uma estrutura de lista/array em memória.

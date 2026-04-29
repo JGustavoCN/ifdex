@@ -15,3 +15,11 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+**Setup para Desenvolvedores Windows**
+Este projeto utiliza o `Makefile` como centralizador de comandos.
+
+1. Abra o PowerShell como Administrador e instale o pacote Make:
+   `winget install ezwinports.make`
+2. Ao abrir este projeto no VS Code, o terminal padrão será automaticamente alterado para o **Git Bash**.
+3. *ATENÇÃO:* Não utilize o WSL para este projeto, pois isso dificultará a conexão com emuladores Android. Rode todos os comandos `make` (ex: `make check`) diretamente no terminal do Git Bash dentro do VS Code.
