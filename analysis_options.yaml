@@ -1,28 +1,51 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
-#
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
-
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+analyzer:
+  # 0. Ignora pastas mortas e arquivos gerados
+  exclude:
+    - "build/**"
+    - ".fvm/**"
+    - ".dart_tool/**"
+    - "android/**"
+    - "ios/**"
+    - "web/**"
+    - "**/*.g.dart"
+  # 1. Checagens Estritas (Impede a IA de usar 'dynamic' por preguiça)
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+  # 2. Elevando a régua (Transforma avisos em ERROS que quebram o build)
+  errors:
+    missing_required_param: error
+    missing_return: error
+    always_declare_return_types: error
+    avoid_dynamic_calls: error
+    avoid_print: warning # Mantém warning para não travar debug local de humanos, mas será pego no CI/CD
+
+linter:
+  rules:
+    # --- Regras Vitais para IA e DX (Formatação Perfeita) ---
+    require_trailing_commas: true
+    avoid_print: true
+    always_declare_return_types: true
+    prefer_single_quotes: true
+
+    # --- Performance e Otimização do Flutter ---
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true # Nova regra adicionada da sua lista
+    use_key_in_widget_constructors: true
+    sized_box_for_whitespace: true # Nova regra: Força SizedBox em vez de Container vazio
+
+    # --- Prevenção de Bugs (Pontos cegos da IA e Memória) ---
+    avoid_empty_else: true
+    cancel_subscriptions: true
+    close_sinks: true
+    valid_regexps: true
+    avoid_dynamic_calls: true
+    unawaited_futures: true # Nova regra: Impede que a IA esqueça o 'await' em funções assíncronas
+
+    # --- Padrão de Projeto (Clean Code) ---
+    flutter_style_todos: true # Nova regra: Força a IA a criar TODOs no padrão correto com link/usuário

@@ -1,0 +1,18 @@
+rules:
+  # Define que o tipo do commit não pode ser vazio
+  type-empty: [2, "never"]
+  # Define os prefixos permitidos (feat, fix, docs, etc)
+  type-enum:
+    - 2
+    - "always"
+    - - "feat" # Nova funcionalidade
+      - "fix" # Correção de bug
+      - "docs" # Alteração na documentação
+      - "style" # Formatação (espaços, vírgulas, etc - sem mudança de lógica)
+      - "refactor" # Refatoração de código
+      - "test" # Adição ou correção de testes
+      - "chore" # Atualização de dependências, builds, etc
+  # Define que a mensagem (o assunto) não pode ser vazia
+  subject-empty: [2, "never"]
+  # Impede ponto final no final do título do commit
+  subject-full-stop: [2, "never", "."]

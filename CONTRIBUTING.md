@@ -7,6 +7,7 @@ Primeiramente, obrigado por se interessar em contribuir para o nosso projeto! N�
 - [Contribuindo para o IFdex](#contribuindo-para-o-ifdex)
   - [Índice](#índice)
   - [Regras do Repositório (Branch `main`)](#regras-do-repositório-branch-main)
+  - [Padrão de Commits (Conventional Commits)](#padrão-de-commits-conventional-commits)
   - [Como Submeter Alterações (Pull Requests)](#como-submeter-alterações-pull-requests)
   - [Como Relatar Bugs](#como-relatar-bugs)
   - [Como Sugerir Melhorias](#como-sugerir-melhorias)
@@ -29,6 +30,29 @@ Para garantir a estabilidade do nosso projeto (especialmente na branch `main`), 
   - `build_and_deploy_web`
   - `build_and_distribute_android`
 - **Force Pushes Bloqueados:** É terminantemente proibido sobrescrever o histórico da branch `main` utilizando `git push --force`.
+
+## Padrão de Commits (Conventional Commits)
+
+Para mantermos o histórico do projeto limpo e rastreável, nosso repositório utiliza o padrão **Conventional Commits**. O nosso hook do Git (Lefthook) validará automaticamente a sua mensagem e **bloqueará o commit** caso ele não siga a formatação correta.
+
+A estrutura obrigatória de um commit é:
+`<tipo>: <mensagem no tempo presente e com letra minúscula>`
+
+**Tipos Permitidos:**
+
+- `feat`: Desenvolvimento de uma nova funcionalidade (ex: _feat: adiciona upload de PDF_).
+- `fix`: Correção de um bug (ex: _fix: corrige travamento na tela inicial_).
+- `docs`: Alterações exclusivas na documentação (ex: _docs: atualiza readme_).
+- `style`: Mudanças de formatação que não afetam a lógica (ex: _style: formata arquivos com dart format_).
+- `refactor`: Mudança no código que não adiciona feature nem corrige bug (ex: _refactor: componentiza card de certificado_).
+- `test`: Adição ou correção de testes automatizados.
+- `chore`: Manutenção de dependências, configuração de CI/CD ou ferramentas de build.
+
+**Regras Vitais da Mensagem:**
+
+1. Escreva no tempo presente e no imperativo (ex: use "adiciona" ao invés de "adicionei" ou "adicionando").
+2. Não utilize ponto final (`.`) no final da mensagem do commit.
+3. As mensagens devem ser claras e explicar _o que_ a mudança faz e _por que_ ela foi feita[cite: 2].
 
 ## Como Submeter Alterações (Pull Requests)
 

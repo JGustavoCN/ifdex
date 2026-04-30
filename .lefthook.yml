@@ -1,0 +1,6 @@
+pre-commit:
+  commands:
+    run-all:
+      glob: "*.dart"
+      run: make pre-commit
+      stage_fixed: true

@@ -16,6 +16,17 @@
         "focus": false,
         "panel": "shared"
       }
+    },
+    {
+      "label": "Projeto: Instalar Dependências e Hooks (make install)",
+      "type": "shell",
+      "command": "make install",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
     }
   ]
 }
