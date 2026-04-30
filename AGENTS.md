@@ -151,3 +151,47 @@ Para atender integralmente aos critérios de avaliação da disciplina, a implem
    - **NÃO** crie rotinas manuais de lint ou build. Utilize estritamente os comandos definidos no `Makefile`.
 
 3. **Formatação e Padrões (VS Code):** As regras do `.vscode/settings.json` e `.editorconfig` devem ser respeitadas. O limite de linha do Dart é de 80 caracteres e os imports devem ser organizados (limpos) a cada alteração.
+
+## 📝 Regras para Criação de Issues via GitHub MCP
+
+Quando você for instruído a criar uma nova Issue neste repositório usando suas ferramentas do GitHub, você DEVE formatar o `body` (corpo em Markdown) da requisição para espelhar exatamente os nossos formulários YAML.
+
+**Se for uma Nova Funcionalidade (Feature), o corpo do markdown DEVE conter estes cabeçalhos (H3):**
+
+### Descrição clara do que é a feature
+
+[Sua descrição aqui]
+
+### Qual problema ela resolve?
+
+[Sua justificativa aqui]
+
+### Critérios de Aceite
+
+- [ ] [Critério 1]
+- [ ] [Critério 2]
+
+**Se for um Relato de Bug (Bug Report), o corpo do markdown DEVE conter estes cabeçalhos (H3):**
+
+### O que aconteceu?
+
+[Sua descrição aqui]
+
+### Passos para reproduzir
+
+1. [Passo 1]
+2. [Passo 2]
+
+### Qualidade do ambiente
+
+[Especifique o ambiente: Windows/GitBash, macOS, ou Linux]
+
+### Comportamento esperado
+
+[Sua descrição aqui]
+
+### Logs de erro rodando make check ou fvm flutter run
+
+```shell
+[Insira os logs aqui]
+```

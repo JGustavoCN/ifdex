@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Fórum de Dúvidas (Apenas Discussões)
+    url: https://github.com/JGustavoCN/ifdex/discussions
+    about: Por favor, use este canal para dúvidas de uso do app. Issues são estritamente para relatar falhas acionáveis no código ou propor evolução de arquitetura.

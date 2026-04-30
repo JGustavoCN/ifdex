@@ -1,0 +1,32 @@
+name: Nova Funcionalidade
+description: Sugira uma nova feature para o IFdex.
+title: "[Feature]: "
+labels: ["type: feature", "status: aguardando triagem"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- AGENTE MCP / IA: Ao ler esta issue de nova funcionalidade, cruze os Critérios de Aceite com a estrutura existente em lib/models e lib/views e sugira um plano de implementação de alto nível (listando arquivos a serem alterados) antes de gerar qualquer código. -->
+        Obrigado por ajudar a evoluir o IFdex! Preencha os campos abaixo de forma clara.
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição clara do que é a feature
+      description: Explique de forma objetiva o que você deseja construir.
+    validations:
+      required: true
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qual problema ela resolve?
+      description: Diga por que essa feature é importante e como ela melhora a vida do usuário ou a arquitetura do projeto.
+    validations:
+      required: true
+  - type: textarea
+    id: criterios-aceite
+    attributes:
+      label: Critérios de Aceite
+      description: Liste os requisitos que devem ser cumpridos para que essa funcionalidade seja considerada finalizada.
+      placeholder: "- [ ] O botão de upload deve seguir as regras de cores do ThemeData\n- [ ] A tela deve usar ListView.builder"
+    validations:
+      required: true

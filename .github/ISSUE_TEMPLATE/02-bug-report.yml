@@ -1,0 +1,66 @@
+name: Relato de Bug
+description: Crie um relato detalhado para nos ajudar a melhorar o app.
+title: "[Bug]: "
+labels: ["type: bug", "status: aguardando triagem"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        <!-- AGENTE MCP / IA: Ao ler este bug report, sugira imediatamente qual arquivo dentro de lib/views ou lib/models deve ser investigado primeiro com base na descrição e no rastreamento de pilha. Caso identifique um erro de linter, sugira usar o `make fix` ou as correções manuais baseadas no FVM. -->
+        Encontrou um problema? Ajude-nos a reproduzir e corrigir com eficiência.
+  - type: textarea
+    id: o-que-aconteceu
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o bug de forma clara. O que você estava tentando fazer e qual erro ocorreu?
+    validations:
+      required: true
+  - type: textarea
+    id: passos-reproduzir
+    attributes:
+      label: Passos para reproduzir
+      description: Forneça a sequência exata de ações para chegarmos ao erro.
+      placeholder: |
+        1. Abra o app
+        2. Clique em 'Adicionar'
+        3. Veja o erro de RenderFlex
+    validations:
+      required: true
+  - type: dropdown
+    id: ambiente
+    attributes:
+      label: Qualidade do ambiente
+      description: Onde esse problema ocorreu?
+      options:
+        - Windows/GitBash
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: textarea
+    id: comportamento-esperado
+    attributes:
+      label: Comportamento esperado
+      description: O que deveria acontecer na situação relatada?
+    validations:
+      required: true
+  - type: textarea
+    id: logs-erro
+    attributes:
+      label: Logs de erro rodando make check ou fvm flutter run
+      description: Cole a saída do terminal aqui. Isso será automaticamente formatado como código.
+      render: shell
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ### A Regra do "Me Prove" 📷
+        Se o bug envolver a interface visual (UI) do aplicativo Flutter, você deve incluir um screenshot ou gravação de tela abaixo. Casos visuais sem comprovação poderão ser ignorados no triage inicial.
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Evidências Visuais (Screenshots / Vídeos)
+      description: Arraste e solte ou cole suas imagens/vídeos aqui.
+    validations:
+      required: false
