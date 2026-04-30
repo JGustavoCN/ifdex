@@ -23,12 +23,10 @@ Para garantir a estabilidade do nosso projeto (especialmente na branch `main`), 
 - **Aprovações (Review):** Como somos uma equipe reduzida (duas pessoas), a exigência mínima de aprovações formais no sistema é **0**. No entanto, recomendamos a revisão em pares sempre que possível para garantir a qualidade do código.
 - **Regras Adicionais de PRs:**
   - **Invalidação de Aprovações:** Novas atualizações (commits) enviadas para um PR invalidarão aprovações anteriores automaticamente.
-  - **Aprovação de Push Recente:** O commit mais recente antes do merge deve ser aprovado por alguém que não seja o autor do commit.
   - **Resolução de Conversas:** Todas as threads de conversas (comentários de revisão) no código devem ser resolvidas e fechadas antes que um Pull Request possa ser mergeado.
   - **Atualização Obrigatória:** A branch do seu PR deve estar totalmente atualizada com o código mais recente da `main` antes que o merge seja permitido.
 - **Status Checks Obrigatórios:** O código deve passar de forma bem-sucedida nas seguintes verificações automatizadas de CI/CD antes do merge:
-  - `build_and_deploy_web`
-  - `build_and_distribute_android`
+  - `build_and_preview`
 - **Force Pushes Bloqueados:** É terminantemente proibido sobrescrever o histórico da branch `main` utilizando `git push --force`.
 
 ## Padrão de Commits (Conventional Commits)
@@ -61,7 +59,7 @@ A estrutura obrigatória de um commit é:
 3. **Execute os testes e linters:** Certifique-se de executar localmente os comandos obrigatórios do projeto (veja as convenções de código abaixo).
 4. **Commits claros:** Faça os commits com mensagens claras, em tempo presente, explicando _o que_ a mudança faz e _por que_ ela foi feita.
 5. **Abra o Pull Request:** Envie sua branch para o repositório e abra um Pull Request apontando para a `main`. Preencha a descrição do PR explicando o contexto da alteração.
-6. **Integração Contínua (CI):** Aguarde as verificações `build_and_deploy_web` e `build_and_distribute_android` passarem. Caso falhem, investigue os logs, corrija os problemas e faça push de novos commits na mesma branch.
+6. **Integração Contínua (CI):** Aguarde a verificação `build_and_preview` passar. Caso falhe, investigue os logs, corrija os problemas e faça push de novos commits na mesma branch.
 7. **Revisão:** Discuta as mudanças com a equipe. Resolva todas as sugestões e comentários.
 
 ## Como Relatar Bugs
