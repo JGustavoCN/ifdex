@@ -1,0 +1,65 @@
+{
+  // =========================================================
+  // 1. GERENCIAMENTO DO FLUTTER (FVM)
+  // =========================================================
+  // Usa o symlink dinâmico. NUNCA coloque a versão fixa aqui (ex: 3.41.7)
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "search.exclude": {
+    "**/.fvm": true
+  },
+  "files.watcherExclude": {
+    "**/.fvm": true
+  },
+
+  // =========================================================
+  // 2. TERMINAL E INTEGRAÇÃO (WINDOWS + MAKEFILE)
+  // =========================================================
+  "terminal.integrated.profiles.windows": {
+    "Git Bash": {
+      "path": [
+        "C:\\Program Files\\Git\\bin\\bash.exe",
+        "C:\\Program Files\\Git\\usr\\bin\\bash.exe"
+      ],
+      "icon": "terminal-bash"
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+
+  // =========================================================
+  // 3. REGRAS DE LINTING, DEBUG E FORMATAÇÃO (DART)
+  // =========================================================
+  "editor.formatOnSave": true,
+  "dart.lineLength": 80,
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+
+  // =========================================================
+  // 4. CONFIGURAÇÕES GERAIS E MARKDOWN (IDE)
+  // =========================================================
+  "redhat.telemetry.enabled": false,
+  "json.schemaDownload.enable": true,
+  "workbench.iconTheme": "material-icon-theme",
+  "[markdown]": {
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  }
+}

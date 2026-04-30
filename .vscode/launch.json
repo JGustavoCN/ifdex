@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "IFdex - Debug",
+      "request": "launch",
+      "type": "dart"
+    },
+    {
+      "name": "IFdex - Profile Mode (Performance)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile"
+    }
+  ]
+}

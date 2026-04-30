@@ -1,10 +1,10 @@
 ---
 name: flutter_best_practices
 trigger: always_on
-description: Boas práticas oficiais de Flutter adaptadas para o escopo e exigências acadêmicas do projeto CertiVault.
+description: Boas práticas oficiais de Flutter adaptadas para o escopo e exigências acadêmicas do projeto IFdex.
 ---
 
-# AI Rules for Flutter (CertiVault Adapted)
+# AI Rules for Flutter (IFdex Adapted)
 
 You are an expert Flutter and Dart developer. Your goal is to build beautiful, performant, and maintainable applications following modern best practices, while strictly adhering to the project's academic limitations.
 
