@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../helpers/gamification.dart';
 import 'app_text.dart';
 
@@ -30,7 +31,7 @@ class XpHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -52,7 +53,10 @@ class XpHeader extends StatelessWidget {
               const Spacer(),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.filter_alt_outlined, color: Colors.white),
+                icon: const Icon(
+                  Icons.filter_alt_outlined,
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
@@ -74,7 +78,10 @@ class XpHeader extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.amber,
                   borderRadius: BorderRadius.circular(999),
@@ -85,7 +92,7 @@ class XpHeader extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                   color: const Color(0xFF3A2B00),
                 ),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -94,17 +101,21 @@ class XpHeader extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progresso,
               minHeight: 8,
-              backgroundColor: Colors.white.withOpacity(0.15),
+              backgroundColor: Colors.white.withValues(alpha: 0.15),
               color: Colors.lightGreenAccent,
             ),
           ),
           const SizedBox(height: 14),
           Row(
             children: [
-              const Icon(Icons.folder_outlined, color: Colors.white70, size: 20),
+              const Icon(
+                Icons.folder_outlined,
+                color: Colors.white70,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               AppText(
-                'PORTFÓLIO (${totalCertificados})',
+                'PORTFÓLIO ($totalCertificados)',
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 color: Colors.white,

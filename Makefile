@@ -10,7 +10,7 @@ install:
 	@echo "3/4 Baixando os pacotes do projeto..."
 	fvm flutter pub get
 	@echo "4/4 Blindando os commits com Lefthook..."
-	fvm dart run lefthook install
+	npx lefthook install
 	@echo "Sucesso! Dependências instaladas e Lefthook ativado!"
 
 # Aplica correções automáticas (consts, sintaxe, etc) sugeridas pelo linter
@@ -30,7 +30,7 @@ test:
 	fvm flutter test
 
 # O "Cão de Guarda" da checagem
-check: format lint test
+check: format fix lint test
 
 # O comando mestre executado pelo git hook e pela IA
 pre-commit: fix check

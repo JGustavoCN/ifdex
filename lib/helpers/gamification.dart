@@ -12,19 +12,27 @@ class Gamification {
 
   String get nomeNivel {
     switch (nivel) {
-      case 1: return 'Calouro';
-      case 2: return 'Explorador';
-      case 3: return 'Especialista';
-      default: return 'Veterano';
+      case 1:
+        return 'Calouro';
+      case 2:
+        return 'Explorador';
+      case 3:
+        return 'Especialista';
+      default:
+        return 'Veterano';
     }
   }
 
   int get xpNivelAnterior {
     switch (nivel) {
-      case 1: return 0;
-      case 2: return 50;
-      case 3: return 150;
-      default: return 350;
+      case 1:
+        return 0;
+      case 2:
+        return 50;
+      case 3:
+        return 150;
+      default:
+        return 350;
     }
   }
 

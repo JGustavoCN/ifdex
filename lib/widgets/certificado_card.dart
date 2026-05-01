@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/certificado.dart';
 import 'remove_button.dart';
 
@@ -34,7 +35,7 @@ class CertificadoCard extends StatelessWidget {
               border: Border.all(color: const Color(0xFFE9ECEF)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -46,12 +47,16 @@ class CertificadoCard extends StatelessWidget {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: isOfficial ? const Color(0xFFEAF3EA) : const Color(0xFFFFF2DE),
+                    color: isOfficial
+                        ? const Color(0xFFEAF3EA)
+                        : const Color(0xFFFFF2DE),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
                     isOfficial ? Icons.verified_outlined : Icons.person_outline,
-                    color: isOfficial ? const Color(0xFF355E3B) : const Color(0xFFB7791F),
+                    color: isOfficial
+                        ? const Color(0xFF355E3B)
+                        : const Color(0xFFB7791F),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -61,7 +66,10 @@ class CertificadoCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          _Badge(text: isOfficial ? 'OFICIAL IFS' : 'MANUAL', isOfficial: isOfficial),
+                          _Badge(
+                            text: isOfficial ? 'OFICIAL IFS' : 'MANUAL',
+                            isOfficial: isOfficial,
+                          ),
                           const Spacer(),
                           Text(
                             '${certificado.ano}',
@@ -100,14 +108,20 @@ class CertificadoCard extends StatelessWidget {
                           runSpacing: 6,
                           children: certificado.tags.map((tag) {
                             return Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF3F4F6),
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
                                 tag,
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             );
                           }).toList(),

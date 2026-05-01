@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/certificado.dart';
-import 'certificado_form_view.dart';
 
 class CertificadoDetalhesDialog extends StatelessWidget {
   final Certificado certificado;
@@ -28,10 +27,7 @@ class CertificadoDetalhesDialog extends StatelessWidget {
                   children: [
                     _Cover(certificado: certificado),
                     Expanded(
-                      child: _Info(
-                        certificado: certificado,
-                        onEdit: onEdit,
-                      ),
+                      child: _Info(certificado: certificado, onEdit: onEdit),
                     ),
                   ],
                 )
@@ -39,10 +35,7 @@ class CertificadoDetalhesDialog extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _Cover(certificado: certificado, height: 180),
-                    _Info(
-                      certificado: certificado,
-                      onEdit: onEdit,
-                    ),
+                    _Info(certificado: certificado, onEdit: onEdit),
                   ],
                 ),
         ),
@@ -98,10 +91,7 @@ class _Info extends StatelessWidget {
   final Certificado certificado;
   final VoidCallback? onEdit;
 
-  const _Info({
-    required this.certificado,
-    this.onEdit,
-  });
+  const _Info({required this.certificado, this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -157,11 +147,11 @@ class _Info extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              _Box(
+              const _Box(
                 title: 'IDENTIFICADOR DE SEGURANÇA',
                 child: Text(
                   'uid_v4:1',
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+                  style: TextStyle(fontWeight: FontWeight.w700),
                 ),
               ),
               const SizedBox(height: 20),

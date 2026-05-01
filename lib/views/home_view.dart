@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../data/mock_certificados.dart';
 import '../models/certificado.dart';
 import '../widgets/certificado_card.dart';
 import '../widgets/xp_header.dart';
-import 'certificado_form_view.dart';
 import 'certificado_detalhes_dialog.dart';
+import 'certificado_form_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -18,24 +19,20 @@ class _HomeViewState extends State<HomeView> {
   int xp = 150;
   String filtroAtual = 'todos';
 
-List<Certificado> get certificadosFiltrados {
-  if (filtroAtual == 'oficial') {
-    return certificados
-        .where((c) => c.origem == Origem.sispubli)
-        .toList();
-  }
+  List<Certificado> get certificadosFiltrados {
+    if (filtroAtual == 'oficial') {
+      return certificados.where((c) => c.origem == Origem.sispubli).toList();
+    }
 
-  if (filtroAtual == 'manual') {
-    return certificados
-        .where((c) => c.origem == Origem.manual)
-        .toList();
-  }
+    if (filtroAtual == 'manual') {
+      return certificados.where((c) => c.origem == Origem.manual).toList();
+    }
 
-  return certificados;
-}
+    return certificados;
+  }
 
   void _removerCertificado(int index) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmar remoção'),
@@ -67,7 +64,8 @@ List<Certificado> get certificadosFiltrados {
     final resultado = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
-        builder: (_) => CertificadoFormView(certificado: certificado, editIndex: index),
+        builder: (_) =>
+            CertificadoFormView(certificado: certificado, editIndex: index),
       ),
     );
 
@@ -86,24 +84,30 @@ List<Certificado> get certificadosFiltrados {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(ehEdicao ? 'Certificado atualizado.' : 'Certificado salvo com sucesso!')),
+      SnackBar(
+        content: Text(
+          ehEdicao
+              ? 'Certificado atualizado.'
+              : 'Certificado salvo com sucesso!',
+        ),
+      ),
     );
   }
 
   void _abrirDetalhes(Certificado certificado, int index) {
-  showDialog(
-    context: context,
-    builder: (_) => CertificadoDetalhesDialog(
-      certificado: certificado,
-      onEdit: certificado.origem == Origem.manual
-          ? () {
-              Navigator.pop(context);
-              _abrirFormulario(certificado, index);
-            }
-          : null,
-    ),
-  );
-}
+    showDialog<void>(
+      context: context,
+      builder: (_) => CertificadoDetalhesDialog(
+        certificado: certificado,
+        onEdit: certificado.origem == Origem.manual
+            ? () {
+                Navigator.pop(context);
+                _abrirFormulario(certificado, index);
+              }
+            : null,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,54 +124,51 @@ List<Certificado> get certificadosFiltrados {
               children: [
                 const Text(
                   'PORTFÓLIO',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFF6B7280)),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF6B7280),
+                  ),
                 ),
                 PopupMenuButton<String>(
-  onSelected: (value) {
-    setState(() {
-      filtroAtual = value;
-    });
-  },
-  itemBuilder: (context) => [
-    const PopupMenuItem(
-      value: 'todos',
-      child: Text('Todos'),
-    ),
-    const PopupMenuItem(
-      value: 'oficial',
-      child: Text('Oficiais'),
-    ),
-    const PopupMenuItem(
-      value: 'manual',
-      child: Text('Manuais'),
-    ),
-  ],
-  child: Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 12,
-      vertical: 8,
-    ),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(
-        color: const Color(0xFFE5E7EB),
-      ),
-    ),
-    child: Row(
-      children: const [
-        Icon(Icons.filter_alt_outlined, size: 18),
-        SizedBox(width: 6),
-        Text(
-          'Filtrar',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    ),
-  ),
-)
+                  onSelected: (value) {
+                    setState(() {
+                      filtroAtual = value;
+                    });
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(value: 'todos', child: Text('Todos')),
+                    const PopupMenuItem(
+                      value: 'oficial',
+                      child: Text('Oficiais'),
+                    ),
+                    const PopupMenuItem(
+                      value: 'manual',
+                      child: Text('Manuais'),
+                    ),
+                  ],
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFE5E7EB)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.filter_alt_outlined, size: 18),
+                        SizedBox(width: 6),
+                        Text(
+                          'Filtrar',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -190,11 +191,11 @@ List<Certificado> get certificadosFiltrados {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-  onPressed: () => _abrirFormulario(),
-  backgroundColor: const Color(0xFF355E3B),
-  foregroundColor: Colors.white,
-  child: const Icon(Icons.add),
-),
+        onPressed: () => _abrirFormulario(),
+        backgroundColor: const Color(0xFF355E3B),
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

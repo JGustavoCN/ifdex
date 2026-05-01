@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
 import '../models/certificado.dart';
 import '../widgets/app_text.dart';
 
@@ -7,11 +8,7 @@ class CertificadoFormView extends StatefulWidget {
   final Certificado? certificado;
   final int? editIndex;
 
-  const CertificadoFormView({
-    super.key,
-    this.certificado,
-    this.editIndex,
-  });
+  const CertificadoFormView({super.key, this.certificado, this.editIndex});
 
   @override
   State<CertificadoFormView> createState() => _CertificadoFormViewState();
@@ -36,7 +33,9 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
     _tituloCtrl = TextEditingController(text: c?.titulo ?? '');
     _instituicaoCtrl = TextEditingController(text: c?.instituicao ?? '');
     _anoCtrl = TextEditingController(text: c?.ano.toString() ?? '');
-    _cargaHorariaCtrl = TextEditingController(text: c?.cargaHoraria?.toString() ?? '');
+    _cargaHorariaCtrl = TextEditingController(
+      text: c?.cargaHoraria?.toString() ?? '',
+    );
     _tagsCtrl = TextEditingController(text: c?.tags.join(', ') ?? '');
     _linkCtrl = TextEditingController(text: c?.urlDocumento ?? '');
     _isLink = c?.uploadDocumento == null;
@@ -84,10 +83,7 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
       tags: tags,
     );
 
-    Navigator.pop(context, {
-      'certificado': novo,
-      'index': widget.editIndex,
-    });
+    Navigator.pop(context, {'certificado': novo, 'index': widget.editIndex});
   }
 
   @override
@@ -110,7 +106,9 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: width > 700 ? 480 : double.infinity),
+            constraints: BoxConstraints(
+              maxWidth: width > 700 ? 480 : double.infinity,
+            ),
             child: Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
@@ -118,7 +116,7 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 18,
                     offset: const Offset(0, 10),
                   ),
@@ -147,14 +145,22 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _tituloCtrl,
-                      decoration: const InputDecoration(labelText: 'Título do Curso/Evento *'),
-                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Título obrigatório' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Título do Curso/Evento *',
+                      ),
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Título obrigatório'
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _instituicaoCtrl,
-                      decoration: const InputDecoration(labelText: 'Instituição Emissora *'),
-                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Instituição obrigatória' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Instituição Emissora *',
+                      ),
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Instituição obrigatória'
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     Row(
@@ -162,13 +168,19 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                         Expanded(
                           child: TextFormField(
                             controller: _anoCtrl,
-                            decoration: const InputDecoration(labelText: 'Curso'),
+                            decoration: const InputDecoration(
+                              labelText: 'Curso',
+                            ),
                             keyboardType: TextInputType.number,
                             validator: (v) {
-                              if (v == null || v.trim().isEmpty) return 'Ano obrigatório';
+                              if (v == null || v.trim().isEmpty) {
+                                return 'Ano obrigatório';
+                              }
                               final ano = int.tryParse(v.trim());
                               final atual = DateTime.now().year;
-                              if (ano == null || ano < 1900 || ano > atual) return 'Ano inválido';
+                              if (ano == null || ano < 1900 || ano > atual) {
+                                return 'Ano inválido';
+                              }
                               return null;
                             },
                           ),
@@ -177,7 +189,9 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                         Expanded(
                           child: TextFormField(
                             controller: _cargaHorariaCtrl,
-                            decoration: const InputDecoration(labelText: 'Carga Horária'),
+                            decoration: const InputDecoration(
+                              labelText: 'Carga Horária',
+                            ),
                             keyboardType: TextInputType.number,
                           ),
                         ),
@@ -194,13 +208,25 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                     const SizedBox(height: 18),
                     const Text(
                       'COMPROVAÇÃO (EXCLUSÃO MÚTUA)',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF6B7280)),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF6B7280),
+                      ),
                     ),
                     const SizedBox(height: 10),
                     SegmentedButton<bool>(
                       segments: const [
-                        ButtonSegment(value: true, label: Text('Link Externo'), icon: Icon(Icons.link)),
-                        ButtonSegment(value: false, label: Text('Upload PDF'), icon: Icon(Icons.upload_file)),
+                        ButtonSegment(
+                          value: true,
+                          label: Text('Link Externo'),
+                          icon: Icon(Icons.link),
+                        ),
+                        ButtonSegment(
+                          value: false,
+                          label: Text('Upload PDF'),
+                          icon: Icon(Icons.upload_file),
+                        ),
                       ],
                       selected: {_isLink},
                       onSelectionChanged: (set) {
@@ -211,13 +237,19 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                     if (_isLink)
                       TextFormField(
                         controller: _linkCtrl,
-                        decoration: const InputDecoration(hintText: 'https://...'),
+                        decoration: const InputDecoration(
+                          hintText: 'https://...',
+                        ),
                         keyboardType: TextInputType.url,
                         validator: (v) {
                           if (!_isLink) return null;
-                          if (v == null || v.trim().isEmpty) return 'Informe o link';
+                          if (v == null || v.trim().isEmpty) {
+                            return 'Informe o link';
+                          }
                           final uri = Uri.tryParse(v.trim());
-                          if (uri == null || !uri.hasAuthority) return 'URL inválida';
+                          if (uri == null || !uri.hasAuthority) {
+                            return 'URL inválida';
+                          }
                           return null;
                         },
                       )
@@ -225,7 +257,9 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                       OutlinedButton.icon(
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Upload simulado de PDF.')),
+                            const SnackBar(
+                              content: Text('Upload simulado de PDF.'),
+                            ),
                           );
                         },
                         icon: const Icon(Icons.upload_file),
@@ -234,7 +268,11 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                     const SizedBox(height: 18),
                     FilledButton(
                       onPressed: _salvar,
-                      child: Text(isEdicao ? 'Atualizar Certificado' : 'Salvar Documento (+50 XP)'),
+                      child: Text(
+                        isEdicao
+                            ? 'Atualizar Certificado'
+                            : 'Salvar Documento (+50 XP)',
+                      ),
                     ),
                   ],
                 ),
