@@ -1,19 +1,11 @@
 {
-  // =========================================================
-  // 1. GERENCIAMENTO DO FLUTTER (FVM)
-  // =========================================================
-  // Usa o symlink dinâmico. NUNCA coloque a versão fixa aqui (ex: 3.41.7)
-  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "dart.flutterSdkPath": ".fvm/versions/3.41.7",
   "search.exclude": {
     "**/.fvm": true
   },
   "files.watcherExclude": {
     "**/.fvm": true
   },
-
-  // =========================================================
-  // 2. TERMINAL E INTEGRAÇÃO (WINDOWS + MAKEFILE)
-  // =========================================================
   "terminal.integrated.profiles.windows": {
     "Git Bash": {
       "path": [
@@ -24,10 +16,6 @@
     }
   },
   "terminal.integrated.defaultProfile.windows": "Git Bash",
-
-  // =========================================================
-  // 3. REGRAS DE LINTING, DEBUG E FORMATAÇÃO (DART)
-  // =========================================================
   "editor.formatOnSave": true,
   "dart.lineLength": 80,
   "dart.debugExternalPackageLibraries": false,
@@ -35,7 +23,9 @@
   "[dart]": {
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
-    "editor.rulers": [80],
+    "editor.rulers": [
+      80
+    ],
     "editor.selectionHighlight": false,
     "editor.tabCompletion": "onlySnippets",
     "editor.wordBasedSuggestions": "off",
@@ -44,10 +34,6 @@
       "source.organizeImports": "explicit"
     }
   },
-
-  // =========================================================
-  // 4. CONFIGURAÇÕES GERAIS E MARKDOWN (IDE)
-  // =========================================================
   "redhat.telemetry.enabled": false,
   "json.schemaDownload.enable": true,
   "workbench.iconTheme": "material-icon-theme",
