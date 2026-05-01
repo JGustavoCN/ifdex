@@ -7,6 +7,7 @@ class Certificado {
   int ano;
   String instituicao;
   String tipoDescricao;
+  int notaRelevancia;
   int? cargaHoraria;
   String? urlDocumento;
   String? uploadDocumento;
@@ -23,5 +24,6 @@ class Certificado {
     this.urlDocumento,
     this.uploadDocumento,
     this.tags = const [],
+    this.notaRelevancia = 1,
   });
 }
