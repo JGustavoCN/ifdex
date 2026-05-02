@@ -9,6 +9,9 @@ class AppText extends StatelessWidget {
   final Color? color;
   final TextAlign textAlign;
   final double? letterSpacing;
+  final int? maxLines;
+  final TextOverflow? overflow;
+  final double? height;
 
   const AppText(
     this.text, {
@@ -18,6 +21,9 @@ class AppText extends StatelessWidget {
     this.color,
     this.textAlign = TextAlign.start,
     this.letterSpacing,
+    this.maxLines,
+    this.overflow,
+    this.height,
   });
 
   /// Títulos e Cabeçalhos (Inter, 20px, SemiBold)
@@ -78,11 +84,14 @@ class AppText extends StatelessWidget {
     return Text(
       text,
       textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
       style: GoogleFonts.inter(
         fontSize: fontSize,
         fontWeight: fontWeight,
         color: color ?? AppColors.textPrimary,
         letterSpacing: letterSpacing,
+        height: height,
       ),
     );
   }
