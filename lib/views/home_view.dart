@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../data/mock_certificados.dart';
 import '../models/certificado.dart';
 import '../theme/app_theme.dart';
-import 'certificado_detalhes_dialog.dart';
 import 'certificado_form_view.dart';
 import 'home_mobile_view.dart';
 import 'home_web_view.dart';
@@ -79,18 +78,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _abrirDetalhes(Certificado certificado, int index) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => CertificadoDetalhesDialog(
-        certificado: certificado,
-        onEdit: certificado.origem == Origem.manual
-            ? () {
-                Navigator.pop(context);
-                _abrirFormulario(certificado, index);
-              }
-            : null,
-      ),
-    );
+    _abrirFormulario(certificado, index);
   }
 
   @override
