@@ -131,7 +131,10 @@ class CertificadoCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 6),
-                RemoveButton(onPressed: onRemove),
+                RemoveButton(
+                  certificado: certificado,
+                  onConfirmDelete: onRemove,
+                ),
               ],
             ),
           ),
