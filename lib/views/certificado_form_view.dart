@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -62,15 +64,16 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
         .toList();
 
     String? url;
-    String? upload;
+    Uint8List? upload;
 
     if (_isLink) {
       url = _linkCtrl.text.trim().isEmpty ? null : _linkCtrl.text.trim();
     } else {
-      upload = 'arquivo_local_simulado.pdf';
+      // MVP: bytes simulados para representar upload
+      upload = Uint8List.fromList([0]);
     }
 
-    final novo = Certificado(
+    final novo = Certificado.criar(
       id: widget.certificado?.id ?? const Uuid().v4(),
       origem: widget.certificado?.origem ?? Origem.manual,
       titulo: _tituloCtrl.text.trim(),
@@ -81,6 +84,7 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
       urlDocumento: url,
       uploadDocumento: upload,
       tags: tags,
+      notaRelevancia: widget.certificado?.notaRelevancia ?? 1,
     );
 
     Navigator.pop(context, {'certificado': novo, 'index': widget.editIndex});
