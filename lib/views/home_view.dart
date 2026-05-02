@@ -32,32 +32,13 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _removerCertificado(int index) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmar remoção'),
-        content: const Text('Tem certeza que deseja remover este certificado?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                certificados.removeAt(index);
-                xp = (xp - 50).clamp(0, 99999);
-              });
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Certificado removido.')),
-              );
-            },
-            child: const Text('Remover', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
+    setState(() {
+      certificados.removeAt(index);
+      xp = (xp - 50).clamp(0, 99999);
+    });
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Certificado removido.')));
   }
 
   Future<void> _abrirFormulario([Certificado? certificado, int? index]) async {
