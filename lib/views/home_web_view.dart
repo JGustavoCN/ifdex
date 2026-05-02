@@ -89,16 +89,12 @@ class _Sidebar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(
-                Icons.shield_outlined,
-                color: AppColors.textOnDark,
-                size: 28,
-              ),
-              SizedBox(width: 12),
-              AppText(
-                'IFDEX',
+              Image.asset('assets/logo_transparent.png', height: 32, width: 32),
+              const SizedBox(width: 12),
+              const AppText(
+                'IFdex',
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textOnDark,

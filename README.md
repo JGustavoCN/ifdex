@@ -1,20 +1,12 @@
-# ifdex
+<div align="center">
+  <img src="assets/logo_transparent.png" alt="IFdex Logo" width="120" />
+  <h1>IFdex</h1>
+  <p><strong>Cofre Acadêmico e Portfólio Gamificado</strong></p>
+</div>
 
-Aplicativo de cofre de certificados gamificado
+O **IFdex** é um hub centralizado e privado para gestão de portfólio acadêmico. Ele integra dados oficiais institucionais (como o Sispubli) e permite registros manuais de certificados através de uma interface moderna e gamificada (Sistema de XP).
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+O ecossistema é composto por um aplicativo híbrido (desenvolvido em Flutter Mobile/PWA) para a gestão privada dos dados.
 
 ## Setup para Desenvolvedores Windows
 
