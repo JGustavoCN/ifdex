@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../data/mock_certificados.dart';
 import '../models/certificado.dart';
-import '../widgets/certificado_card.dart';
-import '../widgets/xp_header.dart';
+import '../theme/app_theme.dart';
 import 'certificado_detalhes_dialog.dart';
 import 'certificado_form_view.dart';
+import 'home_mobile_view.dart';
+import 'home_web_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -64,6 +65,8 @@ class _HomeViewState extends State<HomeView> {
       }
     });
 
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -92,91 +95,48 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 900;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7F8),
-      appBar: null,
-      body: Column(
-        children: [
-          XpHeader(totalCertificados: certificados.length, xp: xp),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'PORTFÓLIO',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF6B7280),
-                  ),
-                ),
-                PopupMenuButton<String>(
-                  onSelected: (value) {
-                    setState(() {
-                      filtroAtual = value;
-                    });
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'todos', child: Text('Todos')),
-                    const PopupMenuItem(
-                      value: 'oficial',
-                      child: Text('Oficiais'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'manual',
-                      child: Text('Manuais'),
-                    ),
-                  ],
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFE5E7EB)),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.filter_alt_outlined, size: 18),
-                        SizedBox(width: 6),
-                        Text(
-                          'Filtrar',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: certificados.isEmpty
-                ? const Center(child: Text('Nenhum certificado cadastrado.'))
-                : ListView.builder(
-                    itemCount: certificadosFiltrados.length,
-                    padding: const EdgeInsets.only(bottom: 16),
-                    itemBuilder: (context, index) {
-                      final c = certificadosFiltrados[index];
-                      return CertificadoCard(
-                        certificado: c,
-                        onTap: () => _abrirDetalhes(c, index),
-                        onRemove: () => _removerCertificado(index),
-                      );
-                    },
-                  ),
-          ),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 900) {
+            return HomeMobileView(
+              certificadosFiltrados: certificadosFiltrados,
+              totalCertificados: certificados.length,
+              xp: xp,
+              filtroAtual: filtroAtual,
+              onFiltroChanged: (valor) {
+                setState(() => filtroAtual = valor);
+              },
+              onAdicionarCertificado: _abrirFormulario,
+              onAbrirDetalhes: _abrirDetalhes,
+              onRemoverCertificado: _removerCertificado,
+            );
+          }
+
+          return HomeWebView(
+            certificadosFiltrados: certificadosFiltrados,
+            totalCertificados: certificados.length,
+            xp: xp,
+            filtroAtual: filtroAtual,
+            onFiltroChanged: (valor) {
+              setState(() => filtroAtual = valor);
+            },
+            onAdicionarCertificado: _abrirFormulario,
+            onAbrirDetalhes: _abrirDetalhes,
+            onRemoverCertificado: _removerCertificado,
+          );
+        },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _abrirFormulario(),
-        backgroundColor: const Color(0xFF355E3B),
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: isMobile
+          ? FloatingActionButton(
+              onPressed: _abrirFormulario,
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.textOnPrimary,
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }
