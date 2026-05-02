@@ -1,7 +1,7 @@
 import '../models/certificado.dart';
 
 List<Certificado> certificadosMock = [
-  Certificado(
+  Certificado.criar(
     id: '1',
     origem: Origem.manual,
     titulo: 'Desenvolvimento Web Moderno',
@@ -11,8 +11,9 @@ List<Certificado> certificadosMock = [
     cargaHoraria: 40,
     tags: ['React', 'CSS'],
     urlDocumento: 'https://udemy.com/cert/123',
+    notaRelevancia: 3,
   ),
-  Certificado(
+  Certificado.criar(
     id: '2',
     origem: Origem.sispubli,
     titulo: 'Segurança da Informação II',
@@ -20,8 +21,9 @@ List<Certificado> certificadosMock = [
     instituicao: 'IFS',
     tipoDescricao: 'Participação',
     tags: ['Criptografia'],
+    notaRelevancia: 4,
   ),
-  Certificado(
+  Certificado.criar(
     id: '3',
     origem: Origem.sispubli,
     titulo: 'Semana de Tecnologia IFS',
@@ -29,5 +31,6 @@ List<Certificado> certificadosMock = [
     instituicao: 'IFS',
     tipoDescricao: 'Palestrante',
     tags: ['Educação'],
+    notaRelevancia: 5,
   ),
 ];

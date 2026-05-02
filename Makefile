@@ -3,15 +3,15 @@
 
 # Instala o FVM, baixa o SDK, instala dependências e ativa o Lefthook na máquina
 install:
-	@echo "1/4 Ativando o FVM na máquina..."
+	@echo "------> 1/4 Ativando o FVM na máquina..."
 	dart pub global activate fvm
-	@echo "2/4 Baixando a versão correta do Flutter (isolada para este projeto)..."
+	@echo "------> 2/4 Baixando a versão correta do Flutter (isolada para este projeto)..."
 	fvm install
-	@echo "3/4 Baixando os pacotes do projeto..."
+	@echo "------> 3/4 Baixando os pacotes do projeto..."
 	fvm flutter pub get
-	@echo "4/4 Blindando os commits com Lefthook..."
+	@echo "------> 4/4 Blindando os commits com lefthook..."
 	npx lefthook install
-	@echo "Sucesso! Dependências instaladas e Lefthook ativado!"
+	@echo "------> Sucesso! Dependências instaladas e lefthook ativado!"
 
 # Aplica correções automáticas (consts, sintaxe, etc) sugeridas pelo linter
 fix:
