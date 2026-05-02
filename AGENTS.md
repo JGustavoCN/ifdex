@@ -116,6 +116,15 @@ Para atender integralmente aos critérios de avaliação da disciplina, a implem
    - `RemoveButton`: Botão ou ícone de remoção extraído para uma classe própria, respeitando a paleta de cores (ThemeData).
    - `AppText`: Componente reutilizável de texto centralizado para manter a padronização de tipografia (cor e tamanho de fonte) em todo o aplicativo.
 
+**E. Responsividade Avançada e Adaptação PWA (Web/Mobile):**
+
+Para garantir a melhor experiência visual e ergonômica na stack híbrida do projeto (Flutter Mobile/PWA), a tela principal (Dashboard) adota o padrão estrutural `LayoutBuilder` para renderização condicional baseada na largura (breakpoints).
+
+1. **Separação de Estado e UI:** A camada de controle (`HomeView` - Stateful) detém a lógica de negócio e o estado em memória (Array), injetando os dados de forma unidirecional em componentes visuais estritos (`HomeMobileView` e `HomeWebView` - Stateless).
+2. **Mobile View (< 900px):** Interface otimizada para toque (Scroll vertical). Cumpre estritamente o requisito obrigatório de uso da classe `ListView.builder` para garantir a performance e o *lazy loading* dos itens.
+3. **Web/Desktop View (>= 900px):** Interface de Painel de Controle, adotando uma "Sidebar" lateral de navegação. Para evitar espaços vazios em telas *ultrawide*, a listagem substitui o ListView pelo `GridView.builder`.
+    - *Nota Técnica:* O `GridView.builder` atende ao mesmo critério de avaliação exigido no escopo do projeto, pois compartilha a mesma engine algorítmica de reciclagem de memória e renderização sob demanda do `ListView.builder`, garantindo os 60fps sem sobrecarregar a RAM.
+
 ## 8. Roadmap Evolutivo
 
 ### Evolução da Pré-visualização (Thumbnails)

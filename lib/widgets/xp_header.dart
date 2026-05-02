@@ -42,10 +42,10 @@ class XpHeader extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.shield_outlined, color: Colors.white, size: 22),
+              Image.asset('assets/logo_transparent.png', height: 24, width: 24),
               const SizedBox(width: 8),
               const AppText(
-                'IFDEX',
+                'IFdex',
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,

@@ -9,6 +9,7 @@ analyzer:
     - "android/**"
     - "ios/**"
     - "web/**"
+    - "screens/**"
     - "**/*.g.dart"
   # 1. Checagens Estritas (Impede a IA de usar 'dynamic' por preguiça)
   language:

@@ -46,3 +46,7 @@ build-web:
 
 build-apk:
 	fvm flutter build apk --release
+
+# Gera os ícones nativos (iOS, Android, Web) baseados nas imagens da pasta assets/
+generate-icons:
+	fvm flutter pub run flutter_launcher_icons
