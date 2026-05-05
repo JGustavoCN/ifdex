@@ -18,7 +18,6 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   List<Certificado> certificados = List.from(certificadosMock);
-  int xp = 150;
   String filtroAtual = 'todos';
 
   List<Certificado> get certificadosFiltrados {
@@ -36,7 +35,6 @@ class _HomeViewState extends State<HomeView> {
   void _removerCertificado(int index) {
     setState(() {
       certificados.removeAt(index);
-      xp = (xp - 50).clamp(0, 99999);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -68,7 +66,6 @@ class _HomeViewState extends State<HomeView> {
         certificados[resultado['index'] as int] = novoCert;
       } else {
         certificados.add(novoCert);
-        xp += 50;
       }
     });
 
@@ -130,7 +127,6 @@ class _HomeViewState extends State<HomeView> {
             return HomeMobileView(
               certificadosFiltrados: certificadosFiltrados,
               totalCertificados: certificados.length,
-              xp: xp,
               filtroAtual: filtroAtual,
               onFiltroChanged: (valor) {
                 setState(() => filtroAtual = valor);
@@ -144,7 +140,6 @@ class _HomeViewState extends State<HomeView> {
           return HomeWebView(
             certificadosFiltrados: certificadosFiltrados,
             totalCertificados: certificados.length,
-            xp: xp,
             filtroAtual: filtroAtual,
             onFiltroChanged: (valor) {
               setState(() => filtroAtual = valor);

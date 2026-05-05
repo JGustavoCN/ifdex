@@ -14,7 +14,6 @@ import '../widgets/xp_header.dart';
 class HomeMobileView extends StatelessWidget {
   final List<Certificado> certificadosFiltrados;
   final int totalCertificados;
-  final int xp;
   final String filtroAtual;
   final ValueChanged<String> onFiltroChanged;
   final VoidCallback onAdicionarCertificado;
@@ -25,7 +24,6 @@ class HomeMobileView extends StatelessWidget {
     super.key,
     required this.certificadosFiltrados,
     required this.totalCertificados,
-    required this.xp,
     required this.filtroAtual,
     required this.onFiltroChanged,
     required this.onAdicionarCertificado,
@@ -37,7 +35,7 @@ class HomeMobileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        XpHeader(totalCertificados: totalCertificados, xp: xp),
+        XpHeader(totalCertificados: totalCertificados),
         _BarraFiltros(
           filtroAtual: filtroAtual,
           onFiltroChanged: onFiltroChanged,
