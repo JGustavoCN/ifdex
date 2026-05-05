@@ -1,11 +1,23 @@
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/certificado.dart';
+import '../models/certificado_types.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_text.dart';
+import '../widgets/certificado_cover.dart';
+import '../widgets/info_box.dart';
 
+/// Formulário para **criar** ou **editar** certificados.
+///
+/// - Certificados **manuais**: todos os campos editáveis.
+/// - Certificados **Sispubli**: Título, Instituição e Ano
+///   são exibidos como texto estático (bloqueados). Apenas
+///   metadados (Tags, Tipo, Relevância) são editáveis.
+///   A seção de Comprovação (Upload/Link) é ocultada.
 class CertificadoFormView extends StatefulWidget {
   final Certificado? certificado;
   final int? editIndex;
@@ -30,13 +42,10 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
   int _notaRelevancia = 1;
   String _tipoSelecionado = 'Participação';
 
-  final List<String> _tipos = [
-    'Participação',
-    'Curso',
-    'Palestra',
-    'Certificação',
-    'Outros',
-  ];
+  Uint8List? _arquivoSelecionado;
+  String? _nomeArquivoSelecionado;
+
+  bool get _isSispubli => widget.certificado?.origem == Origem.sispubli;
 
   @override
   void initState() {
@@ -52,24 +61,29 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
     _linkCtrl = TextEditingController(text: c?.urlDocumento ?? '');
     _isLink = c?.uploadDocumento == null;
     _notaRelevancia = c?.notaRelevancia ?? 1;
+    _arquivoSelecionado = c?.uploadDocumento;
 
     _tipoSelecionado = c?.tipoDescricao ?? 'Participação';
-    if (!_tipos.contains(_tipoSelecionado)) {
-      _tipos.add(_tipoSelecionado);
+    if (!CertificadoTypes.values.contains(_tipoSelecionado)) {
+      _tipoSelecionado = 'Outros';
     }
 
-    _tituloCtrl.addListener(_updateUI);
-    _instituicaoCtrl.addListener(_updateUI);
-    _anoCtrl.addListener(_updateUI);
+    if (!_isSispubli) {
+      _tituloCtrl.addListener(_updateUI);
+      _instituicaoCtrl.addListener(_updateUI);
+      _anoCtrl.addListener(_updateUI);
+    }
   }
 
   void _updateUI() => setState(() {});
 
   @override
   void dispose() {
-    _tituloCtrl.removeListener(_updateUI);
-    _instituicaoCtrl.removeListener(_updateUI);
-    _anoCtrl.removeListener(_updateUI);
+    if (!_isSispubli) {
+      _tituloCtrl.removeListener(_updateUI);
+      _instituicaoCtrl.removeListener(_updateUI);
+      _anoCtrl.removeListener(_updateUI);
+    }
     _tituloCtrl.dispose();
     _instituicaoCtrl.dispose();
     _anoCtrl.dispose();
@@ -79,65 +93,78 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
     super.dispose();
   }
 
-  IconData _getIcon() {
-    final origem = widget.certificado?.origem ?? Origem.manual;
-    if (origem == Origem.sispubli) return Icons.account_balance;
-    final inst = _instituicaoCtrl.text.toLowerCase();
-    if (inst.contains('aws') || inst.contains('amazon')) {
-      return Icons.cloud_outlined;
+  Future<void> _selecionarArquivo() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'png'],
+      withData: true,
+    );
+    if (result == null) return;
+    final file = result.files.first;
+    final tamanhoMB = file.size / (1024 * 1024);
+    if (tamanhoMB > 5) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const AppText(
+            'O arquivo excede o limite de 5MB.',
+            color: AppColors.textOnPrimary,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return;
     }
-    if (inst.contains('udemy')) return Icons.play_circle_outline;
-    return _isLink ? Icons.link : Icons.folder_open_outlined;
-  }
-
-  Color _getColor() {
-    final origem = widget.certificado?.origem ?? Origem.manual;
-    if (origem == Origem.sispubli) return AppColors.primary;
-    final inst = _instituicaoCtrl.text.toLowerCase();
-    if (inst.contains('aws') || inst.contains('amazon')) {
-      return AppColors.warning;
-    }
-    if (inst.contains('udemy')) return const Color(0xFF8B5CF6);
-    return AppColors.secondary;
+    setState(() {
+      _arquivoSelecionado = file.bytes;
+      _nomeArquivoSelecionado = file.name;
+      _isLink = false;
+      _linkCtrl.clear();
+    });
   }
 
   void _salvar() {
     if (!_formKey.currentState!.validate()) return;
 
-    final isSispubli = widget.certificado?.origem == Origem.sispubli;
-
+    final c = widget.certificado;
     final tags = _tagsCtrl.text
         .split(',')
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
 
+    // Dados fixos do Sispubli são repassados intactos
+    final titulo = _isSispubli ? c!.titulo : _tituloCtrl.text.trim();
+    final instituicao = _isSispubli
+        ? c!.instituicao
+        : _instituicaoCtrl.text.trim();
+    final ano = _isSispubli
+        ? c!.ano
+        : (int.tryParse(_anoCtrl.text.trim()) ?? DateTime.now().year);
+    final origem = c?.origem ?? Origem.manual;
+
+    // Comprovação: Sispubli mantém dados originais
     String? url;
     Uint8List? upload;
-
-    if (isSispubli) {
-      url = widget.certificado?.urlDocumento;
-      upload = widget.certificado?.uploadDocumento;
+    if (_isSispubli) {
+      url = c!.urlDocumento;
+      upload = c.uploadDocumento;
+    } else if (_isLink) {
+      url = _linkCtrl.text.trim().isEmpty ? null : _linkCtrl.text.trim();
     } else {
-      if (_isLink) {
-        url = _linkCtrl.text.trim().isEmpty ? null : _linkCtrl.text.trim();
-      } else {
-        upload = Uint8List.fromList([0]);
-      }
+      upload = _arquivoSelecionado;
     }
 
+    final cargaHoraria = int.tryParse(_cargaHorariaCtrl.text.trim());
+
     final novo = Certificado.criar(
-      id: widget.certificado?.id ?? const Uuid().v4(),
-      origem: widget.certificado?.origem ?? Origem.manual,
-      titulo: _tituloCtrl.text.trim(),
-      ano: int.tryParse(_anoCtrl.text.trim()) ?? DateTime.now().year,
-      instituicao: _instituicaoCtrl.text.trim(),
-      tipoDescricao: isSispubli
-          ? (widget.certificado?.tipoDescricao ?? 'Manual')
-          : _tipoSelecionado,
-      cargaHoraria: isSispubli
-          ? null
-          : int.tryParse(_cargaHorariaCtrl.text.trim()),
+      id: c?.id ?? const Uuid().v4(),
+      origem: origem,
+      titulo: titulo,
+      ano: ano,
+      instituicao: instituicao,
+      tipoDescricao: _isSispubli ? c!.tipoDescricao : _tipoSelecionado,
+      cargaHoraria: cargaHoraria,
       urlDocumento: url,
       uploadDocumento: upload,
       tags: tags,
@@ -147,92 +174,46 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
     Navigator.pop(context, {'certificado': novo, 'index': widget.editIndex});
   }
 
-  Widget _buildCover({required double width, double? height}) {
-    final titulo = _tituloCtrl.text.trim().isEmpty
-        ? 'Título do Certificado'
-        : _tituloCtrl.text.trim();
-    final inst = _instituicaoCtrl.text.trim().isEmpty
-        ? 'Instituição'
-        : _instituicaoCtrl.text.trim();
-    final ano = _anoCtrl.text.trim().isEmpty ? 'Ano' : _anoCtrl.text.trim();
-
-    final cor = _getColor();
-    final icone = _getIcon();
-
-    return Container(
-      width: width,
-      height: height ?? double.infinity,
-      decoration: BoxDecoration(color: cor),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icone, size: width < 150 ? 36 : 56, color: Colors.white70),
-          const SizedBox(height: 18),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              titulo,
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: width < 150 ? 14 : 24,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              '$inst • $ano',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: width < 150 ? 10 : 13,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildUploadBox() {
+    final temArquivo = _arquivoSelecionado != null;
     return InkWell(
-      onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Upload simulado de PDF.')),
-        );
-      },
-      borderRadius: BorderRadius.circular(12),
+      onTap: _selecionarArquivo,
+      borderRadius: BorderRadius.circular(14),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade400, width: 1.5),
+          color: temArquivo ? AppColors.successSoft : AppColors.surfaceAlt,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: temArquivo ? AppColors.success : AppColors.border,
+            width: 1.5,
+          ),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.cloud_upload_outlined, size: 48, color: Colors.grey),
-            SizedBox(height: 12),
-            Text(
-              'Selecione um arquivo .pdf ou .jpg',
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-              ),
+            Icon(
+              temArquivo
+                  ? Icons.check_circle_outline
+                  : Icons.cloud_upload_outlined,
+              size: 48,
+              color: temArquivo ? AppColors.success : AppColors.textMuted,
+            ),
+            const SizedBox(height: 12),
+            AppText(
+              temArquivo
+                  ? _nomeArquivoSelecionado ?? 'Arquivo selecionado'
+                  : 'Selecione um arquivo '
+                        '.pdf, .jpg ou .png',
+              fontWeight: FontWeight.w700,
+              color: temArquivo ? AppColors.success : AppColors.textPrimary,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 4),
-            Text(
-              'Máx 5MB',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-              textAlign: TextAlign.center,
+            const SizedBox(height: 4),
+            AppText.label(
+              temArquivo ? 'Toque para alterar' : 'Máx 5MB',
+              color: AppColors.textMuted,
             ),
           ],
         ),
@@ -240,7 +221,12 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
     );
   }
 
-  Widget _buildForm(bool isReadOnly, bool isEdicao) {
+  Widget _buildForm() {
+    final isEdicao = widget.certificado != null;
+    final labelSalvar = _isSispubli
+        ? 'Salvar Metadados'
+        : (isEdicao ? 'Salvar Edição' : 'Salvar Novo (+50 XP)');
+
     return Padding(
       padding: const EdgeInsets.all(18),
       child: Form(
@@ -249,130 +235,135 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 18),
-            _Box(
-              child: isReadOnly
-                  ? Text(
-                      _tituloCtrl.text,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    )
-                  : TextFormField(
-                      controller: _tituloCtrl,
-                      decoration: const InputDecoration.collapsed(
-                        hintText: 'Título do Curso/Evento *',
-                      ),
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Obrigatório'
-                          : null,
-                    ),
-            ),
+            // ── Título ──────────────────────────────
+            if (_isSispubli)
+              InfoBox(
+                title: 'TÍTULO (BLOQUEADO)',
+                child: AppText(_tituloCtrl.text, fontWeight: FontWeight.w700),
+              )
+            else
+              TextFormField(
+                controller: _tituloCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Título do Curso/Evento',
+                  hintText: 'Ex: Desenvolvimento Web',
+                ),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) {
+                    return 'Obrigatório';
+                  }
+                  if (v.length > 100) {
+                    return 'Máx. 100 caracteres';
+                  }
+                  return null;
+                },
+              ),
             const SizedBox(height: 12),
-            _Box(
-              child: isReadOnly
-                  ? Text(
-                      _instituicaoCtrl.text,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    )
-                  : TextFormField(
-                      controller: _instituicaoCtrl,
-                      decoration: const InputDecoration.collapsed(
-                        hintText: 'Instituição Emissora *',
-                      ),
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Obrigatório'
-                          : null,
-                    ),
-            ),
+            // ── Instituição ─────────────────────────
+            if (_isSispubli)
+              InfoBox(
+                title: 'INSTITUIÇÃO (BLOQUEADO)',
+                child: AppText(
+                  _instituicaoCtrl.text,
+                  fontWeight: FontWeight.w700,
+                ),
+              )
+            else
+              TextFormField(
+                controller: _instituicaoCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Instituição Emissora',
+                  hintText: 'Ex: Udemy, IFS, AWS',
+                ),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Obrigatório' : null,
+              ),
             const SizedBox(height: 12),
+            // ── Tipo + Ano ──────────────────────────
             Row(
               children: [
                 Expanded(
-                  child: _Box(
-                    child: isReadOnly
-                        ? Text(
+                  child: _isSispubli
+                      ? InfoBox(
+                          title: 'TIPO (BLOQUEADO)',
+                          child: AppText(
                             _tipoSelecionado,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          )
-                        : DropdownButtonFormField<String>(
-                            initialValue: _tipoSelecionado,
-                            items: _tipos.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      : DropdownButtonFormField<String>(
+                          initialValue: _tipoSelecionado,
+                          items: CertificadoTypes.values
+                              .map(
+                                (v) => DropdownMenuItem<String>(
+                                  value: v,
+                                  child: AppText(
+                                    v,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 14,
                                   ),
                                 ),
-                              );
-                            }).toList(),
-                            onChanged: (newValue) {
-                              if (newValue != null) {
-                                setState(() => _tipoSelecionado = newValue);
-                              }
-                            },
-                            decoration: const InputDecoration.collapsed(
-                              hintText: 'Curso',
-                            ),
-                            iconSize: 20,
-                            isExpanded: true,
-                          ),
-                  ),
+                              )
+                              .toList(),
+                          onChanged: (v) {
+                            if (v != null) {
+                              setState(() => _tipoSelecionado = v);
+                            }
+                          },
+                          decoration: const InputDecoration(labelText: 'Tipo'),
+                          iconSize: 20,
+                          isExpanded: true,
+                        ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _Box(
-                    child: isReadOnly
-                        ? Text(
+                  child: _isSispubli
+                      ? InfoBox(
+                          title: 'ANO (BLOQUEADO)',
+                          child: AppText(
                             _anoCtrl.text,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          )
-                        : TextFormField(
-                            controller: _anoCtrl,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: 'Ano *',
-                            ),
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                            keyboardType: TextInputType.number,
-                            validator: (v) {
-                              if (v == null || v.trim().isEmpty) {
-                                return 'Obrigatório';
-                              }
-                              final ano = int.tryParse(v.trim());
-                              final atual = DateTime.now().year;
-                              if (ano == null || ano < 1900 || ano > atual) {
-                                return 'Inválido';
-                              }
-                              return null;
-                            },
+                            fontWeight: FontWeight.w700,
                           ),
-                  ),
+                        )
+                      : TextFormField(
+                          controller: _anoCtrl,
+                          decoration: const InputDecoration(
+                            labelText: 'Ano',
+                            hintText: 'Ex: 2024',
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (v) {
+                            if (v == null || v.trim().isEmpty) {
+                              return 'Obrigatório';
+                            }
+                            final ano = int.tryParse(v.trim());
+                            final atual = DateTime.now().year;
+                            if (ano == null || ano < 1900 || ano > atual) {
+                              return 'Inválido';
+                            }
+                            return null;
+                          },
+                        ),
                 ),
               ],
             ),
             const SizedBox(height: 18),
-            const Text(
+            // ── Relevância ──────────────────────────
+            AppText.label(
               'RELEVÂNCIA PROFISSIONAL',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF6B7280),
-              ),
+              color: AppColors.textSecondary,
+              letterSpacing: 0.5,
             ),
             const SizedBox(height: 10),
             Row(
               children: List.generate(5, (index) {
                 return GestureDetector(
-                  onTap: () {
-                    setState(() => _notaRelevancia = index + 1);
-                  },
+                  onTap: () => setState(() => _notaRelevancia = index + 1),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: Icon(
                       index < _notaRelevancia ? Icons.star : Icons.star_border,
-                      color: const Color(0xFFF6B52E),
+                      color: AppColors.warning,
                       size: 40,
                     ),
                   ),
@@ -383,59 +374,63 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
             Row(
               children: [
                 Expanded(
-                  child: _Box(
-                    child: isReadOnly
-                        ? Text(
-                            _cargaHorariaCtrl.text.isEmpty
-                                ? 'N/A'
-                                : _cargaHorariaCtrl.text,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          )
-                        : TextFormField(
-                            controller: _cargaHorariaCtrl,
-                            decoration: const InputDecoration.collapsed(
-                              hintText: 'Carga Horária (Opcional)',
-                            ),
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                            keyboardType: TextInputType.number,
-                          ),
+                  child: TextFormField(
+                    controller: _cargaHorariaCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Carga Horária',
+                      hintText: 'Opcional',
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return null;
+                      }
+                      final ch = int.tryParse(v.trim());
+                      if (ch == null || ch < 1 || ch > 5000) {
+                        return 'Entre 1 e 5000';
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _Box(
-                    child: TextFormField(
-                      controller: _tagsCtrl,
-                      decoration: const InputDecoration.collapsed(
-                        hintText: 'Tags (Ex: Web, API)',
-                      ),
-                      style: const TextStyle(fontWeight: FontWeight.w700),
+                  child: TextFormField(
+                    controller: _tagsCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Tags (máx 5)',
+                      hintText: 'Ex: Web, API',
                     ),
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return null;
+                      }
+                      final tags = v
+                          .split(',')
+                          .map((e) => e.trim())
+                          .where((e) => e.isNotEmpty)
+                          .toList();
+                      if (tags.length > 5) {
+                        return 'Máx. 5 tags';
+                      }
+                      for (final tag in tags) {
+                        if (tag.length > 20) {
+                          return 'Máx. 20 chars/tag';
+                        }
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            if (isReadOnly)
-              const _Box(
-                title: 'IDENTIFICADOR DE SEGURANÇA',
-                child: Text(
-                  'SISPUBLI OFICIAL',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
             const SizedBox(height: 20),
-            if (!isReadOnly) ...[
-              const Text(
+            // ── Comprovação (só Manual) ──────────────
+            if (!_isSispubli) ...[
+              AppText.label(
                 'COMPROVAÇÃO (EXCLUSÃO MÚTUA)',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF6B7280),
-                ),
+                color: AppColors.textSecondary,
+                letterSpacing: 0.5,
               ),
               const SizedBox(height: 10),
               SegmentedButton<bool>(
@@ -447,69 +442,61 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                   ),
                   ButtonSegment(
                     value: false,
-                    label: Text('Upload PDF'),
+                    label: Text('Upload Arquivo'),
                     icon: Icon(Icons.upload_file),
                   ),
                 ],
                 selected: {_isLink},
                 onSelectionChanged: (set) {
-                  setState(() => _isLink = set.first);
+                  setState(() {
+                    _isLink = set.first;
+                    if (_isLink) {
+                      _arquivoSelecionado = null;
+                      _nomeArquivoSelecionado = null;
+                    } else {
+                      _linkCtrl.clear();
+                    }
+                  });
                 },
               ),
               const SizedBox(height: 12),
               if (_isLink)
-                _Box(
-                  title: 'LINK EXTERNO',
-                  child: TextFormField(
-                    controller: _linkCtrl,
-                    decoration: const InputDecoration.collapsed(
-                      hintText: 'https://...',
-                    ),
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                    keyboardType: TextInputType.url,
-                    validator: (v) {
-                      if (!_isLink) return null;
-                      if (v == null || v.trim().isEmpty) {
-                        return 'Informe o link';
-                      }
-                      final uri = Uri.tryParse(v.trim());
-                      if (uri == null || !uri.hasAuthority) {
-                        return 'URL inválida';
-                      }
-                      return null;
-                    },
+                TextFormField(
+                  controller: _linkCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Link Externo',
+                    hintText: 'https://...',
+                    prefixIcon: Icon(Icons.link),
                   ),
+                  keyboardType: TextInputType.url,
+                  validator: (v) {
+                    if (!_isLink) return null;
+                    if (v == null || v.trim().isEmpty) {
+                      return null;
+                    }
+                    final uri = Uri.tryParse(v.trim());
+                    if (uri == null || !uri.hasAuthority) {
+                      return 'URL inválida';
+                    }
+                    return null;
+                  },
                 )
               else
                 _buildUploadBox(),
             ],
-            const SizedBox(height: 20),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                FilledButton.icon(
-                  onPressed: _salvar,
-                  icon: const Icon(Icons.save),
-                  label: Text(isEdicao ? 'Salvar Edição' : 'SALVAR NOVO'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(
-                      0xFF355E3B,
-                    ), // Dark green to match the screenshot "Salvar Documento (+50 XP)"
-                    foregroundColor: Colors.white,
-                  ),
+            const SizedBox(height: 24),
+            // ── Botão Salvar ────────────────────────
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: _salvar,
+                icon: const Icon(Icons.save),
+                label: AppText(
+                  labelSalvar,
+                  color: AppColors.textOnPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
-                OutlinedButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.copy),
-                  label: const Text('Copiar Link'),
-                ),
-                if (isReadOnly)
-                  FilledButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('FECHAR'),
-                  ),
-              ],
+              ),
             ),
           ],
         ),
@@ -520,17 +507,22 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
   @override
   Widget build(BuildContext context) {
     final isEdicao = widget.certificado != null;
-    final isReadOnly = widget.certificado?.origem == Origem.sispubli;
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 700;
+    final origem = widget.certificado?.origem ?? Origem.manual;
+
+    final appBarTitle = _isSispubli
+        ? 'Editar Metadados'
+        : (isEdicao ? 'Editar Certificado' : 'Registro Manual');
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7F8),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(
-          isReadOnly
-              ? 'Detalhes do Certificado'
-              : (isEdicao ? 'Editar Certificado' : 'Registro Manual'),
+        title: AppText(
+          appBarTitle,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textOnPrimary,
         ),
       ),
       body: Center(
@@ -541,7 +533,7 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
             child: Container(
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(22),
                 boxShadow: [
                   BoxShadow(
@@ -557,18 +549,30 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _buildCover(width: double.infinity, height: 140),
-                          _buildForm(isReadOnly, isEdicao),
+                          CertificadoCover(
+                            titulo: _tituloCtrl.text.trim(),
+                            instituicao: _instituicaoCtrl.text.trim(),
+                            ano: _anoCtrl.text.trim(),
+                            origem: origem,
+                            isLink: _isLink,
+                            width: double.infinity,
+                          ),
+                          _buildForm(),
                         ],
                       )
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _buildCover(width: 220),
+                          CertificadoCover(
+                            titulo: _tituloCtrl.text.trim(),
+                            instituicao: _instituicaoCtrl.text.trim(),
+                            ano: _anoCtrl.text.trim(),
+                            origem: origem,
+                            isLink: _isLink,
+                            width: 220,
+                          ),
                           Expanded(
-                            child: SingleChildScrollView(
-                              child: _buildForm(isReadOnly, isEdicao),
-                            ),
+                            child: SingleChildScrollView(child: _buildForm()),
                           ),
                         ],
                       ),
@@ -576,44 +580,6 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _Box extends StatelessWidget {
-  final String? title;
-  final Widget child;
-
-  const _Box({this.title, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (title != null) ...[
-            Text(
-              title!,
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF9CA3AF),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-          child,
-        ],
       ),
     );
   }

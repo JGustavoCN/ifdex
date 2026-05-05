@@ -14,7 +14,6 @@ import '../widgets/certificado_card.dart';
 class HomeWebView extends StatelessWidget {
   final List<Certificado> certificadosFiltrados;
   final int totalCertificados;
-  final int xp;
   final String filtroAtual;
   final ValueChanged<String> onFiltroChanged;
   final VoidCallback onAdicionarCertificado;
@@ -25,7 +24,6 @@ class HomeWebView extends StatelessWidget {
     super.key,
     required this.certificadosFiltrados,
     required this.totalCertificados,
-    required this.xp,
     required this.filtroAtual,
     required this.onFiltroChanged,
     required this.onAdicionarCertificado,
@@ -35,8 +33,8 @@ class HomeWebView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final g = Gamification(xp);
-    final progresso = g.progressoPercent.clamp(0.0, 1.0);
+    final g = Gamification(totalCertificados);
+    final progresso = g.progressoPercent;
 
     return Row(
       children: [
@@ -169,11 +167,6 @@ class _XpSidebarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final xpDisplay = gamification.xp < 0 ? 0 : gamification.xp;
-    final xpRestante = gamification.xpRestante < 0
-        ? 0
-        : gamification.xpRestante;
-
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -190,24 +183,26 @@ class _XpSidebarCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           AppText(
-            '$xpDisplay XP',
+            '${gamification.totalXp} XP',
             fontSize: 24,
             fontWeight: FontWeight.w800,
             color: AppColors.textOnDark,
           ),
           const SizedBox(height: 10),
           ClipRRect(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
               value: progresso,
-              minHeight: 5,
+              minHeight: 6,
               backgroundColor: Colors.black.withValues(alpha: 0.2),
-              color: Colors.lightGreenAccent,
+              color: AppColors.success,
             ),
           ),
           const SizedBox(height: 8),
           AppText(
-            'Faltam $xpRestante XP',
+            gamification.nivel < 5
+                ? 'Faltam ${gamification.xpRestante} XP'
+                : 'Nível máximo!',
             fontSize: 11,
             color: AppColors.textOnDark.withValues(alpha: 0.6),
           ),
@@ -331,13 +326,32 @@ class _AreaPrincipal extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           certificadosFiltrados.isEmpty
-              ? const Center(
+              ? Center(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 64),
-                    child: AppText(
-                      'Nenhum certificado '
-                      'cadastrado.',
-                      color: AppColors.textMuted,
+                    padding: const EdgeInsets.only(top: 64),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          size: 72,
+                          color: AppColors.textMuted.withValues(alpha: 0.5),
+                        ),
+                        const SizedBox(height: 16),
+                        const AppText(
+                          'Cofre vazio',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(height: 6),
+                        const AppText(
+                          'Adicione seu primeiro '
+                          'certificado e comece '
+                          'a ganhar XP!',
+                          color: AppColors.textMuted,
+                        ),
+                      ],
                     ),
                   ),
                 )
@@ -469,8 +483,6 @@ class _XpStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final xpDisplay = gamification.xp < 0 ? 0 : gamification.xp;
-
     return Container(
       width: 260,
       height: 100,
@@ -494,7 +506,7 @@ class _XpStatCard extends StatelessWidget {
                   color: AppColors.textOnDark.withValues(alpha: 0.8),
                 ),
                 AppText(
-                  '$xpDisplay XP',
+                  '${gamification.totalXp} XP',
                   fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textOnDark,

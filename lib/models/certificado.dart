@@ -98,7 +98,20 @@ class Certificado {
       );
     }
 
-    // 7. Regras Específicas do Sispubli
+    // 7. Validação de Tags
+    if (tags.length > 5) {
+      throw ArgumentError('O máximo permitido é 5 tags.');
+    }
+    for (final tag in tags) {
+      if (tag.length > 20) {
+        throw ArgumentError(
+          'Cada tag deve ter no máximo '
+          '20 caracteres.',
+        );
+      }
+    }
+
+    // 8. Regras Específicas do Sispubli
     if (origem == Origem.sispubli) {
       if (instituicao.trim().toUpperCase() != 'IFS') {
         throw ArgumentError(
@@ -107,22 +120,16 @@ class Certificado {
         );
       }
 
-      if (cargaHoraria != null) {
-        throw ArgumentError(
-          'Certificados do Sispubli não possuem '
-          'carga horária (a API não fornece).',
-        );
-      }
-
       if (uploadDocumento != null) {
         throw ArgumentError(
           'Certificados do Sispubli não aceitam '
-          'upload de arquivos, apenas URL permanente.',
+          'upload de arquivos, apenas '
+          'URL permanente.',
         );
       }
     }
 
-    // 8. Validação de Formato de URL (Básica)
+    // 9. Validação de Formato de URL (Básica)
     if (urlDocumento != null && urlDocumento.isNotEmpty) {
       final uri = Uri.tryParse(urlDocumento);
       if (uri == null || !uri.isAbsolute) {

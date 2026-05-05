@@ -28,10 +28,10 @@ O esquema é idêntico para ambas as origens, facilitando a renderização. A di
 | `ano`             | Int           | **Bloqueado** (Read-only) | Editável                                |
 | `instituicao`     | String        | Fixo: "IFS"               | Editável                                |
 | `tipoDescricao`   | String        | Participação/Ouvinte/etc  | Editável                                |
-| `cargaHoraria`    | Int?          | **Nulo** (API não fornece)| **Opcional** (1 a 5000)                 |
+| `cargaHoraria`    | Int?          | **Editável** (API não fornece, usuário enriquece) | **Opcional** (1 a 5000)  |
 | `urlDocumento`    | String?       | Link Permanente (API)     | Link Externo (Opcional)                 |
 | `uploadDocumento` | `File`/`Bytes`| Nulo                      | **Opcional** (Arquivo após validações)  |
-| `tags`            | List          | Editável (Metadado)       | Editável (Metadado)                     |
+| `tags`            | List          | Editável (Metadado, máx 5, 20ch/tag) | Editável (Metadado, máx 5, 20ch/tag) |
 | `notaRelevancia`  | Int (1-5)     | Editável (Metadado)       | Editável (Metadado)                     |
 
 > [!IMPORTANT]
@@ -83,7 +83,8 @@ Foco em UI/UX, Componentização e Validações.
 
 - **Título:** Obrigatório (max 100 char).
 - **Ano:** 1900 a 2026.
-- **Carga Horária:** Se preenchido, entre 1 e 5000.
+- **Carga Horária:** Se preenchido, entre 1 e 5000 (disponível para ambas as origens).
+- **Tags:** Máx. 5 tags por certificado, máx. 20 caracteres por tag.
 - **Arquivo/Link:** Validação de tipo e tamanho (5MB) ou formato de URL.
 
 **B. Gamificação e Estado (Contador de Itens):**
@@ -92,13 +93,20 @@ Para cumprir o requisito obrigatório de **"Manipulação de Estado / Contador d
 
 - **Contador Dinâmico:** A tela principal exibirá o número total de certificados cadastrados, atualizando via `setState` a cada inserção ou remoção.
 - **Sistema de XP:** Cada certificado adicionado = **+50 XP**; removido = **-50 XP** (com confirmação).
-- **Nomenclatura de Níveis:** Nível 1 (**Calouro**), Nível 2 (**Explorador**), Nível 3 (**Especialista**).
-- **Regra de Progressão:** Dificuldade **exponencial**. Cada nível exige o dobro de XP do anterior.
+- **Nomenclatura de Níveis:** Nível 1 (**Calouro**), Nível 2 (**Explorador**), Nível 3 (**Especialista**), Nível 4 (**Mestre**), Nível 5 (**Lenda**).
+- **Regra de Progressão:** Dificuldade **exponencial**. O delta de XP entre cada nível **dobra** em relação ao anterior (100 → 200 → 400 → 800).
 - **Interface:** Barra de progresso com display claro do **XP restante** e o total de certificados.
+
+> [!NOTE]
+> Para a especificação completa da gamificação (tabela de progressão, fórmulas e exemplos), consulte [`docs/gamificacao_spec.md`](docs/gamificacao_spec.md).
 
 **C. Experiência do Usuário (UX) e Interface:**
 
-- **Campos Bloqueados (Sispubli):** Origens "Read-only" iniciam como desativados (`enabled: false`). Pode-se usar estética de "texto estático" no futuro para limpeza visual, mantendo a mesma lógica.
+- **Campos Bloqueados (Sispubli):** Título, Instituição, Ano e Tipo são exibidos como `InfoBox` estático (read-only). Carga Horária, Tags e Relevância são editáveis (enriquecimento do usuário).
+
+> [!NOTE]
+> Para documentação detalhada do fluxo Detalhes → Edição (incluindo comportamento de botões, bloqueios condicionais e merge de dados), consulte [`docs/fluxo_certificado.md`](docs/fluxo_certificado.md).
+
 - **Dinâmica do Formulário (Exclusão Mútua):** Se "URL" for preenchida, esconde "Upload", e vice-versa.
 - **Prevenção de Erros:** Disparar **`AlertDialog`** para confirmar a intenção de exclusão de certificados.
 - **Feedback de Sistema:** Uso de **`SnackBars`** para notificações de sucesso (ex: "Certificado salvo") ou erros de validação.

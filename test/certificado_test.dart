@@ -425,21 +425,12 @@ void main() {
   // G. Regras do Sispubli (Exceções)
   // ═══════════════════════════════════════════════════════
   group('G. Regras do Sispubli (Exceções)', () {
-    test('#23 Deve lançar erro se a Origem for Sispubli '
-        'e possuir carga horária', () {
+    test('#23 Deve aceitar Sispubli com carga horária '
+        '(enriquecimento do usuário)', () {
       final p = baseSispubli()..['cargaHoraria'] = 40;
 
-      expect(
-        () => criar(p),
-        throwsA(
-          isA<ArgumentError>().having(
-            (e) => e.message,
-            'message',
-            'Certificados do Sispubli não possuem '
-                'carga horária (a API não fornece).',
-          ),
-        ),
-      );
+      final cert = criar(p);
+      expect(cert.cargaHoraria, 40);
     });
 
     test('#24 Deve lançar erro se a Origem for Sispubli '
@@ -459,6 +450,61 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════
+  // H. Validação de Tags
+  // ═══════════════════════════════════════════════════════
+  group('H. Validação de Tags', () {
+    test('#25 Deve lançar erro se houver mais de '
+        '5 tags', () {
+      final p = baseManual()..['tags'] = <String>['A', 'B', 'C', 'D', 'E', 'F'];
+
+      expect(
+        () => criar(p),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            'O máximo permitido é 5 tags.',
+          ),
+        ),
+      );
+    });
+
+    test('#26 Deve aceitar exatamente 5 tags', () {
+      final p = baseManual()..['tags'] = <String>['A', 'B', 'C', 'D', 'E'];
+
+      final cert = criar(p);
+      expect(cert.tags.length, 5);
+    });
+
+    test('#27 Deve lançar erro se uma tag exceder '
+        '20 caracteres', () {
+      final tagLonga = 'A' * 21;
+      final p = baseManual()..['tags'] = <String>[tagLonga];
+
+      expect(
+        () => criar(p),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            'Cada tag deve ter no máximo '
+                '20 caracteres.',
+          ),
+        ),
+      );
+    });
+
+    test('#28 Deve aceitar tag com exatamente '
+        '20 caracteres', () {
+      final tag20 = 'A' * 20;
+      final p = baseManual()..['tags'] = <String>[tag20];
+
+      final cert = criar(p);
+      expect(cert.tags.first.length, 20);
     });
   });
 }
