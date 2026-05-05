@@ -73,12 +73,12 @@ jobs:
       # Commits com chore/ci/test/wip são descartados.
       - name: Gerar Release Notes Inteligentes
         env:
-          COMMITS_JSON: ${{ toJson(github.event.commits.*.message) }}
+          COMMITS_JSON: ${{ toJson(github.event.commits) }}
         run: |
-          # 1. Transforma o JSON de commits em texto (uma mensagem por linha)
+          # 1. Extrai o campo .message de cada commit via jq
           # 2. Filtra apenas linhas que iniciam com prefixos válidos
           # 3. Salva no arquivo notes.txt
-          echo "$COMMITS_JSON" | jq -r '.[]' | grep -iE '^(feat|fix|refactor|perf|docs|style)' > notes.txt || true
+          echo "$COMMITS_JSON" | jq -r '.[].message' | grep -iE '^(feat|fix|refactor|perf|docs|style)' > notes.txt || true
 
           # Fallback: se nenhum commit passou no filtro, usa mensagem padrão
           if [ ! -s notes.txt ]; then
