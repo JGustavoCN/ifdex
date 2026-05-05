@@ -20,17 +20,17 @@ class Gamification {
   ///
   /// Cada entrada: `[xpBase, xpTarget, nível, nome]`
   ///
-  /// Delta entre níveis cresce por multiplicadores pares:
-  ///   Lvl 1 → 2: delta 100 (base)
-  ///   Lvl 2 → 3: delta 200 (100 × 2)
-  ///   Lvl 3 → 4: delta 800 (200 × 4)
-  ///   Lvl 4 → 5: delta 4800 (800 × 6)
+  /// Delta entre níveis **dobra** a cada transição:
+  ///   Lvl 1 → 2: delta 100  (base)
+  ///   Lvl 2 → 3: delta 200  (100 × 2)
+  ///   Lvl 3 → 4: delta 400  (200 × 2)
+  ///   Lvl 4 → 5: delta 800  (400 × 2)
   static const _niveis = [
     {'base': 0, 'target': 100, 'nivel': 1, 'nome': 'Calouro'},
     {'base': 100, 'target': 300, 'nivel': 2, 'nome': 'Explorador'},
-    {'base': 300, 'target': 1100, 'nivel': 3, 'nome': 'Especialista'},
-    {'base': 1100, 'target': 5900, 'nivel': 4, 'nome': 'Mestre'},
-    {'base': 5900, 'target': 5900, 'nivel': 5, 'nome': 'Lenda'},
+    {'base': 300, 'target': 700, 'nivel': 3, 'nome': 'Especialista'},
+    {'base': 700, 'target': 1500, 'nivel': 4, 'nome': 'Mestre'},
+    {'base': 1500, 'target': 1500, 'nivel': 5, 'nome': 'Lenda'},
   ];
 
   /// Retorna o mapa do nível atual com base no [totalXp].

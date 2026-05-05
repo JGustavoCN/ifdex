@@ -93,9 +93,12 @@ Para cumprir o requisito obrigatório de **"Manipulação de Estado / Contador d
 
 - **Contador Dinâmico:** A tela principal exibirá o número total de certificados cadastrados, atualizando via `setState` a cada inserção ou remoção.
 - **Sistema de XP:** Cada certificado adicionado = **+50 XP**; removido = **-50 XP** (com confirmação).
-- **Nomenclatura de Níveis:** Nível 1 (**Calouro**), Nível 2 (**Explorador**), Nível 3 (**Especialista**).
-- **Regra de Progressão:** Dificuldade **exponencial**. Cada nível exige o dobro de XP do anterior.
+- **Nomenclatura de Níveis:** Nível 1 (**Calouro**), Nível 2 (**Explorador**), Nível 3 (**Especialista**), Nível 4 (**Mestre**), Nível 5 (**Lenda**).
+- **Regra de Progressão:** Dificuldade **exponencial**. O delta de XP entre cada nível **dobra** em relação ao anterior (100 → 200 → 400 → 800).
 - **Interface:** Barra de progresso com display claro do **XP restante** e o total de certificados.
+
+> [!NOTE]
+> Para a especificação completa da gamificação (tabela de progressão, fórmulas e exemplos), consulte [`docs/gamificacao_spec.md`](docs/gamificacao_spec.md).
 
 **C. Experiência do Usuário (UX) e Interface:**
 
@@ -103,6 +106,7 @@ Para cumprir o requisito obrigatório de **"Manipulação de Estado / Contador d
 
 > [!NOTE]
 > Para documentação detalhada do fluxo Detalhes → Edição (incluindo comportamento de botões, bloqueios condicionais e merge de dados), consulte [`docs/fluxo_certificado.md`](docs/fluxo_certificado.md).
+
 - **Dinâmica do Formulário (Exclusão Mútua):** Se "URL" for preenchida, esconde "Upload", e vice-versa.
 - **Prevenção de Erros:** Disparar **`AlertDialog`** para confirmar a intenção de exclusão de certificados.
 - **Feedback de Sistema:** Uso de **`SnackBars`** para notificações de sucesso (ex: "Certificado salvo") ou erros de validação.

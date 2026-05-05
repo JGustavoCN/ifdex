@@ -326,13 +326,32 @@ class _AreaPrincipal extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           certificadosFiltrados.isEmpty
-              ? const Center(
+              ? Center(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 64),
-                    child: AppText(
-                      'Nenhum certificado '
-                      'cadastrado.',
-                      color: AppColors.textMuted,
+                    padding: const EdgeInsets.only(top: 64),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          size: 72,
+                          color: AppColors.textMuted.withValues(alpha: 0.5),
+                        ),
+                        const SizedBox(height: 16),
+                        const AppText(
+                          'Cofre vazio',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(height: 6),
+                        const AppText(
+                          'Adicione seu primeiro '
+                          'certificado e comece '
+                          'a ganhar XP!',
+                          color: AppColors.textMuted,
+                        ),
+                      ],
                     ),
                   ),
                 )

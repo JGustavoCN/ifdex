@@ -42,10 +42,31 @@ class HomeMobileView extends StatelessWidget {
         ),
         Expanded(
           child: certificadosFiltrados.isEmpty
-              ? const Center(
-                  child: AppText(
-                    'Nenhum certificado cadastrado.',
-                    color: AppColors.textMuted,
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.inventory_2_outlined,
+                        size: 64,
+                        color: AppColors.textMuted.withValues(alpha: 0.5),
+                      ),
+                      const SizedBox(height: 16),
+                      const AppText(
+                        'Cofre vazio',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(height: 6),
+                      const AppText(
+                        'Adicione seu primeiro '
+                        'certificado\n'
+                        'e comece a ganhar XP!',
+                        color: AppColors.textMuted,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 )
               : ListView.builder(
