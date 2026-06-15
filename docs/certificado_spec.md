@@ -37,7 +37,8 @@ complementar — dentro do portfólio digital do usuário.
 > [!NOTE]
 > A classe **não possui lógica de persistência**. Na Fase 1
 > (MVP/Eixo 1), as instâncias são mantidas exclusivamente em uma
-> `List<Certificado>` em memória, gerenciada via `setState`.
+> Na **Fase 1** (Eixo 1), as instâncias eram mantidas em uma `List<Certificado>` em memória, gerenciada via `setState`.
+> Na **Fase 2** (Eixo 2 — Atual), os dados são persistidos no **Cloud Firestore** e gerenciados via **Riverpod** (`StateNotifier`/`AsyncNotifier`).
 
 ---
 
@@ -366,7 +367,7 @@ Factory constructor.
 - **Nunca permita instanciação sem validação de `titulo`.**
   O título é o campo de exibição primário em toda a UI; um título
   vazio corromperia cards, listas e compartilhamentos.
-- **Nunca use `setState` ou lógica de UI dentro do modelo.**
+- **Nunca use lógica de UI (setState, ref.watch, build) dentro do modelo.** O modelo é puro.
   `Certificado` é uma entidade de domínio pura — ela não deve
   conhecer Flutter, widgets ou contexto de renderização.
 

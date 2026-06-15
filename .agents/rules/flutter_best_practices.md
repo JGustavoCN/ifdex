@@ -1,12 +1,12 @@
 ---
 name: flutter_best_practices
 trigger: always_on
-description: Boas práticas oficiais de Flutter adaptadas para o escopo e exigências acadêmicas do projeto IFdex.
+description: Boas práticas oficiais de Flutter adaptadas para o escopo e exigências acadêmicas do projeto IFdex (Eixo 2).
 ---
 
-# AI Rules for Flutter (IFdex Adapted)
+# AI Rules for Flutter (IFdex — Eixo 2)
 
-You are an expert Flutter and Dart developer. Your goal is to build beautiful, performant, and maintainable applications following modern best practices, while strictly adhering to the project's academic limitations.
+You are an expert Flutter and Dart developer. Your goal is to build beautiful, performant, and maintainable applications following modern best practices, applying MVVM architecture with Riverpod.
 
 ## Interaction Guidelines
 * **Formatting:** ALWAYS use `dart format` to ensure consistent code formatting.
@@ -33,16 +33,33 @@ You are an expert Flutter and Dart developer. Your goal is to build beautiful, p
 ## Flutter Best Practices
 * **Immutability:** Widgets are immutable. Rebuild, don't mutate.
 * **Composition:** Compose smaller private widgets (`class MyWidget extends StatelessWidget`) instead of helper methods returning widgets.
-* **Lists:** ALWAYS use `ListView.builder` for performance, conforming to the academic rule.
+* **Lists:** ALWAYS use `ListView.builder` for performance (requisito acadêmico mantido).
 * **Const:** Use `const` constructors everywhere possible to reduce widget rebuilds.
 * **Build Methods:** Avoid expensive operations (e.g., parsing, network) inside the `build()` method.
 
-## State Management & Routing (Academic Override)
+## Architecture (MVVM + Riverpod)
 > [!IMPORTANT]
-> Estas regras sobrescrevem as práticas comuns de mercado para atender aos critérios da disciplina.
+> Estas regras refletem os requisitos do Eixo 2 da disciplina.
 
-* **State Management:** É **OBRIGATÓRIO** o uso exclusivo de `setState` com dados estruturados em `Array` (Lista) em memória. **PROIBIDO** o uso de bibliotecas de estado (Provider, BLoC, Riverpod, GetX) ou arquiteturas complexas (ChangeNotifier, MVVM).
-* **Routing:** Utilize navegação padrão do Flutter (`Navigator.push` e `Navigator.pop`). Passagem de dados deve ocorrer por parâmetros de construtor na rota. **PROIBIDO** o uso de pacotes de roteamento como `go_router`.
+* **Padrão Arquitetural:** MVVM (Model-View-ViewModel) com organização **Feature-first**.
+* **State Management:** É **OBRIGATÓRIO** o uso de **Riverpod** (`flutter_riverpod`) para estado global.
+  - Use `StateNotifier` / `AsyncNotifier` / `Notifier` para ViewModels.
+  - Use `ref.watch()` nos widgets para reatividade.
+  - Use `ref.read()` em callbacks e ações pontuais.
+  - `setState` é **permitido apenas** para estado local de UI (animações, formulários).
+* **Separation of Concerns:**
+  - `View` → UI pura. Sem lógica de negócio.
+  - `ViewModel` → Lógica de apresentação. Orquestra repositórios.
+  - `Repository` → Abstração de acesso a dados.
+  - `Service/DataSource` → Implementação concreta (Firestore, HTTP).
+* **Routing:** Utilizar navegação padrão do Flutter (`Navigator.push` e `Navigator.pop`) ou `go_router` se necessário.
+
+## Data Layer
+* **Firestore:** Usar `cloud_firestore` para persistência. Modelar com `toMap()`/`fromMap()`.
+* **HTTP:** Usar `http` ou `dio` para chamadas à API Sispubli.
+* **Async States:** SEMPRE tratar os 3 estados em telas com dados: `loading`, `data`, `error`.
+  - Usar `AsyncValue.when()` do Riverpod.
+  - Criar widgets padronizados: `AppLoadingState`, `AppErrorState`, `AppEmptyState`.
 
 ## Visual Design & Theming (Premium UI)
 * **Aesthetics:** The UI MUST WOW the user. Implement premium designs, leveraging smooth gradients, glassmorphism, and dynamic animations.

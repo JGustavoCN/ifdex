@@ -8,7 +8,7 @@
 
 O sistema de gamificação do IFdex visa motivar o usuário a construir um portfólio acadêmico robusto, oferecendo feedback visual imediato (XP, nível e barra de progresso) a cada certificado adicionado ou removido.
 
-Além da motivação, o sistema **cumpre o requisito acadêmico obrigatório** de "Manipulação de Estado / Contador de itens", demonstrando o uso de `setState` para atualizar a interface dinamicamente.
+Além da motivação, o sistema **cumpre o requisito acadêmico obrigatório** de "Manipulação de Estado", demonstrando o uso de gerenciamento de estado (Riverpod no Eixo 2, `setState` no Eixo 1) para atualizar a interface dinamicamente.
 
 ## 2. Fórmula de XP
 
@@ -91,4 +91,4 @@ Header gradiente no topo da tela principal, contendo:
 | Lógica de cálculo | `lib/helpers/gamification.dart` | Classe `Gamification` |
 | Header Mobile | `lib/widgets/xp_header.dart` | Widget `XpHeader` |
 | Sidebar Web | `lib/views/home_web_view.dart` | Widgets `_XpSidebarCard`, `_XpStatCard` |
-| Estado (setState) | `lib/views/home_view.dart` | Classe `_HomeViewState` |
+| Estado (Riverpod) | `lib/features/certificados/presentation/` | ViewModel/Notifier |
