@@ -14,7 +14,6 @@ import '../widgets/xp_header.dart';
 class HomeMobileView extends StatelessWidget {
   final List<Certificado> certificadosFiltrados;
   final int totalCertificados;
-  final int xp;
   final String filtroAtual;
   final ValueChanged<String> onFiltroChanged;
   final VoidCallback onAdicionarCertificado;
@@ -25,7 +24,6 @@ class HomeMobileView extends StatelessWidget {
     super.key,
     required this.certificadosFiltrados,
     required this.totalCertificados,
-    required this.xp,
     required this.filtroAtual,
     required this.onFiltroChanged,
     required this.onAdicionarCertificado,
@@ -37,17 +35,38 @@ class HomeMobileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        XpHeader(totalCertificados: totalCertificados, xp: xp),
+        XpHeader(totalCertificados: totalCertificados),
         _BarraFiltros(
           filtroAtual: filtroAtual,
           onFiltroChanged: onFiltroChanged,
         ),
         Expanded(
           child: certificadosFiltrados.isEmpty
-              ? const Center(
-                  child: AppText(
-                    'Nenhum certificado cadastrado.',
-                    color: AppColors.textMuted,
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.inventory_2_outlined,
+                        size: 64,
+                        color: AppColors.textMuted.withValues(alpha: 0.5),
+                      ),
+                      const SizedBox(height: 16),
+                      const AppText(
+                        'Cofre vazio',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textSecondary,
+                      ),
+                      const SizedBox(height: 6),
+                      const AppText(
+                        'Adicione seu primeiro '
+                        'certificado\n'
+                        'e comece a ganhar XP!',
+                        color: AppColors.textMuted,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 )
               : ListView.builder(
