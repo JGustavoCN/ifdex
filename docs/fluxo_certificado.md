@@ -70,7 +70,7 @@ Todos os campos são exibidos usando `InfoBox` + `AppText`:
 
 1. FormView retorna `{'certificado': novo, 'index': editIndex}` via `Navigator.pop`.
 2. DetailsView intercepta e faz `Navigator.pop(ctx, resultado)` para propagar à HomeView.
-3. HomeView atualiza o Array via `setState`.
+3. O ViewModel (via Riverpod) atualiza o estado global automaticamente.
 
 ---
 

@@ -1,4 +1,4 @@
-# 📄 Especificação do Projeto: IFdex (Versão 1.6)
+# 📄 Especificação do Projeto: IFdex (Versão 2.0)
 
 ## 1. Visão Geral do Produto
 
@@ -10,8 +10,8 @@
 
 Para eliminar a barreira de entrada, o IFdex utiliza o conceito de **Firebase Anonymous Auth**.
 
-- **Fase 1 (Atual):** O app funciona de forma anônima localmente, utilizando um Array/Lista em memória para simular o estado do usuário.
-- **Fase 2 (Produção):**
+- **Fase 1 (Eixo 1 — Concluída):** O app funcionava de forma anônima localmente, utilizando um Array/Lista em memória para simular o estado do usuário.
+- **Fase 2 (Eixo 2 — Atual):**
   - Ao abrir o app, o sistema realiza um `signInAnonymously()` em segundo plano.
   - O usuário recebe um UID provisório e todos os dados são salvos no Firestore vinculados a este ID.
   - **Conversão de Conta:** Quando o usuário decidir "Criar Conta" ou "Vincular Google", utilizamos `linkWithCredential()`. O Firebase migra automaticamente o UID anônimo para a conta oficial, mantendo todos os dados intactos.
@@ -133,11 +133,59 @@ Para garantir a melhor experiência visual e ergonômica na stack híbrida do pr
 3. **Web/Desktop View (>= 900px):** Interface de Painel de Controle, adotando uma "Sidebar" lateral de navegação. Para evitar espaços vazios em telas *ultrawide*, a listagem substitui o ListView pelo `GridView.builder`.
     - *Nota Técnica:* O `GridView.builder` atende ao mesmo critério de avaliação exigido no escopo do projeto, pois compartilha a mesma engine algorítmica de reciclagem de memória e renderização sob demanda do `ListView.builder`, garantindo os 60fps sem sobrecarregar a RAM.
 
-## 8. Roadmap Evolutivo
+## 8. Requisitos para a Entrega do Eixo 2 (07/07)
+
+Foco em Arquitetura, Estado Global e Dados Reais.
+
+**A. Arquitetura em Camadas (MVVM + Feature-first):**
+
+O projeto deve demonstrar separação clara de responsabilidades, evitando concentrar toda a lógica nas telas.
+
+- **Padrão:** MVVM (Model-View-ViewModel) com **Riverpod** como injetor de dependências.
+- **Organização:** Feature-first — cada feature possui suas próprias pastas `data/`, `models/`, `presentation/`, `widgets/`.
+- **Camadas:**
+  - `View` → UI pura (Widgets). Consome estado do ViewModel via `ref.watch()`.
+  - `ViewModel` → Lógica de apresentação. Notifiers do Riverpod que orquestram os repositórios.
+  - `Repository` → Abstração de acesso a dados. Interface entre ViewModel e DataSources.
+  - `Service/DataSource` → Implementações concretas (Firestore, HTTP, etc.).
+
+> [!NOTE]
+> Para a especificação completa da arquitetura (diagrama, convenções, regras de importação), consulte [`docs/arquitetura_spec.md`](docs/arquitetura_spec.md).
+
+**B. Gerenciamento de Estado Global (Riverpod):**
+
+- **Pacote:** `flutter_riverpod` com `riverpod_annotation` (code generation).
+- **Estado global:** Lista de certificados, filtros, ordenação e gamificação gerenciados via providers globais.
+- **`setState`** permanece permitido **apenas** para estado local de UI (animações, controllers de texto).
+- **Padrão de acesso:** `ref.watch()` para reatividade, `ref.read()` para ações pontuais.
+
+**C. Dados Reais (Firestore + HTTP):**
+
+- **Firestore:** CRUD completo de certificados. Coleção: `users/{uid}/certificados/{id}`.
+- **Firebase Auth:** `signInAnonymously()` para gerar UID do usuário.
+- **HTTP (Sispubli):** Requisições GET para importar certificados oficiais.
+- **Tratamento obrigatório:** Estados de **loading**, **sucesso** e **erro** em todas as telas que consomem dados.
+
+**D. Interface e Complexidade:**
+
+- Manter todos os requisitos visuais do Eixo 1 (AlertDialog, SnackBar, componentização).
+- Adicionar: Busca por texto, ordenação, tratamento visual de loading/erro/vazio.
+- A complexidade será avaliada por: quantidade de telas, integração entre telas, uso real da arquitetura, persistência funcionando.
+
+**E. Checklist do Eixo 2:**
+
+1. Arquitetura MVVM com separação View/ViewModel/Repository.
+2. Riverpod como estado global em pelo menos 2 features.
+3. Firestore com CRUD completo e dados persistidos entre sessões.
+4. HTTP com pelo menos 1 chamada à API Sispubli com tratamento de loading/erro.
+5. Organização feature-first com pastas claras.
+6. Tratamento visual de estados assíncronos (loading shimmer, error widget, empty state).
+
+## 9. Roadmap Evolutivo
 
 ### Evolução da Pré-visualização (Thumbnails)
 
-1. **Fase 1 (MVP/Eixo 1): Mock Inteligente.** Uso de cards elegantes com ícones genéricos baseados na origem (ex: Ícone IFS para Sispubli, clipe para links, pasta para arquivos). Foco em performance (60fps).
+1. **Fase 1 (MVP/Eixo 1): Mock Inteligente.** ✅ Concluído. Uso de cards elegantes com ícones genéricos baseados na origem.
 2. **Fase 2 (Client-Side): Thumbnail Local.** Geração de miniatura do PDF ocorrendo 100% no celular do usuário **ANTES** do upload, garantindo custo zero de processamento em nuvem.
 3. **Fase 3 (Social): Microserviço Vercel.** Rota `/api/get-og-image` para extrair miniaturas de links de terceiros (ex: Udemy).
     - **Fallback (Graceful Degradation):** Caso o microserviço da Vercel falhe (proteções de login, cookies, etc.), o sistema retorna imediatamente para o **Mock Inteligente**.
@@ -147,14 +195,15 @@ Para garantir a melhor experiência visual e ergonômica na stack híbrida do pr
 
 ### Arquitetura de Estado (Flutter)
 
-- **Fase 1 (Eixo 1):** Utilização de **`setState`** visando agilidade de entrega no MVP.
-- **Fase 2 (Escalabilidade):** Migração preparada para gerenciadores robustos como **`Provider`** ou **`Riverpod`**.
+- **Fase 1 (Eixo 1):** ✅ Concluída. Utilização de `setState` para agilidade de entrega.
+- **Fase 2 (Eixo 2 — Atual):** Migração para **Riverpod** como gerenciador de estado global.
+- **Fase 3 (Escala):** Potencial adoção de `riverpod_generator` com build_runner para produtividade.
 
 ### Persistência e Auth
 
-- **Fase 1:** Estado em memória (Array).
-- **Fase 2:** Firebase Anonymous Auth + Firestore.
-- **Fase 3:** Smart Links via Next.js.
+- **Fase 1:** ✅ Concluída. Estado em memória (Array).
+- **Fase 2 (Eixo 2 — Atual):** Firebase Anonymous Auth + Cloud Firestore.
+- **Fase 3:** Smart Links via Next.js + conversão de conta (`linkWithCredential`).
 
 ## Regras de Execução e Ambiente (CRÍTICO)
 

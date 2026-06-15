@@ -16,10 +16,10 @@ Antes de criar qualquer código de interface, verifique:
 Se, ao construir uma tela, você perceber que uma combinação de widgets (ex: um botão com ícone específico, um card de estatística, um formato de tag) será repetida mais de uma vez na mesma tela ou tem forte potencial de reuso em outras telas:
 1. NÃO mantenha o código inline na árvore principal.
 2. Extraia imediatamente esse bloco para uma classe `StatelessWidget` separada.
-3. Coloque esse novo widget na pasta `lib/widgets/` (ou em um subdiretório semântico, se aplicável).
+3. Coloque esse novo widget na pasta `shared/widgets/` (widgets globais) ou `features/<feature>/widgets/` (widgets específicos da feature).
 4. Parametrize os dados (passe textos, ícones e callbacks pelo construtor).
 
-**Objetivo:** Manter as classes de Tela (Views) o mais enxutas possível, contendo apenas o layout macro e a injeção de estado, delegando o desenho visual para os componentes reutilizáveis.
+**Objetivo:** Manter as classes de Tela (Views) o mais enxutas possível, contendo apenas o layout macro e a injeção de estado via `ref.watch()`, delegando o desenho visual para os componentes reutilizáveis.
 
 ## 4. Conexão e Evolução do DESIGN.md
 O arquivo `DESIGN.md` é a **Fonte Única da Verdade** para o estilo visual deste projeto. 

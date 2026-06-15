@@ -89,10 +89,12 @@ Para manter nossa base de código limpa e com alto padrão de qualidade acadêmi
 
 - **Formatação:** NUNCA faça um commit sem antes executar o formatador padrão. Utilize o comando `dart format .` em toda a base afetada.
 - **Análise de Código:** Seu código não pode introduzir nenhum alerta do linter. Antes do push, rode `dart analyze --fatal-infos` para garantir que tudo está validado.
-- **Arquitetura (Regras Acadêmicas):**
-  - Siga a limitação acadêmica do projeto: use `setState` para gerenciar estado e estruturas de array para armazenamento em memória inicial.
+- **Arquitetura (Eixo 2):**
+  - Siga o padrão **MVVM + Feature-first** com **Riverpod** para estado global.
+  - Lógica de negócio nos ViewModels/Notifiers, acesso a dados nos Repositories.
   - Para as listagens, é **obrigatório** o uso de `ListView.builder`.
   - Componentize interfaces (Cards, Textos, Botões) e reaproveite-os conforme documentado no projeto.
+  - Trate os estados assíncronos (loading, erro, vazio) em toda tela que consome dados.
 
 ## Como Obter Ajuda
 
