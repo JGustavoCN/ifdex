@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:ifdex/features/gamificacao/models/gamification.dart';
+import 'package:ifdex/features/gamificacao/presentation/gamificacao_view_model.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 
@@ -9,14 +10,12 @@ import 'package:ifdex/shared/widgets/app_text.dart';
 /// Exibe a logo, nível atual, XP acumulado, barra de
 /// progresso e contagem de certificados. Usa [SafeArea]
 /// para evitar sobreposição com a barra de notificações.
-class XpHeader extends StatelessWidget {
-  final int totalCertificados;
-
-  const XpHeader({super.key, required this.totalCertificados});
+class XpHeader extends ConsumerWidget {
+  const XpHeader({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final g = Gamification(totalCertificados);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final g = ref.watch(gamificacaoViewModelProvider);
     final progresso = g.progressoPercent;
 
     return Container(
@@ -135,7 +134,7 @@ class XpHeader extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   AppText(
-                    '$totalCertificados certificados guardados',
+                    '${g.totalCertificados} certificados guardados',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textOnPrimary,

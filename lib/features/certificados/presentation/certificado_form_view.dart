@@ -2,10 +2,12 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:ifdex/features/certificados/models/certificado.dart';
 import 'package:ifdex/features/certificados/models/certificado_types.dart';
+import 'package:ifdex/features/certificados/presentation/certificados_view_model.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
@@ -18,17 +20,17 @@ import 'package:ifdex/features/certificados/widgets/info_box.dart';
 ///   são exibidos como texto estático (bloqueados). Apenas
 ///   metadados (Tags, Tipo, Relevância) são editáveis.
 ///   A seção de Comprovação (Upload/Link) é ocultada.
-class CertificadoFormView extends StatefulWidget {
-  final Certificado? certificado;
-  final int? editIndex;
+class CertificadoFormView extends ConsumerStatefulWidget {
+  final String? id;
 
-  const CertificadoFormView({super.key, this.certificado, this.editIndex});
+  const CertificadoFormView({super.key, this.id});
 
   @override
-  State<CertificadoFormView> createState() => _CertificadoFormViewState();
+  ConsumerState<CertificadoFormView> createState() =>
+      _CertificadoFormViewState();
 }
 
-class _CertificadoFormViewState extends State<CertificadoFormView> {
+class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _tituloCtrl;
@@ -44,13 +46,18 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
 
   Uint8List? _arquivoSelecionado;
   String? _nomeArquivoSelecionado;
+  Certificado? _certificadoOriginal;
 
-  bool get _isSispubli => widget.certificado?.origem == Origem.sispubli;
+  bool get _isSispubli => _certificadoOriginal?.origem == Origem.sispubli;
 
   @override
   void initState() {
     super.initState();
-    final c = widget.certificado;
+    if (widget.id != null) {
+      _certificadoOriginal = ref.read(certificadoPorIdProvider(widget.id!));
+    }
+
+    final c = _certificadoOriginal;
     _tituloCtrl = TextEditingController(text: c?.titulo ?? '');
     _instituicaoCtrl = TextEditingController(text: c?.instituicao ?? '');
     _anoCtrl = TextEditingController(text: c?.ano.toString() ?? '');
@@ -126,7 +133,7 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
   void _salvar() {
     if (!_formKey.currentState!.validate()) return;
 
-    final c = widget.certificado;
+    final c = _certificadoOriginal;
     final tags = _tagsCtrl.text
         .split(',')
         .map((e) => e.trim())
@@ -171,7 +178,23 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
       notaRelevancia: _notaRelevancia,
     );
 
-    Navigator.pop(context, {'certificado': novo, 'index': widget.editIndex});
+    if (widget.id == null) {
+      ref.read(certificadosViewModelProvider.notifier).adicionar(novo);
+    } else {
+      ref.read(certificadosViewModelProvider.notifier).atualizar(novo);
+    }
+
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: AppText(
+          widget.id == null
+              ? 'Certificado salvo com sucesso!'
+              : 'Certificado atualizado.',
+          color: AppColors.textOnPrimary,
+        ),
+      ),
+    );
   }
 
   Widget _buildUploadBox() {
@@ -222,7 +245,7 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
   }
 
   Widget _buildForm() {
-    final isEdicao = widget.certificado != null;
+    final isEdicao = widget.id != null;
     final labelSalvar = _isSispubli
         ? 'Salvar Metadados'
         : (isEdicao ? 'Salvar Edição' : 'Salvar Novo (+50 XP)');
@@ -506,10 +529,10 @@ class _CertificadoFormViewState extends State<CertificadoFormView> {
 
   @override
   Widget build(BuildContext context) {
-    final isEdicao = widget.certificado != null;
+    final isEdicao = widget.id != null;
     final width = MediaQuery.of(context).size.width;
     final isMobile = width < 700;
-    final origem = widget.certificado?.origem ?? Origem.manual;
+    final origem = _certificadoOriginal?.origem ?? Origem.manual;
 
     final appBarTitle = _isSispubli
         ? 'Editar Metadados'

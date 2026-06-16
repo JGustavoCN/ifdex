@@ -41,6 +41,7 @@ You are an expert Flutter and Dart developer. Your goal is to build beautiful, p
 > [!IMPORTANT]
 > Estas regras refletem os requisitos do Eixo 2 da disciplina.
 > Para a especificação completa (diagrama de pastas, convenções de nomenclatura, regras de dependência e plano de migração), consulte [`docs/arquitetura_spec.md`](docs/arquitetura_spec.md).
+> Para regras avançadas de performance e injeção de dependências, consulte [`docs/riverpod_best_practices.md`](docs/riverpod_best_practices.md).
 
 * **Padrão Arquitetural:** MVVM (Model-View-ViewModel) com organização **Feature-first**.
 * **State Management:** É **OBRIGATÓRIO** o uso de **Riverpod** (`flutter_riverpod`) para estado global.

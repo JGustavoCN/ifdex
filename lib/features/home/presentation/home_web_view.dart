@@ -1,61 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:ifdex/features/gamificacao/models/gamification.dart';
+import 'package:ifdex/features/gamificacao/presentation/gamificacao_view_model.dart';
 import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/features/certificados/presentation/certificados_view_model.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_card.dart';
+import 'package:ifdex/features/certificados/presentation/certificado_details_view.dart';
+import 'package:ifdex/features/certificados/presentation/certificado_form_view.dart';
 
-/// Interface Web/Desktop da tela principal (>= 900px).
-///
-/// Adota layout de Painel com Sidebar lateral e
-/// [GridView.builder] para distribuição em grade,
-/// equivalente ao [ListView.builder] em otimização.
-class HomeWebView extends StatelessWidget {
-  final List<Certificado> certificadosFiltrados;
-  final int totalCertificados;
-  final String filtroAtual;
-  final ValueChanged<String> onFiltroChanged;
-  final VoidCallback onAdicionarCertificado;
-  final void Function(Certificado, int) onAbrirDetalhes;
-  final void Function(int) onRemoverCertificado;
-
-  const HomeWebView({
-    super.key,
-    required this.certificadosFiltrados,
-    required this.totalCertificados,
-    required this.filtroAtual,
-    required this.onFiltroChanged,
-    required this.onAdicionarCertificado,
-    required this.onAbrirDetalhes,
-    required this.onRemoverCertificado,
-  });
+class HomeWebView extends ConsumerWidget {
+  const HomeWebView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final g = Gamification(totalCertificados);
-    final progresso = g.progressoPercent;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gamification = ref.watch(gamificacaoViewModelProvider);
+    final progresso = gamification.progressoPercent;
 
     return Row(
       children: [
-        _Sidebar(gamification: g, progresso: progresso),
+        _Sidebar(gamification: gamification, progresso: progresso),
         Expanded(
           child: Column(
             children: [
-              _TopBar(
-                filtroAtual: filtroAtual,
-                onFiltroChanged: onFiltroChanged,
-                onAdicionarCertificado: onAdicionarCertificado,
-              ),
-              Expanded(
-                child: _AreaPrincipal(
-                  certificadosFiltrados: certificadosFiltrados,
-                  totalCertificados: totalCertificados,
-                  gamification: g,
-                  onAbrirDetalhes: onAbrirDetalhes,
-                  onRemoverCertificado: onRemoverCertificado,
-                ),
-              ),
+              const _TopBar(),
+              Expanded(child: _AreaPrincipal(gamification: gamification)),
             ],
           ),
         ),
@@ -214,18 +185,10 @@ class _XpSidebarCard extends StatelessWidget {
 
 // ── Top Bar ────────────────────────────────────────
 
-class _TopBar extends StatelessWidget {
-  final String filtroAtual;
-  final ValueChanged<String> onFiltroChanged;
-  final VoidCallback onAdicionarCertificado;
+class _TopBar extends ConsumerWidget {
+  const _TopBar();
 
-  const _TopBar({
-    required this.filtroAtual,
-    required this.onFiltroChanged,
-    required this.onAdicionarCertificado,
-  });
-
-  String get _labelFiltro {
+  String _labelFiltro(String filtroAtual) {
     switch (filtroAtual) {
       case 'oficial':
         return 'Oficiais';
@@ -237,7 +200,9 @@ class _TopBar extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filtroAtual = ref.watch(filtroCertificadosProvider);
+
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -250,7 +215,8 @@ class _TopBar extends StatelessWidget {
           AppText.headline('Dashboard Acadêmico'),
           const Spacer(),
           PopupMenuButton<String>(
-            onSelected: onFiltroChanged,
+            onSelected: (novo) =>
+                ref.read(filtroCertificadosProvider.notifier).setFiltro(novo),
             itemBuilder: (_) => [
               const PopupMenuItem(value: 'todos', child: AppText('Todos')),
               const PopupMenuItem(value: 'oficial', child: AppText('Oficiais')),
@@ -272,14 +238,24 @@ class _TopBar extends StatelessWidget {
                     color: AppColors.textSecondary,
                   ),
                   const SizedBox(width: 6),
-                  AppText.label(_labelFiltro, color: AppColors.textPrimary),
+                  AppText.label(
+                    _labelFiltro(filtroAtual),
+                    color: AppColors.textPrimary,
+                  ),
                 ],
               ),
             ),
           ),
           const SizedBox(width: 12),
           ElevatedButton.icon(
-            onPressed: onAdicionarCertificado,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => const CertificadoFormView(),
+                ),
+              );
+            },
             icon: const Icon(Icons.add, size: 18),
             label: const AppText(
               'Novo Certificado',
@@ -295,87 +271,108 @@ class _TopBar extends StatelessWidget {
 
 // ── Área Principal (Stats + Grid) ──────────────────
 
-class _AreaPrincipal extends StatelessWidget {
-  final List<Certificado> certificadosFiltrados;
-  final int totalCertificados;
+class _AreaPrincipal extends ConsumerWidget {
   final Gamification gamification;
-  final void Function(Certificado, int) onAbrirDetalhes;
-  final void Function(int) onRemoverCertificado;
 
-  const _AreaPrincipal({
-    required this.certificadosFiltrados,
-    required this.totalCertificados,
-    required this.gamification,
-    required this.onAbrirDetalhes,
-    required this.onRemoverCertificado,
-  });
+  const _AreaPrincipal({required this.gamification});
 
   @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _StatsRow(
-            total: totalCertificados,
-            oficiais: certificadosFiltrados
-                .where((c) => c.origem == Origem.sispubli)
-                .length,
-            gamification: gamification,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncCertificados = ref.watch(certificadosViewModelProvider);
+
+    return asyncCertificados.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Erro: $err')),
+      data: (_) {
+        final certificadosFiltrados = ref.watch(certificadosFiltradosProvider);
+        final totalOficiais = certificadosFiltrados
+            .where((c) => c.origem == Origem.sispubli)
+            .length;
+
+        // Utilizamos ref.read ao invés de watch para evitar recarregar apenas o total aqui se o list view fizer isso
+        final totalCertificados = ref.watch(
+          certificadosViewModelProvider.select(
+            (state) => state.value?.length ?? 0,
           ),
-          const SizedBox(height: 32),
-          certificadosFiltrados.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 64),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.inventory_2_outlined,
-                          size: 72,
-                          color: AppColors.textMuted.withValues(alpha: 0.5),
+        );
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _StatsRow(
+                total: totalCertificados,
+                oficiais: totalOficiais,
+                gamification: gamification,
+              ),
+              const SizedBox(height: 32),
+              certificadosFiltrados.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 64),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.inventory_2_outlined,
+                              size: 72,
+                              color: AppColors.textMuted.withValues(alpha: 0.5),
+                            ),
+                            const SizedBox(height: 16),
+                            const AppText(
+                              'Cofre vazio',
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(height: 6),
+                            const AppText(
+                              'Adicione seu primeiro '
+                              'certificado e comece '
+                              'a ganhar XP!',
+                              color: AppColors.textMuted,
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                        const AppText(
-                          'Cofre vazio',
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textSecondary,
-                        ),
-                        const SizedBox(height: 6),
-                        const AppText(
-                          'Adicione seu primeiro '
-                          'certificado e comece '
-                          'a ganhar XP!',
-                          color: AppColors.textMuted,
-                        ),
-                      ],
+                      ),
+                    )
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 350,
+                            mainAxisExtent: 320,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
+                      itemCount: certificadosFiltrados.length,
+                      itemBuilder: (context, index) {
+                        final c = certificadosFiltrados[index];
+                        return CertificadoCard(
+                          certificado: c,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    CertificadoDetailsView(id: c.id),
+                              ),
+                            );
+                          },
+                          onRemove: () {
+                            ref
+                                .read(certificadosViewModelProvider.notifier)
+                                .remover(c.id);
+                          },
+                        );
+                      },
                     ),
-                  ),
-                )
-              : GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 350,
-                    mainAxisExtent: 320,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                  ),
-                  itemCount: certificadosFiltrados.length,
-                  itemBuilder: (context, index) {
-                    final c = certificadosFiltrados[index];
-                    return CertificadoCard(
-                      certificado: c,
-                      onTap: () => onAbrirDetalhes(c, index),
-                      onRemove: () => onRemoverCertificado(index),
-                    );
-                  },
-                ),
-        ],
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

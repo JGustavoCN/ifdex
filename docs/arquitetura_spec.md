@@ -3,7 +3,7 @@
 > **Versão:** 1.0
 > **Última Atualização:** 2026-06-16
 > **Issue de Origem:** [#28 — Definir Especificação de Arquitetura MVVM + Feature-first](https://github.com/JGustavoCN/ifdex/issues/28)
-> **Status:** Aprovado
+> **Status:** ❄️ Arquitetura Aprovada e Congelada (Mudanças futuras exigem justificativa arquitetural)
 
 ## 1. Propósito
 
@@ -66,8 +66,7 @@ flowchart TB
 lib/
 ├── app/                              # Configuração global do aplicativo
 │   ├── app.dart                      # Widget MaterialApp + ProviderScope
-│   ├── routes.dart                   # Definição de rotas (se usar go_router)
-│   └── firebase_options.dart         # Gerado pelo FlutterFire CLI
+│   └── routes.dart                   # Definição de rotas (se usar go_router)
 │
 ├── features/                         # Features isoladas (Feature-first)
 │   ├── certificados/                 # Feature principal
@@ -83,9 +82,6 @@ lib/
 │   │   │
 │   │   ├── presentation/            # Views + ViewModels
 │   │   │   ├── certificados_view_model.dart
-│   │   │   ├── home_view.dart
-│   │   │   ├── home_mobile_view.dart
-│   │   │   ├── home_web_view.dart
 │   │   │   ├── certificado_details_view.dart
 │   │   │   └── certificado_form_view.dart
 │   │   │
@@ -101,6 +97,12 @@ lib/
 │   │   │   └── gamificacao_view_model.dart
 │   │   └── widgets/
 │   │       └── xp_header.dart
+│   │
+│   ├── home/                         # Feature Shell / Dashboard
+│   │   └── presentation/             # Orquestra widgets de outras features
+│   │       ├── home_view.dart
+│   │       ├── home_mobile_view.dart
+│   │       └── home_web_view.dart
 │   │
 │   └── auth/                         # Feature de autenticação
 │       ├── data/
@@ -420,15 +422,14 @@ sequenceDiagram
     participant DS as FirestoreDatasource
 
     U->>V: Preenche formulário e toca "Salvar"
-    V->>VM: ref.read(provider).adicionar(cert)
-    VM->>VM: state = AsyncLoading()
-    VM->>R: salvar(cert)
+    V->>VM: ref.read(provider.notifier).adicionar(cert)
+    VM->>R: adicionar(cert)
     R->>DS: collection.doc(id).set(cert.toMap())
     DS-->>R: Sucesso
     R-->>VM: void
-    VM->>VM: ref.invalidateSelf()
-    VM-->>V: state = AsyncData([...certs])
-    V->>U: Lista atualizada + SnackBar "Salvo!"
+    VM->>VM: state = AsyncData([...lista, cert])
+    VM-->>V: Notifica UI (Rebuild passivo)
+    V->>U: Lista atualizada
 ```
 
 ### 7.3 Exemplo de Código — ViewModel
@@ -454,23 +455,21 @@ class CertificadosViewModel
   }
 
   Future<void> adicionar(Certificado cert) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final repo =
-          ref.read(certificadoRepositoryProvider);
-      await repo.salvar(cert);
-      return repo.listarTodos();
-    });
+    final repo = ref.read(certificadoRepositoryProvider);
+    await repo.adicionar(cert);
+    if (state is AsyncData) {
+      final atual = state.requireValue;
+      state = AsyncData([...atual, cert]);
+    }
   }
 
   Future<void> remover(String id) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final repo =
-          ref.read(certificadoRepositoryProvider);
-      await repo.remover(id);
-      return repo.listarTodos();
-    });
+    final repo = ref.read(certificadoRepositoryProvider);
+    await repo.remover(id);
+    if (state is AsyncData) {
+      final atual = state.requireValue;
+      state = AsyncData(atual.where((c) => c.id != id).toList());
+    }
   }
 }
 ```
@@ -729,3 +728,44 @@ Use este checklist para validar que qualquer código novo ou migrado está em co
 - Fluxo de Certificado: [`docs/fluxo_certificado.md`](./fluxo_certificado.md)
 - Gamificação: [`docs/gamificacao_spec.md`](./gamificacao_spec.md)
 - Regras Acadêmicas: [`docs/academic_requirements.md`](../docs/) (user rules)
+
+---
+
+## 13. Regras de Ouro (Riverpod 3)
+
+### 13.1 Mutações Imutáveis sem AsyncLoading Global
+
+As mutações de estado devem preservar o estado anterior da lista em memória, sem disparar um recarregamento via `AsyncLoading` global que afeta negativamente a fluidez da UI. A estratégia (pessimista aguardando a rede ou otimista atualizando a UI imediatamente) pode variar conforme o caso de uso. O recarregamento forçado via `ref.invalidateSelf()` não deve ser usado para operações comuns de CRUD.
+
+### 13.2 Navegação Primitiva (Somente IDs)
+
+É estritamente proibido trafegar entidades de negócio (objetos) entre as views via parâmetros do construtor ou do Router. A navegação deve utilizar APENAS identificadores primitivos (ex: `String id`). A materialização da entidade na tela destino ocorrerá através de Providers Computados (`ref.watch(certificadoPorIdProvider(id))`).
+
+### 13.3 Dependências Unidirecionais entre Features
+
+Dependências entre Features:
+
+- **Permitidas:** `A → B` (ex: Gamificação observa Certificados).
+- **Proibidas:** Cíclicas `A ↔ B` ou bidirecionais `B → A`.
+
+Uma feature pode observar providers públicos de outra feature caso faça parte do fluxo de negócio (via `ref.watch`). No entanto, a dependência deve ser unidirecional para prevenir ciclos infinitos ou acoplamentos tóxicos. **Regra de Escopo:** Features devem depender de providers públicos e não de ViewModels concretos (ex: prefira `ref.watch(certificadosCountProvider)` em vez de injetar o `certificadosViewModelProvider` quando tudo o que precisa é uma contagem).
+
+### 13.4 Encapsulamento de Data Layers
+
+Os contratos de acesso a dados, suas implementações e os providers de injeção (`@riverpod`) pertencem à camada `data/` da feature. A organização interna (se criará subpastas para `repositories/`, `datasources/` ou `providers/`) fica a critério da feature. A camada de *Presentation* só consumirá o Provider da interface exposta.
+
+### 13.5 Providers Computados como Regra Explícita
+
+Toda lógica derivada de estado (filtros, ordenações, agrupamentos, contagens, cálculos de gamificação, indicadores visuais e transformações complexas de payload) deve ser obrigatoriamente extraída e implementada em **Providers Computados/Derivados** e *não* dentro do método `build()` dos widgets. **Critério oficial:** Se uma transformação de estado é reutilizável, testável ou possui regra de negócio, ela deve existir como um provider computado.
+
+### 13.6 Minimização de Rebuilds com `select()`
+
+Quando um widget depender apenas de uma fração do estado global, deve-se preferir utilizar `select()` para pinçar atributos específicos, ou arquitetar providers derivados ultraespecializados para prevenir renderizações desnecessárias.
+
+### 13.7 Observabilidade Ativa e Condicional
+
+O sistema deve implementar um `ProviderObserver` global. Como política padrão de otimização, a instância do observer deve ser engatada no `ProviderScope` condicionada de forma exclusiva pela flag `kDebugMode`.
+
+### 13.8 Estratégia Oficial de Tratamento de Erros
+
+Os ViewModels são diretamente responsáveis por converter exceções técnicas (Timeout, Sem internet, Falha de persistência, Permissão negada) em estados consumíveis e traduzidos para a UI. A camada visual de Presentation **nunca** deve exibir uma `Exception` bruta não tratada ao usuário final.
