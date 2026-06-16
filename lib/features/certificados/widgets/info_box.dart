@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_theme.dart';
-import 'app_text.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
 
 /// Container estilizado para agrupar informações em um
 /// campo visual consistente com o Design System.

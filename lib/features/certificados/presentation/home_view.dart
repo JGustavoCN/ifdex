@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../data/mock_certificados.dart';
-import '../models/certificado.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_text.dart';
+import 'package:ifdex/features/certificados/data/mock_certificados.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
 import 'certificado_details_view.dart';
 import 'certificado_form_view.dart';
 import 'home_mobile_view.dart';

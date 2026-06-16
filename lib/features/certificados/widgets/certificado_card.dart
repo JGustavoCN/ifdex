@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../models/certificado.dart';
-import '../theme/app_theme.dart';
-import 'app_text.dart';
-import 'remove_button.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
+import 'package:ifdex/shared/widgets/remove_button.dart';
 
 /// Card reutilizável para exibir um [Certificado] dentro
 /// de um `ListView.builder`.

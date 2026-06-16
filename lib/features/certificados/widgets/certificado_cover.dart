@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../models/certificado.dart';
-import '../theme/app_theme.dart';
-import 'app_text.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
 
 /// Card visual "Smart Mock" que exibe a identidade do
 /// certificado.

@@ -32,6 +32,7 @@ O aplicativo deve implementar **ambas** as alternativas:
 - Separação obrigatória em camadas: `features/`, `shared/`, `app/`.
 - Cada feature com suas próprias pastas internas.
 - Nomenclatura clara e compreensível.
+- Para convenções detalhadas de nomenclatura, regras de importação e plano de migração, consulte [`docs/arquitetura_spec.md`](docs/arquitetura_spec.md).
 
 ## 5. Interface Funcional e Coerente
 - A interface deve permitir: consultar, cadastrar, remover, editar, filtrar e visualizar dados.

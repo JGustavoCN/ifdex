@@ -4,12 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-import '../models/certificado.dart';
-import '../models/certificado_types.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_text.dart';
-import '../widgets/certificado_cover.dart';
-import '../widgets/info_box.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/features/certificados/models/certificado_types.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
+import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
+import 'package:ifdex/features/certificados/widgets/info_box.dart';
 
 /// Formulário para **criar** ou **editar** certificados.
 ///

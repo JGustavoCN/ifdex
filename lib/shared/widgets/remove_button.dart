@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/certificado.dart';
-import 'app_text.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
 
 class RemoveButton extends StatelessWidget {
   final Certificado certificado;

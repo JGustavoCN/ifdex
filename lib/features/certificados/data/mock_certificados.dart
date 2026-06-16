@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import '../models/certificado.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
 
 List<Certificado> certificadosMock = [
   // ── SISPUBLI: Caso 1 ─────────────────────────────────────

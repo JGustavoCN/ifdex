@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../models/certificado.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_text.dart';
-import '../widgets/certificado_card.dart';
-import '../widgets/xp_header.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
+import 'package:ifdex/features/certificados/widgets/certificado_card.dart';
+import 'package:ifdex/features/gamificacao/widgets/xp_header.dart';
 
 /// Interface Mobile da tela principal (< 900px).
 ///
