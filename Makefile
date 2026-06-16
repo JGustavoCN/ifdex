@@ -24,8 +24,7 @@ format-test:
 	fvm dart format test
 
 # Formata o núcleo do projeto (lib e test) - Padrão de desenvolvimento
-format:
-	fvm dart format lib test
+format: format-lib format-test
 
 # Formata o projeto inteiro, incluindo pastas de plataforma (web, android, ios)
 format-all:

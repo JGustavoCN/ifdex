@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:ifdex/features/certificados/data/mock_certificados.dart';
+import 'package:ifdex/features/certificados/data/certificado_repository.dart';
 import 'package:ifdex/features/certificados/models/certificado.dart';
 
 part 'certificados_view_model.g.dart';
@@ -19,18 +19,24 @@ class FiltroCertificados extends _$FiltroCertificados {
 class CertificadosViewModel extends _$CertificadosViewModel {
   @override
   Future<List<Certificado>> build() async {
-    // Inicialmente carrega os mocks (simulando fetch)
-    return List.from(certificadosMock);
+    final repository = ref.watch(certificadoRepositoryProvider);
+    return repository.listar();
   }
 
-  void adicionar(Certificado certificado) {
+  Future<void> adicionar(Certificado certificado) async {
+    final repository = ref.read(certificadoRepositoryProvider);
+    await repository.adicionar(certificado);
+
     if (state is AsyncData) {
       final listaAtual = state.requireValue;
       state = AsyncData([...listaAtual, certificado]);
     }
   }
 
-  void atualizar(Certificado certificado) {
+  Future<void> atualizar(Certificado certificado) async {
+    final repository = ref.read(certificadoRepositoryProvider);
+    await repository.atualizar(certificado);
+
     if (state is AsyncData) {
       final listaAtual = state.requireValue;
       final index = listaAtual.indexWhere((c) => c.id == certificado.id);
@@ -42,7 +48,10 @@ class CertificadosViewModel extends _$CertificadosViewModel {
     }
   }
 
-  void remover(String id) {
+  Future<void> remover(String id) async {
+    final repository = ref.read(certificadoRepositoryProvider);
+    await repository.remover(id);
+
     if (state is AsyncData) {
       final listaAtual = state.requireValue;
       final novaLista = listaAtual.where((c) => c.id != id).toList();
