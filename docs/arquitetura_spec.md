@@ -66,8 +66,7 @@ flowchart TB
 lib/
 ├── app/                              # Configuração global do aplicativo
 │   ├── app.dart                      # Widget MaterialApp + ProviderScope
-│   ├── routes.dart                   # Definição de rotas (se usar go_router)
-│   └── firebase_options.dart         # Gerado pelo FlutterFire CLI
+│   └── routes.dart                   # Definição de rotas (se usar go_router)
 │
 ├── features/                         # Features isoladas (Feature-first)
 │   ├── certificados/                 # Feature principal
@@ -83,9 +82,6 @@ lib/
 │   │   │
 │   │   ├── presentation/            # Views + ViewModels
 │   │   │   ├── certificados_view_model.dart
-│   │   │   ├── home_view.dart
-│   │   │   ├── home_mobile_view.dart
-│   │   │   ├── home_web_view.dart
 │   │   │   ├── certificado_details_view.dart
 │   │   │   └── certificado_form_view.dart
 │   │   │
@@ -101,6 +97,12 @@ lib/
 │   │   │   └── gamificacao_view_model.dart
 │   │   └── widgets/
 │   │       └── xp_header.dart
+│   │
+│   ├── home/                         # Feature Shell / Dashboard
+│   │   └── presentation/             # Orquestra widgets de outras features
+│   │       ├── home_view.dart
+│   │       ├── home_mobile_view.dart
+│   │       └── home_web_view.dart
 │   │
 │   └── auth/                         # Feature de autenticação
 │       ├── data/

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/features/certificados/presentation/certificados_view_model.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
@@ -14,19 +16,23 @@ import 'certificado_form_view.dart';
 /// O botão "Editar" está sempre visível e navega para
 /// o [CertificadoFormView], que aplica bloqueio parcial
 /// conforme a origem.
-class CertificadoDetailsView extends StatelessWidget {
-  final Certificado certificado;
-  final int editIndex;
+class CertificadoDetailsView extends ConsumerWidget {
+  final String id;
 
-  const CertificadoDetailsView({
-    super.key,
-    required this.certificado,
-    required this.editIndex,
-  });
+  const CertificadoDetailsView({super.key, required this.id});
 
   @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final certificado = ref.watch(certificadoPorIdProvider(id));
+
+    if (certificado == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Detalhes')),
+        body: const Center(child: Text('Certificado não encontrado.')),
+      );
+    }
+
+    final width = MediaQuery.sizeOf(context).width;
     final isMobile = width < 700;
 
     return Scaffold(
@@ -66,10 +72,7 @@ class CertificadoDetailsView extends StatelessWidget {
                           certificado,
                           width: double.infinity,
                         ),
-                        _Content(
-                          certificado: certificado,
-                          editIndex: editIndex,
-                        ),
+                        _Content(certificado: certificado),
                       ],
                     )
                   : IntrinsicHeight(
@@ -82,10 +85,7 @@ class CertificadoDetailsView extends StatelessWidget {
                           ),
                           Expanded(
                             child: SingleChildScrollView(
-                              child: _Content(
-                                certificado: certificado,
-                                editIndex: editIndex,
-                              ),
+                              child: _Content(certificado: certificado),
                             ),
                           ),
                         ],
@@ -103,9 +103,8 @@ class CertificadoDetailsView extends StatelessWidget {
 
 class _Content extends StatelessWidget {
   final Certificado certificado;
-  final int editIndex;
 
-  const _Content({required this.certificado, required this.editIndex});
+  const _Content({required this.certificado});
 
   @override
   Widget build(BuildContext context) {
@@ -342,16 +341,12 @@ class _Content extends StatelessWidget {
     }
   }
 
-  Future<void> _navegarParaEdicao(BuildContext ctx) async {
-    final resultado = await Navigator.push<Map<String, dynamic>>(
+  void _navegarParaEdicao(BuildContext ctx) {
+    Navigator.push(
       ctx,
-      MaterialPageRoute(
-        builder: (_) =>
-            CertificadoFormView(certificado: certificado, editIndex: editIndex),
+      MaterialPageRoute<void>(
+        builder: (_) => CertificadoFormView(id: certificado.id),
       ),
     );
-    if (resultado != null && ctx.mounted) {
-      Navigator.pop(ctx, resultado);
-    }
   }
 }

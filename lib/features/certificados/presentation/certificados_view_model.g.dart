@@ -1,0 +1,207 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'certificados_view_model.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+String _$certificadosFiltradosHash() =>
+    r'5fa9897973d724f64b05c7eb095feab140958594';
+
+/// See also [certificadosFiltrados].
+@ProviderFor(certificadosFiltrados)
+final certificadosFiltradosProvider =
+    AutoDisposeProvider<List<Certificado>>.internal(
+      certificadosFiltrados,
+      name: r'certificadosFiltradosProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$certificadosFiltradosHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CertificadosFiltradosRef = AutoDisposeProviderRef<List<Certificado>>;
+String _$certificadoPorIdHash() => r'4e65f71dbd963a7027740ba07396729940b579b5';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
+
+/// See also [certificadoPorId].
+@ProviderFor(certificadoPorId)
+const certificadoPorIdProvider = CertificadoPorIdFamily();
+
+/// See also [certificadoPorId].
+class CertificadoPorIdFamily extends Family<Certificado?> {
+  /// See also [certificadoPorId].
+  const CertificadoPorIdFamily();
+
+  /// See also [certificadoPorId].
+  CertificadoPorIdProvider call(String id) {
+    return CertificadoPorIdProvider(id);
+  }
+
+  @override
+  CertificadoPorIdProvider getProviderOverride(
+    covariant CertificadoPorIdProvider provider,
+  ) {
+    return call(provider.id);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'certificadoPorIdProvider';
+}
+
+/// See also [certificadoPorId].
+class CertificadoPorIdProvider extends AutoDisposeProvider<Certificado?> {
+  /// See also [certificadoPorId].
+  CertificadoPorIdProvider(String id)
+    : this._internal(
+        (ref) => certificadoPorId(ref as CertificadoPorIdRef, id),
+        from: certificadoPorIdProvider,
+        name: r'certificadoPorIdProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$certificadoPorIdHash,
+        dependencies: CertificadoPorIdFamily._dependencies,
+        allTransitiveDependencies:
+            CertificadoPorIdFamily._allTransitiveDependencies,
+        id: id,
+      );
+
+  CertificadoPorIdProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
+  final String id;
+
+  @override
+  Override overrideWith(
+    Certificado? Function(CertificadoPorIdRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: CertificadoPorIdProvider._internal(
+        (ref) => create(ref as CertificadoPorIdRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<Certificado?> createElement() {
+    return _CertificadoPorIdProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CertificadoPorIdProvider && other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, id.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin CertificadoPorIdRef on AutoDisposeProviderRef<Certificado?> {
+  /// The parameter `id` of this provider.
+  String get id;
+}
+
+class _CertificadoPorIdProviderElement
+    extends AutoDisposeProviderElement<Certificado?>
+    with CertificadoPorIdRef {
+  _CertificadoPorIdProviderElement(super.provider);
+
+  @override
+  String get id => (origin as CertificadoPorIdProvider).id;
+}
+
+String _$filtroCertificadosHash() =>
+    r'c2df54e989ddd7053f0fabed0e472d09bdf83094';
+
+/// See also [FiltroCertificados].
+@ProviderFor(FiltroCertificados)
+final filtroCertificadosProvider =
+    AutoDisposeNotifierProvider<FiltroCertificados, String>.internal(
+      FiltroCertificados.new,
+      name: r'filtroCertificadosProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$filtroCertificadosHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$FiltroCertificados = AutoDisposeNotifier<String>;
+String _$certificadosViewModelHash() =>
+    r'de8b4308fe6e25d0540740299b26ee095d1326c6';
+
+/// See also [CertificadosViewModel].
+@ProviderFor(CertificadosViewModel)
+final certificadosViewModelProvider =
+    AutoDisposeAsyncNotifierProvider<
+      CertificadosViewModel,
+      List<Certificado>
+    >.internal(
+      CertificadosViewModel.new,
+      name: r'certificadosViewModelProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$certificadosViewModelHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$CertificadosViewModel = AutoDisposeAsyncNotifier<List<Certificado>>;
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
