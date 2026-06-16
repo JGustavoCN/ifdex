@@ -1,5 +1,6 @@
 # Define que esses nomes são comandos, e não nomes de arquivos ou pastas
-.PHONY: install fix fix-lib fix-test fix-all format format-lib format-test format-all lint lint-lib lint-test lint-all test check check-all pre-commit build-web build-apk clean
+.PHONY: install fix fix-lib fix-test fix-all format format-lib format-test format-all lint lint-lib lint-test lint-all test check check-all pre-commit build-web build-apk clean use-ssh use-https
+
 
 # Instala o FVM, baixa o SDK, instala dependências e ativa o Lefthook na máquina
 install:
@@ -93,4 +94,17 @@ build-apk:
 # Gera os ícones nativos (iOS, Android, Web) baseados nas imagens da pasta assets/
 generate-icons:
 	fvm flutter pub run flutter_launcher_icons
+
+# Alterna o repositório remoto origin para usar SSH
+use-ssh:
+	git remote set-url origin git@github.com:JGustavoCN/ifdex.git
+	@echo "Repositorio alterado para SSH com sucesso!"
+	@git remote -v
+
+# Alterna o repositório remoto origin para usar HTTPS
+use-https:
+	git remote set-url origin https://github.com/JGustavoCN/ifdex.git
+	@echo "Repositorio alterado para HTTPS com sucesso!"
+	@git remote -v
+
 
