@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../helpers/gamification.dart';
-import '../theme/app_theme.dart';
-import 'app_text.dart';
+import 'package:ifdex/features/gamificacao/models/gamification.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
 
 /// Cabeçalho de gamificação para o layout mobile.
 ///

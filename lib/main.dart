@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
-import 'theme/app_theme.dart';
-import 'views/home_view.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/features/certificados/presentation/home_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

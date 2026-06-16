@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../helpers/gamification.dart';
-import '../models/certificado.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_text.dart';
-import '../widgets/certificado_card.dart';
+import 'package:ifdex/features/gamificacao/models/gamification.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
+import 'package:ifdex/features/certificados/widgets/certificado_card.dart';
 
 /// Interface Web/Desktop da tela principal (>= 900px).
 ///

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../models/certificado.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_text.dart';
-import '../widgets/certificado_cover.dart';
-import '../widgets/info_box.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/theme/app_theme.dart';
+import 'package:ifdex/shared/widgets/app_text.dart';
+import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
+import 'package:ifdex/features/certificados/widgets/info_box.dart';
 import 'certificado_form_view.dart';
 
 /// Tela de visualização read-only de um [Certificado].

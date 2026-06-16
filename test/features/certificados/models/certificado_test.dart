@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ifdex/models/certificado.dart';
+import 'package:ifdex/features/certificados/models/certificado.dart';
 
 void main() {
   // ── Helpers ─────────────────────────────────────────────
