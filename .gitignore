@@ -47,3 +47,7 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# Segurança do Keystore
+*.jks
+*.keystore
+keystore_base64.txt
