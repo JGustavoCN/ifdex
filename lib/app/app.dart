@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ifdex/features/auth/presentation/auth_gate.dart';
 import 'package:ifdex/features/home/presentation/home_view.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
       title: 'IFdex',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
-      home: const HomeView(),
+      home: const AuthGate(child: HomeView()),
     );
   }
 }

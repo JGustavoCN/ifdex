@@ -10,6 +10,7 @@ import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_card.dart';
 import 'package:ifdex/features/certificados/presentation/certificado_details_view.dart';
 import 'package:ifdex/features/certificados/presentation/certificado_form_view.dart';
+import 'package:ifdex/features/auth/presentation/profile_view.dart';
 
 class HomeWebView extends ConsumerWidget {
   const HomeWebView({super.key});
@@ -261,6 +262,20 @@ class _TopBar extends ConsumerWidget {
               'Novo Certificado',
               color: AppColors.textOnPrimary,
               fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 16),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(builder: (_) => const ProfileView()),
+              );
+            },
+            icon: const Icon(
+              Icons.account_circle,
+              color: AppColors.primary,
+              size: 32,
             ),
           ),
         ],
