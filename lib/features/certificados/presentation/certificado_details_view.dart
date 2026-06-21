@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:ifdex/features/certificados/models/certificado.dart';
 import 'package:ifdex/features/certificados/presentation/certificados_view_model.dart';
+import 'package:ifdex/features/certificados/data/certificado_repository.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
@@ -101,17 +102,17 @@ class CertificadoDetailsView extends ConsumerWidget {
 
 // ── Conteúdo interno ──────────────────────────────────
 
-class _Content extends StatelessWidget {
+class _Content extends ConsumerWidget {
   final Certificado certificado;
 
   const _Content({required this.certificado});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final temUrl =
         certificado.urlDocumento != null &&
         certificado.urlDocumento!.isNotEmpty;
-    final temUpload = certificado.uploadDocumento != null;
+    final temUpload = certificado.temArquivo;
 
     return Padding(
       padding: const EdgeInsets.all(18),
@@ -232,13 +233,18 @@ class _Content extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 24),
-          _buildButtons(context, temUrl, temUpload),
+          _buildButtons(context, ref, temUrl, temUpload),
         ],
       ),
     );
   }
 
-  Widget _buildButtons(BuildContext context, bool temUrl, bool temUpload) {
+  Widget _buildButtons(
+    BuildContext context,
+    WidgetRef ref,
+    bool temUrl,
+    bool temUpload,
+  ) {
     return Wrap(
       spacing: 12,
       runSpacing: 12,
@@ -254,19 +260,55 @@ class _Content extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-        // Visualizar (Bytes → placeholder)
+        // Visualizar (Bytes → Firestore download sob demanda)
         if (!temUrl && temUpload)
           FilledButton.icon(
-            onPressed: () {
+            onPressed: () async {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: AppText(
-                    'Abrir visualizador de PDF '
-                    'local (Integração na Fase 2)',
+                    'Baixando arquivo...',
                     color: AppColors.textOnPrimary,
                   ),
                 ),
               );
+              try {
+                final repo = ref.read(certificadoRepositoryProvider);
+                final bytes = await repo.carregarArquivo(certificado.id);
+                if (!context.mounted) return;
+
+                if (bytes != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: AppText(
+                        'Download concluído: ${bytes.length} bytes. (Integração PDF na Fase 3)',
+                        color: AppColors.textOnPrimary,
+                      ),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: AppText(
+                        'Arquivo não encontrado no servidor.',
+                        color: AppColors.textOnPrimary,
+                      ),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: AppText(
+                      'Erro ao baixar: $e',
+                      color: AppColors.textOnPrimary,
+                    ),
+                    backgroundColor: AppColors.error,
+                  ),
+                );
+              }
             },
             icon: const Icon(Icons.picture_as_pdf),
             label: const AppText(

@@ -54,9 +54,19 @@ class ProfileView extends ConsumerWidget {
                             .linkWithGoogle();
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Erro: ${e.toString()}')),
-                          );
+                          final erro = e.toString();
+                          if (erro.contains('popup_closed')) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Login com Google cancelado.'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Erro: $erro')),
+                            );
+                          }
                         }
                       }
                     },

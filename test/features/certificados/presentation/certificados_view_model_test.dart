@@ -1,22 +1,63 @@
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ifdex/features/certificados/data/certificado_repository.dart';
-import 'package:ifdex/features/certificados/data/mock_certificado_repository.dart';
+import 'package:ifdex/features/certificados/data/firestore_certificado_repository.dart';
 import 'package:ifdex/features/certificados/presentation/certificados_view_model.dart';
 import 'package:ifdex/features/certificados/models/certificado.dart';
 
+class FakeCertificadoRepository implements FirestoreCertificadoRepository {
+  final List<Certificado> _items = [];
+
+  @override
+  Future<List<Certificado>> listarTodos() async => _items;
+
+  @override
+  Future<void> adicionar(Certificado certificado, {String? fileName}) async {
+    final index = _items.indexWhere((c) => c.id == certificado.id);
+    if (index >= 0) {
+      _items[index] = certificado;
+    } else {
+      _items.add(certificado);
+    }
+  }
+
+  @override
+  Future<void> remover(String id) async {
+    _items.removeWhere((c) => c.id == id);
+  }
+
+  @override
+  Future<Uint8List?> carregarArquivo(String certificadoId) async => null;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   late ProviderContainer container;
+  late FakeCertificadoRepository fakeRepo;
 
   setUp(() {
+    fakeRepo = FakeCertificadoRepository();
+
+    // Add initial item for tests
+    fakeRepo._items.add(
+      Certificado.criar(
+        id: 'mock-1',
+        origem: Origem.manual,
+        titulo: 'Certificado Mock 1',
+        ano: 2024,
+        instituicao: 'Mock',
+        tipoDescricao: 'Curso',
+        tags: [],
+        notaRelevancia: 1,
+      ),
+    );
+
     container = ProviderContainer(
-      overrides: [
-        // Sobrescrevemos o repository se quiséssemos um mock puro com Mockito,
-        // mas usar o MockCertificadoRepository já funciona para os testes em memória.
-        certificadoRepositoryProvider.overrideWithValue(
-          MockCertificadoRepository(delay: Duration.zero),
-        ),
-      ],
+      overrides: [certificadoRepositoryProvider.overrideWithValue(fakeRepo)],
     );
   });
 
@@ -25,13 +66,11 @@ void main() {
   });
 
   test('Deve carregar a lista de certificados no estado inicial', () async {
-    // Escuta para forçar o provider a construir
     final subscription = container.listen(
       certificadosViewModelProvider,
       (_, _) {},
     );
 
-    // Aguarda o build concluir
     final state = await container.read(certificadosViewModelProvider.future);
 
     expect(state, isNotEmpty);
@@ -45,9 +84,7 @@ void main() {
         certificadosViewModelProvider,
         (_, _) {},
       );
-      await container.read(
-        certificadosViewModelProvider.future,
-      ); // aguarda load inicial
+      await container.read(certificadosViewModelProvider.future);
 
       final notifier = container.read(certificadosViewModelProvider.notifier);
       final countBefore = container
@@ -74,10 +111,7 @@ void main() {
           .length;
       expect(countAfter, equals(countBefore + 1));
 
-      // Verifica se realmente foi pro repository
-      final repoList = await container
-          .read(certificadoRepositoryProvider)
-          .listar();
+      final repoList = await fakeRepo.listarTodos();
       expect(repoList.any((c) => c.id == 'view_model_test_id'), isTrue);
 
       subscription.close();

@@ -20,22 +20,12 @@ class CertificadosViewModel extends _$CertificadosViewModel {
   @override
   Future<List<Certificado>> build() async {
     final repository = ref.watch(certificadoRepositoryProvider);
-    return repository.listar();
+    return repository.listarTodos();
   }
 
-  Future<void> adicionar(Certificado certificado) async {
+  Future<void> adicionar(Certificado certificado, {String? fileName}) async {
     final repository = ref.read(certificadoRepositoryProvider);
-    await repository.adicionar(certificado);
-
-    if (state is AsyncData) {
-      final listaAtual = state.requireValue;
-      state = AsyncData([...listaAtual, certificado]);
-    }
-  }
-
-  Future<void> atualizar(Certificado certificado) async {
-    final repository = ref.read(certificadoRepositoryProvider);
-    await repository.atualizar(certificado);
+    await repository.adicionar(certificado, fileName: fileName);
 
     if (state is AsyncData) {
       final listaAtual = state.requireValue;
@@ -44,6 +34,8 @@ class CertificadosViewModel extends _$CertificadosViewModel {
         final novaLista = List<Certificado>.from(listaAtual);
         novaLista[index] = certificado;
         state = AsyncData(novaLista);
+      } else {
+        state = AsyncData([...listaAtual, certificado]);
       }
     }
   }

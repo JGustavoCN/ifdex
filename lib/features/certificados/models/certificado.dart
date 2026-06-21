@@ -22,7 +22,8 @@ class Certificado {
   String tipoDescricao;
   int? cargaHoraria;
   String? urlDocumento;
-  Uint8List? uploadDocumento;
+  Uint8List? uploadDocumento; // Transitório: usado apenas no upload
+  bool temArquivo;
   List<String> tags;
   int notaRelevancia;
 
@@ -37,6 +38,7 @@ class Certificado {
     this.cargaHoraria,
     this.urlDocumento,
     this.uploadDocumento,
+    this.temArquivo = false,
     required this.tags,
     required this.notaRelevancia,
   });
@@ -55,6 +57,7 @@ class Certificado {
     int? cargaHoraria,
     String? urlDocumento,
     Uint8List? uploadDocumento,
+    bool temArquivo = false,
     required List<String> tags,
     required int notaRelevancia,
   }) {
@@ -147,8 +150,45 @@ class Certificado {
       cargaHoraria: cargaHoraria,
       urlDocumento: urlDocumento,
       uploadDocumento: uploadDocumento,
+      temArquivo: temArquivo,
       tags: tags,
       notaRelevancia: notaRelevancia,
+    );
+  }
+
+  // ── Firestore Serialization ──────────────────────────────
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'origem': origem.name,
+      'titulo': titulo,
+      'ano': ano,
+      'instituicao': instituicao,
+      'tipoDescricao': tipoDescricao,
+      'cargaHoraria': cargaHoraria,
+      'urlDocumento': urlDocumento,
+      'temArquivo': temArquivo,
+      'tags': tags,
+      'notaRelevancia': notaRelevancia,
+    };
+  }
+
+  factory Certificado.fromMap(Map<String, dynamic> map, String documentId) {
+    return Certificado.criar(
+      id: documentId,
+      origem: Origem.values.firstWhere(
+        (e) => e.name == map['origem'],
+        orElse: () => Origem.manual,
+      ),
+      titulo: map['titulo'] as String? ?? '',
+      ano: map['ano'] as int? ?? 1900,
+      instituicao: map['instituicao'] as String? ?? '',
+      tipoDescricao: map['tipoDescricao'] as String? ?? '',
+      cargaHoraria: map['cargaHoraria'] as int?,
+      urlDocumento: map['urlDocumento'] as String?,
+      temArquivo: map['temArquivo'] as bool? ?? false,
+      tags: List<String>.from((map['tags'] as List?) ?? []),
+      notaRelevancia: map['notaRelevancia'] as int? ?? 1,
     );
   }
 }
