@@ -8,6 +8,10 @@ import 'package:ifdex/features/certificados/widgets/certificado_card.dart';
 import 'package:ifdex/features/gamificacao/widgets/xp_header.dart';
 import 'package:ifdex/features/certificados/presentation/certificado_details_view.dart';
 
+import 'package:ifdex/shared/widgets/app_loading_state.dart';
+import 'package:ifdex/shared/widgets/app_error_state.dart';
+import 'package:ifdex/shared/widgets/app_empty_state.dart';
+
 class HomeMobileView extends ConsumerWidget {
   const HomeMobileView({super.key});
 
@@ -21,39 +25,20 @@ class HomeMobileView extends ConsumerWidget {
         const _BarraFiltros(),
         Expanded(
           child: asyncCertificados.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, stack) => Center(child: Text('Erro: $err')),
+            loading: () => const AppLoadingState(),
+            error: (err, stack) => AppErrorState(
+              message: err.toString(),
+              onRetry: () => ref.invalidate(certificadosViewModelProvider),
+            ),
             data: (_) {
               final certificadosFiltrados = ref.watch(
                 certificadosFiltradosProvider,
               );
               if (certificadosFiltrados.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.inventory_2_outlined,
-                        size: 64,
-                        color: AppColors.textMuted.withValues(alpha: 0.5),
-                      ),
-                      const SizedBox(height: 16),
-                      const AppText(
-                        'Cofre vazio',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(height: 6),
-                      const AppText(
-                        'Adicione seu primeiro '
-                        'certificado\n'
-                        'e comece a ganhar XP!',
-                        color: AppColors.textMuted,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
+                return const AppEmptyState(
+                  message: 'Cofre vazio',
+                  subMessage:
+                      'Adicione seu primeiro certificado\ne comece a ganhar XP!',
                 );
               }
 

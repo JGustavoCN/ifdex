@@ -507,4 +507,75 @@ void main() {
       expect(cert.tags.first.length, 20);
     });
   });
+
+  // ═══════════════════════════════════════════════════════
+  // I. Serialização (Firestore)
+  // ═══════════════════════════════════════════════════════
+  group('I. Serialização (Firestore)', () {
+    test(
+      '#29 Deve serializar e desserializar corretamente (roundtrip) - Manual',
+      () {
+        final certOriginal = Certificado.criar(
+          id: '123',
+          origem: Origem.manual,
+          titulo: 'Flutter Avançado',
+          ano: 2023,
+          instituicao: 'Udemy',
+          tipoDescricao: 'Curso',
+          cargaHoraria: 40,
+          urlDocumento: 'https://udemy.com/cert/123',
+          temArquivo: false,
+          tags: ['Flutter', 'Dart'],
+          notaRelevancia: 5,
+        );
+
+        final map = certOriginal.toMap();
+        final certRecuperado = Certificado.fromMap(map, '123');
+
+        expect(certRecuperado.id, certOriginal.id);
+        expect(certRecuperado.origem, certOriginal.origem);
+        expect(certRecuperado.titulo, certOriginal.titulo);
+        expect(certRecuperado.ano, certOriginal.ano);
+        expect(certRecuperado.instituicao, certOriginal.instituicao);
+        expect(certRecuperado.tipoDescricao, certOriginal.tipoDescricao);
+        expect(certRecuperado.cargaHoraria, certOriginal.cargaHoraria);
+        expect(certRecuperado.urlDocumento, certOriginal.urlDocumento);
+        expect(certRecuperado.temArquivo, certOriginal.temArquivo);
+        expect(certRecuperado.tags, certOriginal.tags);
+        expect(certRecuperado.notaRelevancia, certOriginal.notaRelevancia);
+      },
+    );
+
+    test(
+      '#30 Deve serializar e desserializar corretamente (roundtrip) - Sispubli',
+      () {
+        final certOriginal = Certificado.criar(
+          id: 'sha256-abc',
+          origem: Origem.sispubli,
+          titulo: 'Semana de Tecnologia',
+          ano: 2024,
+          instituicao: 'IFS',
+          tipoDescricao: 'Participação',
+          temArquivo: true,
+          tags: ['Tech'],
+          notaRelevancia: 4,
+        );
+
+        final map = certOriginal.toMap();
+        final certRecuperado = Certificado.fromMap(map, 'sha256-abc');
+
+        expect(certRecuperado.id, certOriginal.id);
+        expect(certRecuperado.origem, certOriginal.origem);
+        expect(certRecuperado.titulo, certOriginal.titulo);
+        expect(certRecuperado.ano, certOriginal.ano);
+        expect(certRecuperado.instituicao, certOriginal.instituicao);
+        expect(certRecuperado.tipoDescricao, certOriginal.tipoDescricao);
+        expect(certRecuperado.cargaHoraria, isNull);
+        expect(certRecuperado.urlDocumento, isNull);
+        expect(certRecuperado.temArquivo, certOriginal.temArquivo);
+        expect(certRecuperado.tags, certOriginal.tags);
+        expect(certRecuperado.notaRelevancia, certOriginal.notaRelevancia);
+      },
+    );
+  });
 }

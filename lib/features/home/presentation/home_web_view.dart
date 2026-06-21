@@ -10,6 +10,11 @@ import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_card.dart';
 import 'package:ifdex/features/certificados/presentation/certificado_details_view.dart';
 import 'package:ifdex/features/certificados/presentation/certificado_form_view.dart';
+import 'package:ifdex/features/auth/presentation/profile_view.dart';
+
+import 'package:ifdex/shared/widgets/app_loading_state.dart';
+import 'package:ifdex/shared/widgets/app_error_state.dart';
+import 'package:ifdex/shared/widgets/app_empty_state.dart';
 
 class HomeWebView extends ConsumerWidget {
   const HomeWebView({super.key});
@@ -263,6 +268,20 @@ class _TopBar extends ConsumerWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
+          const SizedBox(width: 16),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(builder: (_) => const ProfileView()),
+              );
+            },
+            icon: const Icon(
+              Icons.account_circle,
+              color: AppColors.primary,
+              size: 32,
+            ),
+          ),
         ],
       ),
     );
@@ -281,8 +300,11 @@ class _AreaPrincipal extends ConsumerWidget {
     final asyncCertificados = ref.watch(certificadosViewModelProvider);
 
     return asyncCertificados.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Erro: $err')),
+      loading: () => const AppLoadingState(),
+      error: (err, stack) => AppErrorState(
+        message: err.toString(),
+        onRetry: () => ref.invalidate(certificadosViewModelProvider),
+      ),
       data: (_) {
         final certificadosFiltrados = ref.watch(certificadosFiltradosProvider);
         final totalOficiais = certificadosFiltrados
@@ -308,33 +330,12 @@ class _AreaPrincipal extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               certificadosFiltrados.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 64),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.inventory_2_outlined,
-                              size: 72,
-                              color: AppColors.textMuted.withValues(alpha: 0.5),
-                            ),
-                            const SizedBox(height: 16),
-                            const AppText(
-                              'Cofre vazio',
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(height: 6),
-                            const AppText(
-                              'Adicione seu primeiro '
-                              'certificado e comece '
-                              'a ganhar XP!',
-                              color: AppColors.textMuted,
-                            ),
-                          ],
-                        ),
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 64),
+                      child: AppEmptyState(
+                        message: 'Cofre vazio',
+                        subMessage:
+                            'Adicione seu primeiro certificado e comece a ganhar XP!',
                       ),
                     )
                   : GridView.builder(

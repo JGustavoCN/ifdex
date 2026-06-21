@@ -130,7 +130,7 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
     });
   }
 
-  void _salvar() {
+  Future<void> _salvar() async {
     if (!_formKey.currentState!.validate()) return;
 
     final c = _certificadoOriginal;
@@ -178,23 +178,42 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
       notaRelevancia: _notaRelevancia,
     );
 
-    if (widget.id == null) {
-      ref.read(certificadosViewModelProvider.notifier).adicionar(novo);
-    } else {
-      ref.read(certificadosViewModelProvider.notifier).atualizar(novo);
-    }
+    try {
+      if (widget.id == null) {
+        await ref
+            .read(certificadosViewModelProvider.notifier)
+            .adicionar(novo, fileName: _nomeArquivoSelecionado);
+      } else {
+        await ref
+            .read(certificadosViewModelProvider.notifier)
+            .adicionar(novo, fileName: _nomeArquivoSelecionado);
+      }
 
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: AppText(
-          widget.id == null
-              ? 'Certificado salvo com sucesso!'
-              : 'Certificado atualizado.',
-          color: AppColors.textOnPrimary,
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: AppText(
+            widget.id == null
+                ? 'Certificado salvo com sucesso!'
+                : 'Certificado atualizado.',
+            color: AppColors.textOnPrimary,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: AppText(
+            e.toString().replaceAll('Exception: ', ''),
+            color: AppColors.textOnPrimary,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   Widget _buildUploadBox() {

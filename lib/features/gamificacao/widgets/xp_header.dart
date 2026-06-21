@@ -47,18 +47,34 @@ class XpHeader extends ConsumerWidget {
             children: [
               // ── Logo + Branding ──────────────────
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(
-                    'assets/logo_transparent.png',
-                    height: 24,
-                    width: 24,
+                  Row(
+                    children: [
+                      Image.asset(
+                        'assets/logo_transparent.png',
+                        height: 24,
+                        width: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      const AppText(
+                        'IFdex',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textOnPrimary,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  const AppText(
-                    'IFdex',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textOnPrimary,
+                  IconButton(
+                    icon: const Icon(
+                      Icons.menu,
+                      color: AppColors.textOnPrimary,
+                    ),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                   ),
                 ],
               ),

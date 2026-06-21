@@ -184,7 +184,7 @@ final filtroCertificadosProvider =
 
 typedef _$FiltroCertificados = AutoDisposeNotifier<String>;
 String _$certificadosViewModelHash() =>
-    r'a09211286df56970f7c930b512c7d0d8a3fd5485';
+    r'9a0a8967d1fc0410c7644767f736566261860a66';
 
 /// See also [CertificadosViewModel].
 @ProviderFor(CertificadosViewModel)
