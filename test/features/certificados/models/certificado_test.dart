@@ -233,7 +233,7 @@ void main() {
             (e) => e.message,
             'message',
             'O título é obrigatório e deve ter '
-                'no máximo 100 caracteres.',
+                'no máximo 255 caracteres.',
           ),
         ),
       );
@@ -250,24 +250,22 @@ void main() {
             (e) => e.message,
             'message',
             'O título é obrigatório e deve ter '
-                'no máximo 100 caracteres.',
+                'no máximo 255 caracteres.',
           ),
         ),
       );
     });
 
-    test('#13 Deve lançar erro se o título ultrapassar '
-        '100 caracteres', () {
-      final p = baseManual()..['titulo'] = 'A' * 101;
-
+    test('#13 Deve lançar erro se o título ultrapassar 255 caracteres', () {
+      final map = baseManual()..['titulo'] = 'A' * 256;
       expect(
-        () => criar(p),
+        () => criar(map),
         throwsA(
           isA<ArgumentError>().having(
             (e) => e.message,
             'message',
             'O título é obrigatório e deve ter '
-                'no máximo 100 caracteres.',
+                'no máximo 255 caracteres.',
           ),
         ),
       );
@@ -394,11 +392,10 @@ void main() {
       expect(certMax.notaRelevancia, 5);
     });
 
-    test('#20 Deve aceitar um título com exatamente '
-        '100 caracteres', () {
-      final titulo100 = 'A' * 100;
-      final cert = criar(baseManual()..['titulo'] = titulo100);
-      expect(cert.titulo.length, 100);
+    test('#20 Deve aceitar um título com exatamente 255 caracteres', () {
+      final titulo255 = 'A' * 255;
+      final cert = criar(baseManual()..['titulo'] = titulo255);
+      expect(cert.titulo.length, 255);
     });
   });
 

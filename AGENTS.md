@@ -82,7 +82,7 @@ Foco em UI/UX, Componentização e Validações.
 
 **A. Validações do Formulário:**
 
-- **Título:** Obrigatório (max 100 char).
+- **Título:** Obrigatório (max 255 char).
 - **Ano:** 1900 a 2026.
 - **Carga Horária:** Se preenchido, entre 1 e 5000 (disponível para ambas as origens).
 - **Tags:** Máx. 5 tags por certificado, máx. 20 caracteres por tag.
@@ -109,7 +109,7 @@ Para cumprir o requisito obrigatório de **"Manipulação de Estado / Contador d
 > Para documentação detalhada do fluxo Detalhes → Edição (incluindo comportamento de botões, bloqueios condicionais e merge de dados), consulte [`docs/fluxo_certificado.md`](docs/fluxo_certificado.md).
 
 - **Dinâmica do Formulário (Exclusão Mútua):** Se "URL" for preenchida, esconde "Upload", e vice-versa.
-- **Prevenção de Erros:** Disparar **`AlertDialog`** para confirmar a intenção de exclusão de certificados.
+- **Prevenção de Erros:** Disparar **`AlertDialog`** para confirmar a intenção de exclusão de certificados. Bloquear botões com estado de carregamento (`isLoading`) para evitar duplo-clique em requisições de rede.
 - **Feedback de Sistema:** Uso de **`SnackBars`** para notificações de sucesso (ex: "Certificado salvo") ou erros de validação.
 - **Compartilhamento Híbrido:** Utilizar o pacote **`share_plus`** para acionar a gaveta nativa, garantindo sempre a opção explícita de **"Copiar Link"** (compatibilidade Web/Mobile).
 

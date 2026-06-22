@@ -16,6 +16,9 @@ import 'package:ifdex/features/sispubli/presentation/sispubli_import_view.dart';
 import 'package:ifdex/shared/widgets/app_loading_state.dart';
 import 'package:ifdex/shared/widgets/app_error_state.dart';
 import 'package:ifdex/shared/widgets/app_empty_state.dart';
+import 'package:ifdex/shared/widgets/app_search_bar.dart';
+import 'package:ifdex/shared/providers/busca_providers.dart';
+import 'package:ifdex/shared/widgets/app_filtros_bottom_sheet.dart';
 
 class HomeWebView extends ConsumerWidget {
   const HomeWebView({super.key});
@@ -194,21 +197,8 @@ class _XpSidebarCard extends StatelessWidget {
 class _TopBar extends ConsumerWidget {
   const _TopBar();
 
-  String _labelFiltro(String filtroAtual) {
-    switch (filtroAtual) {
-      case 'oficial':
-        return 'Oficiais';
-      case 'manual':
-        return 'Manuais';
-      default:
-        return 'Todos';
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filtroAtual = ref.watch(filtroCertificadosProvider);
-
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -220,37 +210,32 @@ class _TopBar extends ConsumerWidget {
         children: [
           AppText.headline('Dashboard Acadêmico'),
           const Spacer(),
-          PopupMenuButton<String>(
-            onSelected: (novo) =>
-                ref.read(filtroCertificadosProvider.notifier).setFiltro(novo),
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: 'todos', child: AppText('Todos')),
-              const PopupMenuItem(value: 'oficial', child: AppText('Oficiais')),
-              const PopupMenuItem(value: 'manual', child: AppText('Manuais')),
-            ],
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.filter_alt_outlined,
-                    size: 18,
-                    color: AppColors.textSecondary,
-                  ),
-                  const SizedBox(width: 6),
-                  AppText.label(
-                    _labelFiltro(filtroAtual),
-                    color: AppColors.textPrimary,
-                  ),
-                ],
-              ),
+          SizedBox(
+            width: 300,
+            child: AppSearchBar(
+              initialValue: ref.read(buscaHomeProvider),
+              onChanged: (val) {
+                ref.read(buscaHomeProvider.notifier).setQuery(val);
+              },
             ),
+          ),
+          const SizedBox(width: 16),
+          IconButton(
+            onPressed: () {
+              showDialog<void>(
+                context: context,
+                builder: (_) => Dialog(
+                  backgroundColor: Colors.transparent,
+                  insetPadding: const EdgeInsets.all(24),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 450),
+                    child: const AppFiltrosBottomSheet(),
+                  ),
+                ),
+              );
+            },
+            tooltip: 'Filtrar e Ordenar',
+            icon: const Icon(Icons.tune, color: AppColors.primary, size: 24),
           ),
           const SizedBox(width: 12),
           ElevatedButton.icon(

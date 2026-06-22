@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:ifdex/features/sispubli/data/sispubli_datasource.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
+import 'package:ifdex/shared/widgets/app_search_bar.dart';
+import 'package:ifdex/shared/providers/busca_providers.dart';
+import 'package:ifdex/features/sispubli/widgets/app_filtros_sispubli_bottom_sheet.dart';
 
 /// Fase 2: Componente isolado para selecionar DTOs através de checkboxes.
 /// Recebe a lista disponível (já deduplicada pelo Provider Computado)
 /// e avisa a view pai quando o usuário decide "Importar".
-class SispubliSelectionList extends StatefulWidget {
+class SispubliSelectionList extends ConsumerStatefulWidget {
   final List<SispubliCertificadoDto> disponiveis;
   final ValueChanged<List<SispubliCertificadoDto>> onImportar;
 
@@ -18,10 +23,11 @@ class SispubliSelectionList extends StatefulWidget {
   });
 
   @override
-  State<SispubliSelectionList> createState() => _SispubliSelectionListState();
+  ConsumerState<SispubliSelectionList> createState() =>
+      _SispubliSelectionListState();
 }
 
-class _SispubliSelectionListState extends State<SispubliSelectionList> {
+class _SispubliSelectionListState extends ConsumerState<SispubliSelectionList> {
   final Set<String> _selecionados = {};
   bool _selecionarTodos = false;
 
@@ -61,6 +67,18 @@ class _SispubliSelectionListState extends State<SispubliSelectionList> {
 
     return Column(
       children: [
+        // Busca
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          child: AppSearchBar(
+            hintText: 'Filtrar disponíveis...',
+            initialValue: ref.read(buscaSispubliProvider),
+            onChanged: (val) {
+              ref.read(buscaSispubliProvider.notifier).setQuery(val);
+            },
+          ),
+        ),
+
         // Header com info e "Selecionar Todos"
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -87,6 +105,22 @@ class _SispubliSelectionListState extends State<SispubliSelectionList> {
                 ),
               ),
               const Spacer(),
+              IconButton(
+                onPressed: () {
+                  showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => const AppFiltrosSispubliBottomSheet(),
+                  );
+                },
+                tooltip: 'Filtrar e Ordenar',
+                icon: const Icon(
+                  Icons.tune,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
               TextButton.icon(
                 onPressed: _toggleTodos,
                 icon: Icon(

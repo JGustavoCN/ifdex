@@ -62,10 +62,10 @@ class Certificado {
     required int notaRelevancia,
   }) {
     // 1. Validação de Título
-    if (titulo.trim().isEmpty || titulo.length > 100) {
+    if (titulo.trim().isEmpty || titulo.length > 255) {
       throw ArgumentError(
         'O título é obrigatório e deve ter '
-        'no máximo 100 caracteres.',
+        'no máximo 255 caracteres.',
       );
     }
 

@@ -82,7 +82,7 @@ ifdex/
 |:------------------|:---------------|:------------:|:-------------:|:---------------------------------------------------------------------------------------------------------------|
 | `id`              | `String`       | ✅           | Não (`final`) | Identificador único. SHA-256 (Sispubli) ou UUID v4 (Manual).                                                   |
 | `origem`          | `Origem`       | ✅           | Não (`final`) | Enum que classifica a procedência: `sispubli` ou `manual`.                                                     |
-| `titulo`          | `String`       | ✅           | Sim           | Nome do certificado. Máximo de 100 caracteres.                                                                 |
+| `titulo`          | `String`       | ✅           | Sim           | Nome do certificado. Máximo de 255 caracteres.                                                                 |
 | `ano`             | `int`          | ✅           | Sim           | Ano de emissão. Intervalo válido: 1900–2026.                                                                   |
 | `instituicao`     | `String`       | ✅           | Sim           | Instituição emissora. Fixo como "IFS" para origem Sispubli.                                                    |
 | `tipoDescricao`   | `String`       | ✅           | Sim           | Categoria descritiva (ex: "Participação", "Ouvinte").                                                          |
@@ -117,7 +117,7 @@ as regras estão documentadas na ordem de execução do Factory.
 - O campo `titulo` é **obrigatório**.
 - Não pode ser uma string vazia nem composta apenas por espaços em
   branco (avaliado via `titulo.trim().isEmpty`).
-- O comprimento máximo é de **100 caracteres** (inclusive).
+- O comprimento máximo é de **255 caracteres** (inclusive).
 - **Erro:** `ArgumentError` com mensagem descritiva.
 
 ### 4.2 Validação de Ano
@@ -190,7 +190,7 @@ aplicadas para refletir as limitações da API oficial:
 
 ```mermaid
 flowchart TD
-    A["Certificado.criar()"] --> B{"Título válido?<br/>(não vazio, ≤ 100 chars)"}
+    A["Certificado.criar()"] --> B{"Título válido?<br/>(não vazio, ≤ 255 chars)"}
     B -- Não --> X1["❌ ArgumentError"]
     B -- Sim --> C{"Ano ∈ [1900, 2026]?"}
     C -- Não --> X2["❌ ArgumentError"]
@@ -257,7 +257,7 @@ Validam strings obrigatórias, limites de comprimento e formato.
 | #  | Caso de Teste                        | Entrada                                          | Resultado Esperado   |
 |:-: |:-------------------------------------|:-------------------------------------------------|:---------------------|
 | 12 | Título vazio                         | `''` ou `'   '` (espaços)                        | `ArgumentError`      |
-| 13 | Título acima de 100 caracteres       | String com 101 chars                             | `ArgumentError`      |
+| 13 | Título acima de 255 caracteres       | String com 256 chars                             | `ArgumentError`      |
 | 14 | URL com formato inválido             | `'wwwgooglecom'` ou `'link falso'`               | `ArgumentError`      |
 | 15 | ID, Instituição ou Tipo vazios       | Strings vazias nos campos obrigatórios           | `ArgumentError`      |
 | 16 | Sispubli com instituição ≠ IFS       | `instituicao = 'Udemy'` com `Origem.sispubli`    | `ArgumentError`      |
@@ -272,7 +272,7 @@ testando os valores exatos das fronteiras.
 | 17 | Ano nos limites exatos                | `ano = 1900` e `ano = 2026`                     | ✅ Instância criada    |
 | 18 | Carga horária nos limites exatos      | `cargaHoraria = 1` e `cargaHoraria = 5000`      | ✅ Instância criada    |
 | 19 | Nota de relevância nos limites exatos | `notaRelevancia = 1` e `notaRelevancia = 5`     | ✅ Instância criada    |
-| 20 | Título com exatamente 100 caracteres  | String de 100 chars                             | ✅ Instância criada    |
+| 20 | Título com exatamente 255 caracteres  | String de 255 chars                             | ✅ Instância criada    |
 
 ### 5.6 Casos de Borda (Arrays e Nulls)
 
