@@ -73,6 +73,7 @@ lib/
 │   │   ├── data/                     # Camada de Dados
 │   │   │   ├── certificado_repository.dart
 │   │   │   ├── certificado_firestore_datasource.dart
+│   │   │   ├── certificado_arquivo_datasource.dart
 │   │   │   └── sispubli_datasource.dart
 │   │   │
 │   │   ├── models/                   # Entidades e DTOs
@@ -391,9 +392,10 @@ import 'package:ifdex/shared/providers/gamificacao_provider.dart';
 ```
 lib/features/certificados/
 ├── data/
-│   ├── certificado_repository.dart        # Abstrai Firestore + Sispubli
-│   ├── certificado_firestore_datasource.dart  # CRUD Firestore
-│   └── sispubli_datasource.dart           # GET HTTP → Sispubli API
+│   ├── certificado_repository.dart            # Abstrai Firestore + Storage + Sispubli
+│   ├── certificado_firestore_datasource.dart  # CRUD Firestore (Metadados)
+│   ├── certificado_arquivo_datasource.dart    # Supabase Storage (Upload PDFs/Imagens)
+│   └── sispubli_datasource.dart               # GET HTTP → Sispubli API
 ├── models/
 │   ├── certificado.dart                   # Entidade + validações + toMap/fromMap
 │   ├── certificado_types.dart             # Constantes de tipos
@@ -647,6 +649,7 @@ lib/
 | `lib/widgets/xp_header.dart`              | `lib/features/gamificacao/widgets/xp_header.dart`            | Mover         |
 | *(novo)*                                  | `lib/features/certificados/data/certificado_repository.dart` | Criar         |
 | *(novo)*                                  | `lib/features/certificados/data/certificado_firestore_datasource.dart` | Criar |
+| *(novo)*                                  | `lib/features/certificados/data/certificado_arquivo_datasource.dart` | Criar |
 | *(novo)*                                  | `lib/features/certificados/data/sispubli_datasource.dart`    | Criar         |
 | *(novo)*                                  | `lib/features/certificados/presentation/certificados_view_model.dart` | Criar |
 | *(novo)*                                  | `lib/features/gamificacao/presentation/gamificacao_view_model.dart` | Criar  |

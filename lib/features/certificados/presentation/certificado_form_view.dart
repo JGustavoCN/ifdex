@@ -109,12 +109,12 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
     if (result == null) return;
     final file = result.files.first;
     final tamanhoMB = file.size / (1024 * 1024);
-    if (tamanhoMB > 5) {
+    if (tamanhoMB > 10) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const AppText(
-            'O arquivo excede o limite de 5MB.',
+            'O arquivo excede o limite de 10MB.',
             color: AppColors.textOnPrimary,
           ),
           backgroundColor: Theme.of(context).colorScheme.error,
@@ -254,7 +254,7 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
             ),
             const SizedBox(height: 4),
             AppText.label(
-              temArquivo ? 'Toque para alterar' : 'Máx 5MB',
+              temArquivo ? 'Toque para alterar' : 'Máx 10MB',
               color: AppColors.textMuted,
             ),
           ],

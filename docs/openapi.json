@@ -1,0 +1,548 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sispubli API",
+    "description": "A Sispubli API fornece uma camada de abstração de alta performance sobre o sistema Sispubli/IFS, operando sob o padrão de **Vertical Slices**.\n\n**Pilares de Arquitetura:**\n- **Autenticação**: Gestão de identidade baseada em tokens Fernet com rotação de segredos e TTL estrito.\n- **Extração de Dados (Scraping)**: Motor de scraping resiliente que consolida informações do sistema upstream com otimização de cache.\n- **Privacidade e Segurança**: Blindagem de PII conforme LGPD através de hashing SHA-256 e mascaramento em repouso.\n- **Proxy de Documentos**: Túnel seguro de transporte de binários que elimina o vazamento de credenciais no downstream.\n",
+    "version": "2.1.0"
+  },
+  "paths": {
+    "/api/auth/token": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Geração de credenciais de acesso temporárias",
+        "description": "Normaliza, valida e criptografa o CPF do titular em um token de acesso efêmero. O token resultante utiliza criptografia Fernet (AES-128-CBC) e possui um tempo de vida (TTL) de 15 minutos.",
+        "operationId": "auth_token_api_auth_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "CPF invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Erro de validacao de campos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit excedido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/certificados": {
+      "get": {
+        "tags": [
+          "Certificates"
+        ],
+        "summary": "Extração e listagem de certificados",
+        "description": "Realiza a extração iterativa de metadados de certificados no sistema upstream do IFS. O processo é autenticado via Bearer token, onde o CPF é descriptografado no backend para processar as requisições no Sispubli. As URLs de download resultantes são automaticamente convertidas em tickets protegidos, eliminando a manipulação de PII no downstream.",
+        "operationId": "listar_certificados_api_certificados_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificadosResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Nao autenticado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit excedido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Sispubli fora do ar",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/pdf/{ticket}": {
+      "get": {
+        "tags": [
+          "Proxy"
+        ],
+        "summary": "Streaming de documentos via túnel seguro",
+        "description": "Endpoint de alta segurança que executa o streaming bidirecional de documentos binários do sistema upstream. O ticket é decriptado no backend para resolver a URL original, aplicando validações rigorosas de SSRF e eliminando a necessidade de autenticação direta ou exposição de PII no downstream.",
+        "operationId": "tunnel_pdf_api_pdf__ticket__get",
+        "parameters": [
+          {
+            "name": "ticket",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticket"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PDF streamado",
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "application/pdf": {}
+            }
+          },
+          "400": {
+            "description": "Ticket invalido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "SSRF bloqueado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit excedido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Upstream indisponivel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Upstream timeout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Health Check",
+        "description": "Painel de saúde e diagnóstico da API.",
+        "operationId": "health_check__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CertificadoItem": {
+        "properties": {
+          "id_unico": {
+            "type": "string",
+            "title": "Id Unico",
+            "description": "Identificador único (SHA-256 + SALT) para anonimato (LGPD).",
+            "example": "a3f8c2d1e4b7091f6e2a5d8c3b1f4e7a9d..."
+          },
+          "titulo": {
+            "type": "string",
+            "title": "Titulo",
+            "description": "Titulo do evento ou certificado conforme registrado no Sispubli",
+            "example": "Participacao no(a) SEPEX 2023"
+          },
+          "url_download": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url Download",
+            "description": "Link direto para o endpoint de túnel da API. O acesso a este recurso consome um ticket criptografado efêmero, acionando o streaming direto do documento binário do sistema upstream, garantindo que nenhuma PII seja manipulada ou exposta no lado do cliente (downstream).",
+            "example": "https://api.sispubli.edu.br/api/pdf/38f92bd3a84e..."
+          },
+          "ano": {
+            "type": "integer",
+            "title": "Ano",
+            "description": "Ano de realizacao do evento, extraido dos parametros do Sispubli",
+            "example": 2023
+          },
+          "tipo_codigo": {
+            "type": "integer",
+            "title": "Tipo Codigo",
+            "description": "Codigo numerico do tipo de certificado (1=Participacao, 2=Autor, etc.)",
+            "example": 1
+          },
+          "tipo_descricao": {
+            "type": "string",
+            "title": "Tipo Descricao",
+            "description": "Descricao legivel do tipo de certificado",
+            "example": "Participacao"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id_unico",
+          "titulo",
+          "ano",
+          "tipo_codigo",
+          "tipo_descricao"
+        ],
+        "title": "CertificadoItem",
+        "description": "Representa um certificado individual no retorno da API.\n\nA url_download fornece o recurso final via túnel seguro, eliminando a\nnecessidade de processamento de PII no lado do cliente."
+      },
+      "CertificadosResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CertificadosResult"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "CertificadosResponse",
+        "description": "Envelope de resposta de sucesso — dados aninhados em 'data'."
+      },
+      "CertificadosResult": {
+        "properties": {
+          "usuario_id": {
+            "type": "string",
+            "title": "Usuario Id",
+            "description": "CPF mascarado do titular no formato ***.XXX.XXX-** (LGPD)",
+            "example": "***.456.789-**"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Quantidade total de certificados encontrados",
+            "example": 42
+          },
+          "certificados": {
+            "items": {
+              "$ref": "#/components/schemas/CertificadoItem"
+            },
+            "type": "array",
+            "title": "Certificados",
+            "description": "Lista completa de certificados disponiveis para o CPF informado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "usuario_id",
+          "total"
+        ],
+        "title": "CertificadosResult",
+        "description": "Resultado consolidado da busca de certificados para um CPF."
+      },
+      "ErrorDetail": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Codigo de erro em snake_case para tratamento programatico",
+            "example": "invalid_cpf"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Mensagem descritiva do erro em portugues",
+            "example": "CPF deve conter exatamente 11 digitos numericos."
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorDetail",
+        "description": "Detalhe de erro padronizado para facilitar tratamento no cliente."
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "description": "Envelope de resposta de erro — detalhes aninhados em 'error'."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Status geral da nossa API"
+          },
+          "environment": {
+            "type": "string",
+            "title": "Environment",
+            "description": "Ambiente de execução (development/production)"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Versão atual da API"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "Momento exato da verificação (UTC)"
+          },
+          "security_configured": {
+            "type": "boolean",
+            "title": "Security Configured",
+            "description": "Indica se chaves críticas estão no .env"
+          },
+          "sispubli_online": {
+            "type": "boolean",
+            "title": "Sispubli Online",
+            "description": "Status de conectividade com o sistema upstream"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "environment",
+          "version",
+          "timestamp",
+          "security_configured",
+          "sispubli_online"
+        ],
+        "title": "HealthResponse",
+        "description": "Resposta do health check detalhado."
+      },
+      "TokenRequest": {
+        "properties": {
+          "cpf": {
+            "type": "string",
+            "title": "Cpf",
+            "description": "CPF do titular (11 dígitos). Aceita formatação com pontos e traço.",
+            "example": "74839210055"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cpf"
+        ],
+        "title": "TokenRequest",
+        "description": "Payload de entrada para geracao de token de sessao."
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token",
+            "description": "Token Fernet criptografado contendo o CPF do usuário (TTL 15 min)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token"
+        ],
+        "title": "TokenResponse",
+        "description": "Resposta da rota de autenticacao."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Gestão de credenciais e tokens de acesso temporários."
+    },
+    {
+      "name": "Certificates",
+      "description": "Extração iterativa via processamento upstream no sistema Sispubli."
+    },
+    {
+      "name": "Proxy",
+      "description": "Túnel seguro para streaming de documentos binários."
+    },
+    {
+      "name": "System",
+      "description": "Monitoramento de integridade e diagnósticos de infraestrutura."
+    }
+  ]
+}

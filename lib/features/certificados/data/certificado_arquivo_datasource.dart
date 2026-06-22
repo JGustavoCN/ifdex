@@ -1,6 +1,5 @@
 import 'dart:typed_data';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'certificado_arquivo_datasource.g.dart';
@@ -9,98 +8,89 @@ part 'certificado_arquivo_datasource.g.dart';
 CertificadoArquivoDatasource certificadoArquivoDatasource(
   CertificadoArquivoDatasourceRef ref,
 ) {
-  return CertificadoArquivoDatasource(FirebaseFirestore.instance);
+  return CertificadoArquivoDatasource();
 }
 
-class FirestoreFileSizeException implements Exception {
+class StorageFileSizeException implements Exception {
   final String message;
-  FirestoreFileSizeException(this.message);
+  StorageFileSizeException(this.message);
 
   @override
   String toString() => message;
 }
 
-/// Datasource responsável pelo upload e download de binários no Firestore.
+/// Datasource responsável pelo upload e download de binários no Supabase Storage.
 class CertificadoArquivoDatasource {
-  final FirebaseFirestore _db;
-  static const int _maxSizeInBytes = 700 * 1024; // 700KB
+  final SupabaseClient _supabase = Supabase.instance.client;
+  final String _bucket = 'certificados_arquivos';
+  static const int _maxSizeInBytes = 10 * 1024 * 1024; // 10MB
 
-  CertificadoArquivoDatasource(this._db);
-
-  CollectionReference<Map<String, dynamic>> _collection(String uid) {
-    return _db.collection('users').doc(uid).collection('certificados_arquivos');
-  }
-
-  /// Faz o upload de um arquivo binário.
-  /// Se for imagem, tenta comprimir antes de salvar.
-  /// Lança [FirestoreFileSizeException] se exceder 700KB após compressão.
+  /// Faz o upload de um arquivo binário para o Supabase.
+  /// Lança [StorageFileSizeException] se exceder 10MB.
   Future<void> uploadArquivo(
     String uid,
     String certificadoId,
     Uint8List bytes,
-    String fileName,
+    String
+    fileName, // Mantido por compatibilidade com a assinatura, mas path é pdf/jpg
   ) async {
-    Uint8List dataToSave = bytes;
-
-    // Tentar comprimir se for JPG/PNG
-    final isImage =
-        fileName.toLowerCase().endsWith('.jpg') ||
-        fileName.toLowerCase().endsWith('.jpeg') ||
-        fileName.toLowerCase().endsWith('.png');
-
-    if (isImage) {
-      final format = fileName.toLowerCase().endsWith('.png')
-          ? CompressFormat.png
-          : CompressFormat.jpeg;
-
-      final compressed = await FlutterImageCompress.compressWithList(
-        bytes,
-        minWidth: 1920,
-        minHeight: 1080,
-        quality: 70,
-        format: format,
-      );
-
-      dataToSave = compressed;
-    }
-
-    if (dataToSave.lengthInBytes > _maxSizeInBytes) {
-      throw FirestoreFileSizeException(
-        'O arquivo excede o limite de 700KB mesmo após compressão. '
+    if (bytes.lengthInBytes > _maxSizeInBytes) {
+      throw StorageFileSizeException(
+        'O arquivo excede o limite de 10MB. '
         'Por favor, utilize a opção "Link Externo".',
       );
     }
 
-    String contentType = 'application/pdf';
+    // Identifica o formato a partir da extensão ou usa .pdf como padrão de backup
+    String ext = '.pdf';
     if (fileName.toLowerCase().endsWith('.png')) {
-      contentType = 'image/png';
+      ext = '.png';
     } else if (fileName.toLowerCase().endsWith('.jpg') ||
         fileName.toLowerCase().endsWith('.jpeg')) {
-      contentType = 'image/jpeg';
+      ext = '.jpg';
     }
 
-    await _collection(uid).doc(certificadoId).set({
-      'id': certificadoId,
-      'dados': Blob(dataToSave),
-      'nomeArquivo': fileName,
-      'contentType': contentType,
-      'tamanhoOriginal': bytes.lengthInBytes,
-      'tamanhoComprimido': dataToSave.lengthInBytes,
-    });
+    final caminho = '$uid/$certificadoId$ext';
+
+    // Configura o ContentType com base na extensão
+    String contentType = 'application/pdf';
+    if (ext == '.png') contentType = 'image/png';
+    if (ext == '.jpg') contentType = 'image/jpeg';
+
+    await _supabase.storage
+        .from(_bucket)
+        .uploadBinary(
+          caminho,
+          bytes,
+          fileOptions: FileOptions(upsert: true, contentType: contentType),
+        );
   }
 
-  /// Faz o download do arquivo binário sob demanda.
-  Future<Uint8List?> downloadArquivo(String uid, String certificadoId) async {
-    final doc = await _collection(uid).doc(certificadoId).get();
-    if (doc.exists && doc.data() != null) {
-      final blob = doc.data()!['dados'] as Blob?;
-      return blob?.bytes;
+  /// Faz o download do arquivo binário sob demanda do Supabase.
+  Future<Uint8List?> downloadArquivo(
+    String uid,
+    String certificadoId, {
+    String ext = '.pdf',
+  }) async {
+    try {
+      final caminho = '$uid/$certificadoId$ext';
+      return await _supabase.storage.from(_bucket).download(caminho);
+    } catch (e) {
+      return null;
     }
-    return null;
   }
 
-  /// Remove o arquivo do Firestore.
-  Future<void> removerArquivo(String uid, String certificadoId) async {
-    await _collection(uid).doc(certificadoId).delete();
+  /// Remove o arquivo do Supabase Storage.
+  Future<void> removerArquivo(
+    String uid,
+    String certificadoId, {
+    String ext = '.pdf',
+  }) async {
+    try {
+      final caminho = '$uid/$certificadoId$ext';
+      await _supabase.storage.from(_bucket).remove([caminho]);
+    } catch (e) {
+      // Ignora erro se o arquivo não existir
+    }
   }
 }

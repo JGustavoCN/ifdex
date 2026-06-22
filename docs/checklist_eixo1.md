@@ -79,7 +79,7 @@ grep -n "ListView.builder\|GridView.builder" lib/views/home_mobile_view.dart lib
 | Carga Horária | Opcional, 1 a 5000 | `certificado_form_view.dart` — validator do `_cargaHorariaCtrl` |
 | Tags | Máx 5 tags, 20 chars/tag | `certificado_form_view.dart` — validator do `_tagsCtrl` |
 | Link | Formato URL válido | `certificado_form_view.dart` — validator do `_linkCtrl` |
-| Arquivo | Máx 5MB, formatos pdf/jpg/png | `certificado_form_view.dart` — `_selecionarArquivo()` |
+| Arquivo | Máx 10MB, formatos pdf/jpg/png | `certificado_form_view.dart` — `_selecionarArquivo()` |
 
 **Como verificar:**
 
@@ -127,7 +127,7 @@ grep -n "AlertDialog\|showDialog" lib/widgets/remove_button.dart
 | ✅ | SnackBar ao salvar certificado | `lib/views/home_view.dart` — `_abrirFormulario()` exibe "Certificado salvo com sucesso!" |
 | ✅ | SnackBar ao remover certificado | `lib/views/home_view.dart` — `_removerCertificado()` exibe "Certificado removido." |
 | ✅ | SnackBar ao atualizar certificado | `lib/views/home_view.dart` — `_abrirFormulario()` e `_abrirDetalhes()` exibem "Certificado atualizado." |
-| ✅ | SnackBar de erro (upload > 5MB) | `lib/views/certificado_form_view.dart` — `_selecionarArquivo()` |
+| ✅ | SnackBar de erro (upload > 10MB) | `lib/views/certificado_form_view.dart` — `_selecionarArquivo()` |
 
 **Como verificar:**
 

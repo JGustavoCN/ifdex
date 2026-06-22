@@ -112,7 +112,7 @@ A flag `_isSispubli` controla o que é renderizado:
 | Carga Horária | Opcional, 1–5000 se preenchido       | ✅ 1–5000        |
 | Tags          | Máx 5 tags, máx 20 chars por tag    | ✅ 5 tags/20ch   |
 | URL           | Formato URL válido (se preenchido)   | URI absoluta     |
-| Upload        | .pdf/.jpg/.png, máx 5MB             | ✅ 5MB           |
+| Upload        | .pdf/.jpg/.png, máx 10MB            | ✅ 10MB          |
 | Relevância    | 1–5 (via estrelas)                   | ✅ 1–5           |
 
 ### 3.4 Comprovação: Exclusão Mútua (Apenas Manual)

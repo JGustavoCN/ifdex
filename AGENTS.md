@@ -69,11 +69,12 @@ O sistema adota o padrão de **Micro-frontends** para separar a gestão privada 
 
 ## 6. Regras de Segurança, Otimização e Upload
 
-Como o sistema operará na camada gratuita do Firebase, o App Flutter aplica travas rígidas:
+Como o sistema operará numa arquitetura híbrida (Firebase + Supabase):
 
 - **Formatos Aceitos:** Exclusivamente `.pdf`, `.jpg` ou `.png`.
-- **Limite de Tamanho e Armazenamento (Firestore-only):** O projeto **não utiliza Firebase Storage** (que exige plano pago). Os arquivos são armazenados na coleção `certificados_arquivos`. O tamanho máximo permitido para o upload pré-compressão é **5MB**, porém há um **limite restrito de 700KB após compressão** para caber no documento do Firestore. Caso o arquivo comprimido exceda 700KB, o upload será recusado e o usuário deverá usar um "Link Externo".
-- **Otimização Obrigatória:** O aplicativo Flutter deve executar a **compressão automática local** de imagens (`.jpg`/`.png`) antes de iniciar o tráfego de rede.
+- **Armazenamento de Arquivos:** O Firebase Firestore será usado exclusivamente para metadados (indexação, filtros, regras de negócio e deduplicação via Hash/UUID). Os arquivos binários pesados originais serão armazenados no **Supabase Storage**.
+- **Limites de Tamanho:** O projeto permite o upload de documentos de até **10MB** (PDFs e Imagens). Como não há o limite restrito de 1MB do Firestore, os PDFs do Sispubli podem ser salvos de forma íntegra.
+- **Otimização:** O aplicativo Flutter pode executar compressão de imagens (`.jpg`/`.png`) localmente, mas não é estritamente obrigatório reduzir para limites ínfimos devido à infraestrutura do Supabase.
 
 ## 7. Requisitos para a Entrega do Eixo 1 (05/05)
 
@@ -85,7 +86,7 @@ Foco em UI/UX, Componentização e Validações.
 - **Ano:** 1900 a 2026.
 - **Carga Horária:** Se preenchido, entre 1 e 5000 (disponível para ambas as origens).
 - **Tags:** Máx. 5 tags por certificado, máx. 20 caracteres por tag.
-- **Arquivo/Link:** Validação de tipo, tamanho pré-compressão (5MB), tamanho pós-compressão (limite 700KB para Firestore) ou formato de URL.
+- **Arquivo/Link:** Validação de tipo, tamanho máximo de **10MB** (Supabase Storage) ou formato de URL.
 
 **B. Gamificação e Estado (Contador de Itens):**
 
