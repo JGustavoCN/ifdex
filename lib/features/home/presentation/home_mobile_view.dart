@@ -11,6 +11,8 @@ import 'package:ifdex/features/certificados/presentation/certificado_details_vie
 import 'package:ifdex/shared/widgets/app_loading_state.dart';
 import 'package:ifdex/shared/widgets/app_error_state.dart';
 import 'package:ifdex/shared/widgets/app_empty_state.dart';
+import 'package:ifdex/shared/widgets/app_search_bar.dart';
+import 'package:ifdex/shared/providers/busca_providers.dart';
 
 class HomeMobileView extends ConsumerWidget {
   const HomeMobileView({super.key});
@@ -83,42 +85,58 @@ class _BarraFiltros extends ConsumerWidget {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         children: [
-          const AppText(
-            'Meus Certificados',
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-          DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: filtroAtual,
-              icon: const Icon(
-                Icons.filter_list,
-                color: AppColors.primary,
-                size: 20,
-              ),
-              style: const TextStyle(
-                color: AppColors.primary,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const AppText(
+                'Meus Certificados',
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
-                fontFamily: 'Inter',
               ),
-              items: const [
-                DropdownMenuItem(value: 'todos', child: Text('Todos')),
-                DropdownMenuItem(
-                  value: 'oficial',
-                  child: Text('Oficiais (IFS)'),
+              DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: filtroAtual,
+                  icon: const Icon(
+                    Icons.filter_list,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    fontFamily: 'Inter',
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'todos', child: Text('Todos')),
+                    DropdownMenuItem(
+                      value: 'oficial',
+                      child: Text('Oficiais (IFS)'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'manual',
+                      child: Text('Adicionados'),
+                    ),
+                  ],
+                  onChanged: (novo) {
+                    if (novo != null) {
+                      ref
+                          .read(filtroCertificadosProvider.notifier)
+                          .setFiltro(novo);
+                    }
+                  },
                 ),
-                DropdownMenuItem(value: 'manual', child: Text('Adicionados')),
-              ],
-              onChanged: (novo) {
-                if (novo != null) {
-                  ref.read(filtroCertificadosProvider.notifier).setFiltro(novo);
-                }
-              },
-            ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          AppSearchBar(
+            initialValue: ref.read(buscaHomeProvider),
+            onChanged: (val) {
+              ref.read(buscaHomeProvider.notifier).setQuery(val);
+            },
           ),
         ],
       ),

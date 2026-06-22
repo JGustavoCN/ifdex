@@ -16,6 +16,8 @@ import 'package:ifdex/features/sispubli/presentation/sispubli_import_view.dart';
 import 'package:ifdex/shared/widgets/app_loading_state.dart';
 import 'package:ifdex/shared/widgets/app_error_state.dart';
 import 'package:ifdex/shared/widgets/app_empty_state.dart';
+import 'package:ifdex/shared/widgets/app_search_bar.dart';
+import 'package:ifdex/shared/providers/busca_providers.dart';
 
 class HomeWebView extends ConsumerWidget {
   const HomeWebView({super.key});
@@ -220,6 +222,16 @@ class _TopBar extends ConsumerWidget {
         children: [
           AppText.headline('Dashboard Acadêmico'),
           const Spacer(),
+          SizedBox(
+            width: 300,
+            child: AppSearchBar(
+              initialValue: ref.read(buscaHomeProvider),
+              onChanged: (val) {
+                ref.read(buscaHomeProvider.notifier).setQuery(val);
+              },
+            ),
+          ),
+          const SizedBox(width: 16),
           PopupMenuButton<String>(
             onSelected: (novo) =>
                 ref.read(filtroCertificadosProvider.notifier).setFiltro(novo),

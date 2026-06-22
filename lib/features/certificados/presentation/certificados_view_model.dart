@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:ifdex/features/certificados/data/certificado_repository.dart';
 import 'package:ifdex/features/certificados/models/certificado.dart';
+import 'package:ifdex/shared/providers/busca_providers.dart';
 
 part 'certificados_view_model.g.dart';
 
@@ -54,21 +55,35 @@ class CertificadosViewModel extends _$CertificadosViewModel {
 
 @riverpod
 List<Certificado> certificadosFiltrados(CertificadosFiltradosRef ref) {
+  // Lista Original
   final asyncCertificados = ref.watch(certificadosViewModelProvider);
-  final filtro = ref.watch(filtroCertificadosProvider);
-
   if (asyncCertificados is! AsyncData) {
     return const [];
   }
+  var lista = asyncCertificados.requireValue;
 
-  final lista = asyncCertificados.requireValue;
+  // Filtro Tipo
+  final filtroTipo = ref.watch(filtroCertificadosProvider);
+  if (filtroTipo == 'oficial') {
+    lista = lista.where((c) => c.origem == Origem.sispubli).toList();
+  } else if (filtroTipo == 'manual') {
+    lista = lista.where((c) => c.origem == Origem.manual).toList();
+  }
 
-  if (filtro == 'oficial') {
-    return lista.where((c) => c.origem == Origem.sispubli).toList();
+  // Busca Texto (Case-insensitive e Trim garantidos na origem do Debounce)
+  final query = ref.watch(buscaHomeDebouncedProvider);
+  if (query.isNotEmpty) {
+    lista = lista.where((c) {
+      final titulo = c.titulo.toLowerCase().contains(query);
+      final inst = c.instituicao.toLowerCase().contains(query);
+      final tipo = c.tipoDescricao.toLowerCase().contains(query);
+      final tag = c.tags.any((t) => t.toLowerCase().contains(query));
+
+      return titulo || inst || tipo || tag;
+    }).toList();
   }
-  if (filtro == 'manual') {
-    return lista.where((c) => c.origem == Origem.manual).toList();
-  }
+
+  // Resultado Final
   return lista;
 }
 

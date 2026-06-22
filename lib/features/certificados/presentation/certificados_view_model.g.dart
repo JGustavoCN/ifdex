@@ -7,7 +7,7 @@ part of 'certificados_view_model.dart';
 // **************************************************************************
 
 String _$certificadosFiltradosHash() =>
-    r'5fa9897973d724f64b05c7eb095feab140958594';
+    r'a762527f4e9025b66ec2661612c38cf0971c360b';
 
 /// See also [certificadosFiltrados].
 @ProviderFor(certificadosFiltrados)

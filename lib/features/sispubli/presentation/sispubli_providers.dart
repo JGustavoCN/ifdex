@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ifdex/features/sispubli/data/sispubli_datasource.dart';
 import 'package:ifdex/features/certificados/presentation/certificados_view_model.dart';
 import 'package:ifdex/features/sispubli/presentation/sispubli_import_view_model.dart';
+import 'package:ifdex/shared/providers/busca_providers.dart';
 
 /// Provider Computado que atua como Filtro Inteligente.
 /// Observa o estado do fetch da API e os dados locais do usuário,
@@ -29,7 +30,19 @@ final certificadosSispubliDisponiveisProvider =
       }
 
       // 3. Aplica o filtro de deduplicação reativamente
-      return dtosDaApi
+      var lista = dtosDaApi
           .where((dto) => !idsLocais.contains(dto.idUnico))
           .toList();
+
+      // 4. Busca Texto (Case-insensitive e Trim garantidos no Debounce)
+      final query = ref.watch(buscaSispubliDebouncedProvider);
+      if (query.isNotEmpty) {
+        lista = lista.where((dto) {
+          final titulo = dto.titulo.toLowerCase().contains(query);
+          final tipo = dto.tipoDescricao.toLowerCase().contains(query);
+          return titulo || tipo;
+        }).toList();
+      }
+
+      return lista;
     });
