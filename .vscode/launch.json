@@ -5,7 +5,6 @@
       "name": "IFdex - Debug",
       "request": "launch",
       "type": "dart",
-      "deviceId": "chrome",
       "args": ["--web-port=5000"]
     },
     {
