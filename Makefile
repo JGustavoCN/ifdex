@@ -1,5 +1,5 @@
 # Define que esses nomes são comandos, e não nomes de arquivos ou pastas
-.PHONY: install fix fix-lib fix-test fix-all format format-lib format-test format-all lint lint-lib lint-test lint-all test check check-all pre-commit build-web build-apk clean use-ssh use-https
+.PHONY: install fix fix-lib fix-test fix-all format format-lib format-test format-all lint lint-lib lint-test lint-all test check check-all pre-commit build-web build-apk clean use-ssh use-https generate watch
 
 
 # Instala o FVM, baixa o SDK, instala dependências e ativa o Lefthook na máquina
@@ -13,6 +13,15 @@ install:
 	@echo "------> 4/4 Blindando os commits com lefthook..."
 	npx lefthook install
 	@echo "------> Sucesso! Dependências instaladas e lefthook ativado!"
+
+# --- GERAÇÃO DE CÓDIGO ---
+# Roda o build_runner para gerar os arquivos .g.dart (Riverpod, JSON Serializable, etc)
+generate:
+	fvm dart run build_runner build -d
+
+# Roda o build_runner em modo observador (gera os arquivos em tempo real ao salvar)
+watch:
+	fvm dart run build_runner watch -d
 
 # --- FORMATAÇÃO ---
 # Formata apenas a pasta lib (mais rápido)

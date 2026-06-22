@@ -88,7 +88,7 @@ ifdex/
 | `tipoDescricao`   | `String`       | ✅           | Sim           | Categoria descritiva (ex: "Participação", "Ouvinte").                                                          |
 | `cargaHoraria`    | `int?`         | ❌           | Sim           | Horas do certificado. Se informada, deve estar entre 1 e 5000. **Proibida para Sispubli.**                     |
 | `urlDocumento`    | `String?`      | ❌           | Sim           | URL absoluta para o documento digital. Mutuamente exclusiva com `uploadDocumento`.                             |
-| `uploadDocumento` | `Uint8List?`   | ❌           | Sim           | Bytes do arquivo (PDF/JPG/PNG, máx. 5 MB). Mutuamente exclusivo com `urlDocumento`. **Proibido para Sispubli.**|
+| `uploadDocumento` | `Uint8List?`   | ❌           | Sim           | Bytes do arquivo (PDF/JPG/PNG, máx. 10 MB). Mutuamente exclusivo com `urlDocumento`. **Proibido para Sispubli.**|
 | `tags`            | `List<String>` | ✅           | Sim           | Lista de tags de categorização. Pode ser vazia (`[]`).                                                         |
 | `notaRelevancia`  | `int`          | ✅           | Sim           | Nota subjetiva de importância. Intervalo válido: 1–5.                                                          |
 

@@ -11,6 +11,7 @@ import 'package:ifdex/features/certificados/widgets/certificado_card.dart';
 import 'package:ifdex/features/certificados/presentation/certificado_details_view.dart';
 import 'package:ifdex/features/certificados/presentation/certificado_form_view.dart';
 import 'package:ifdex/features/auth/presentation/profile_view.dart';
+import 'package:ifdex/features/sispubli/presentation/sispubli_import_view.dart';
 
 import 'package:ifdex/shared/widgets/app_loading_state.dart';
 import 'package:ifdex/shared/widgets/app_error_state.dart';
@@ -265,6 +266,27 @@ class _TopBar extends ConsumerWidget {
             label: const AppText(
               'Novo Certificado',
               color: AppColors.textOnPrimary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(width: 8),
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => const SispubliImportView(),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.cloud_download_outlined,
+              size: 18,
+              color: AppColors.primary,
+            ),
+            label: const AppText(
+              'Importar do IFS',
+              color: AppColors.primary,
               fontWeight: FontWeight.w500,
             ),
           ),

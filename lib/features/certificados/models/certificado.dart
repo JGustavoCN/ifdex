@@ -122,14 +122,8 @@ class Certificado {
           'a instituição "IFS".',
         );
       }
-
-      if (uploadDocumento != null) {
-        throw ArgumentError(
-          'Certificados do Sispubli não aceitam '
-          'upload de arquivos, apenas '
-          'URL permanente.',
-        );
-      }
+      // uploadDocumento é permitido para Sispubli
+      // (importação baixa o PDF e faz upload no Supabase)
     }
 
     // 9. Validação de Formato de URL (Básica)

@@ -433,23 +433,14 @@ void main() {
       expect(cert.cargaHoraria, 40);
     });
 
-    test('#24 Deve lançar erro se a Origem for Sispubli '
-        'e possuir uploadDocumento', () {
-      final p = baseSispubli()
-        ..['uploadDocumento'] = Uint8List.fromList([1, 2, 3]);
+    test('#24 Deve aceitar uploadDocumento para a Origem Sispubli '
+        '(proxy download)', () {
+      final bytes = Uint8List.fromList([1, 2, 3]);
+      final p = baseSispubli()..['uploadDocumento'] = bytes;
 
-      expect(
-        () => criar(p),
-        throwsA(
-          isA<ArgumentError>().having(
-            (e) => e.message,
-            'message',
-            'Certificados do Sispubli não aceitam '
-                'upload de arquivos, apenas '
-                'URL permanente.',
-          ),
-        ),
-      );
+      final cert = criar(p);
+      expect(cert.uploadDocumento, bytes);
+      expect(cert.origem, Origem.sispubli);
     });
   });
 
