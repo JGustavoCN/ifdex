@@ -130,8 +130,13 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
     });
   }
 
+  bool _isLoading = false;
+
   Future<void> _salvar() async {
+    if (_isLoading) return;
     if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
 
     final c = _certificadoOriginal;
     final tags = _tagsCtrl.text
@@ -213,6 +218,10 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
           duration: const Duration(seconds: 5),
         ),
       );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -531,10 +540,19 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: _salvar,
-                icon: const Icon(Icons.save),
+                onPressed: _isLoading ? null : _salvar,
+                icon: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.textOnPrimary,
+                        ),
+                      )
+                    : const Icon(Icons.save),
                 label: AppText(
-                  labelSalvar,
+                  _isLoading ? 'Salvando...' : labelSalvar,
                   color: AppColors.textOnPrimary,
                   fontWeight: FontWeight.w600,
                 ),

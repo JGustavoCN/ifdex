@@ -5,11 +5,18 @@ import 'package:ifdex/features/auth/widgets/google_sign_in_button.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 
-class ProfileView extends ConsumerWidget {
+class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends ConsumerState<ProfileView> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
 
     return Scaffold(
@@ -46,31 +53,39 @@ class ProfileView extends ConsumerWidget {
                     color: AppColors.textSecondary,
                   ),
                   const SizedBox(height: 32),
-                  GoogleSignInButton(
-                    onPressed: () async {
-                      try {
-                        await ref
-                            .read(authViewModelProvider.notifier)
-                            .linkWithGoogle();
-                      } catch (e) {
-                        if (context.mounted) {
-                          final erro = e.toString();
-                          if (erro.contains('popup_closed')) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Login com Google cancelado.'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Erro: $erro')),
-                            );
-                          }
-                        }
-                      }
-                    },
-                  ),
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : GoogleSignInButton(
+                          onPressed: () async {
+                            if (_isLoading) return;
+                            setState(() => _isLoading = true);
+                            try {
+                              await ref
+                                  .read(authViewModelProvider.notifier)
+                                  .linkWithGoogle();
+                            } catch (e) {
+                              if (context.mounted) {
+                                final erro = e.toString();
+                                if (erro.contains('popup_closed')) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Login com Google cancelado.',
+                                      ),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Erro: $erro')),
+                                  );
+                                }
+                              }
+                            } finally {
+                              if (mounted) setState(() => _isLoading = false);
+                            }
+                          },
+                        ),
                 ],
               ),
             );
@@ -112,12 +127,22 @@ class ProfileView extends ConsumerWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      await ref.read(authViewModelProvider.notifier).signOut();
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                      }
-                    },
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            if (_isLoading) return;
+                            setState(() => _isLoading = true);
+                            try {
+                              await ref
+                                  .read(authViewModelProvider.notifier)
+                                  .signOut();
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+                              }
+                            } finally {
+                              if (mounted) setState(() => _isLoading = false);
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.error.withValues(alpha: 0.1),
                       foregroundColor: AppColors.error,
@@ -127,12 +152,20 @@ class ProfileView extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const AppText(
-                      'Sair da Conta',
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.error,
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: AppColors.error,
+                            ),
+                          )
+                        : const AppText(
+                            'Sair da Conta',
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.error,
+                          ),
                   ),
                 ),
               ],

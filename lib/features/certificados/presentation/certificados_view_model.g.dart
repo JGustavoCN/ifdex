@@ -6,8 +6,77 @@ part of 'certificados_view_model.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$instituicoesAtivasHash() =>
+    r'18a3ca577b63365f990ac2f3ecbb594649895f16';
+
+/// See also [instituicoesAtivas].
+@ProviderFor(instituicoesAtivas)
+final instituicoesAtivasProvider = AutoDisposeProvider<Set<String>>.internal(
+  instituicoesAtivas,
+  name: r'instituicoesAtivasProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$instituicoesAtivasHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef InstituicoesAtivasRef = AutoDisposeProviderRef<Set<String>>;
+String _$anosAtivosHash() => r'd90acd1aa4ce079775e7da344eeac48f1990dc7e';
+
+/// See also [anosAtivos].
+@ProviderFor(anosAtivos)
+final anosAtivosProvider = AutoDisposeProvider<Set<int>>.internal(
+  anosAtivos,
+  name: r'anosAtivosProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$anosAtivosHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AnosAtivosRef = AutoDisposeProviderRef<Set<int>>;
+String _$tiposAtivosHash() => r'a2d9b56185d75fbd6815f7daef5b844a7d8bbd85';
+
+/// See also [tiposAtivos].
+@ProviderFor(tiposAtivos)
+final tiposAtivosProvider = AutoDisposeProvider<Set<String>>.internal(
+  tiposAtivos,
+  name: r'tiposAtivosProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$tiposAtivosHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef TiposAtivosRef = AutoDisposeProviderRef<Set<String>>;
+String _$tagsAtivasHash() => r'b9d3882d34ac31713305f866c408086841512393';
+
+/// See also [tagsAtivas].
+@ProviderFor(tagsAtivas)
+final tagsAtivasProvider = AutoDisposeProvider<Set<String>>.internal(
+  tagsAtivas,
+  name: r'tagsAtivasProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$tagsAtivasHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef TagsAtivasRef = AutoDisposeProviderRef<Set<String>>;
 String _$certificadosFiltradosHash() =>
-    r'a762527f4e9025b66ec2661612c38cf0971c360b';
+    r'3ab391f4b13e6201f40d512f5e4bf7c2b205160a';
 
 /// See also [certificadosFiltrados].
 @ProviderFor(certificadosFiltrados)
@@ -167,12 +236,12 @@ class _CertificadoPorIdProviderElement
 }
 
 String _$filtroCertificadosHash() =>
-    r'c2df54e989ddd7053f0fabed0e472d09bdf83094';
+    r'034e9e45a721af74a14f1092228caca5004d1364';
 
 /// See also [FiltroCertificados].
 @ProviderFor(FiltroCertificados)
 final filtroCertificadosProvider =
-    AutoDisposeNotifierProvider<FiltroCertificados, String>.internal(
+    AutoDisposeNotifierProvider<FiltroCertificados, FiltrosGlobais>.internal(
       FiltroCertificados.new,
       name: r'filtroCertificadosProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -182,7 +251,7 @@ final filtroCertificadosProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$FiltroCertificados = AutoDisposeNotifier<String>;
+typedef _$FiltroCertificados = AutoDisposeNotifier<FiltrosGlobais>;
 String _$certificadosViewModelHash() =>
     r'9a0a8967d1fc0410c7644767f736566261860a66';
 

@@ -104,7 +104,12 @@ class SispubliImportViewModel extends _$SispubliImportViewModel {
             cert.uploadDocumento = bytes;
             await repo.adicionar(cert, fileName: '${cert.id}.pdf');
             importados++;
-          } catch (_) {
+          } catch (e) {
+            // ignore: avoid_print
+            print(
+              '[SispubliImport] Erro ao baixar ou fazer upload do PDF '
+              '("${dto.titulo}"): $e',
+            );
             // PDF falhou — salvar só metadados
             await repo.adicionar(cert);
             semDocumento++;
@@ -114,7 +119,12 @@ class SispubliImportViewModel extends _$SispubliImportViewModel {
           await repo.adicionar(cert);
           semDocumento++;
         }
-      } catch (_) {
+      } catch (e, st) {
+        // ignore: avoid_print
+        print(
+          '[SispubliImport] ERRO TOTAL (rejeição do certificado): '
+          '["${dto.titulo}"] -> $e\n$st',
+        );
         erros++;
       }
 

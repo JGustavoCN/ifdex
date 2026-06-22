@@ -24,13 +24,23 @@ class _SispubliCpfFormState extends ConsumerState<SispubliCpfForm> {
     super.dispose();
   }
 
+  bool _isLoading = false;
+
   void _buscar() {
+    if (_isLoading) return;
     if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
 
     final cpfLimpo = _cpfController.text.replaceAll(RegExp(r'\D'), '');
     ref
         .read(sispubliImportViewModelProvider.notifier)
         .buscarCertificados(cpfLimpo);
+
+    // Reset para o caso da árvore não ser desmontada imediatamente (delay)
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => _isLoading = false);
+    });
   }
 
   @override
@@ -92,10 +102,19 @@ class _SispubliCpfFormState extends ConsumerState<SispubliCpfForm> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: _buscar,
-                    icon: const Icon(Icons.search, size: 20),
-                    label: const AppText(
-                      'Buscar Certificados',
+                    onPressed: _isLoading ? null : _buscar,
+                    icon: _isLoading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.textOnPrimary,
+                            ),
+                          )
+                        : const Icon(Icons.search, size: 20),
+                    label: AppText(
+                      _isLoading ? 'Buscando...' : 'Buscar Certificados',
                       color: AppColors.textOnPrimary,
                       fontWeight: FontWeight.w600,
                     ),

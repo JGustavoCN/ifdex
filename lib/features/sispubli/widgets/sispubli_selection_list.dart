@@ -7,6 +7,7 @@ import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/shared/widgets/app_search_bar.dart';
 import 'package:ifdex/shared/providers/busca_providers.dart';
+import 'package:ifdex/features/sispubli/widgets/app_filtros_sispubli_bottom_sheet.dart';
 
 /// Fase 2: Componente isolado para selecionar DTOs através de checkboxes.
 /// Recebe a lista disponível (já deduplicada pelo Provider Computado)
@@ -104,6 +105,22 @@ class _SispubliSelectionListState extends ConsumerState<SispubliSelectionList> {
                 ),
               ),
               const Spacer(),
+              IconButton(
+                onPressed: () {
+                  showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => const AppFiltrosSispubliBottomSheet(),
+                  );
+                },
+                tooltip: 'Filtrar e Ordenar',
+                icon: const Icon(
+                  Icons.tune,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
               TextButton.icon(
                 onPressed: _toggleTodos,
                 icon: Icon(
