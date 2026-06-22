@@ -3,11 +3,10 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ifdex/features/certificados/data/certificado_repository.dart';
-import 'package:ifdex/features/certificados/data/firestore_certificado_repository.dart';
 import 'package:ifdex/features/certificados/presentation/certificados_view_model.dart';
 import 'package:ifdex/features/certificados/models/certificado.dart';
 
-class FakeCertificadoRepository implements FirestoreCertificadoRepository {
+class FakeCertificadoRepository implements CertificadoRepository {
   final List<Certificado> _items = [];
 
   @override

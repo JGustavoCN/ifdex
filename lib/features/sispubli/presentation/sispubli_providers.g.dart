@@ -43,7 +43,7 @@ final tiposAtivosSispubliProvider = AutoDisposeProvider<Set<String>>.internal(
 // ignore: unused_element
 typedef TiposAtivosSispubliRef = AutoDisposeProviderRef<Set<String>>;
 String _$certificadosSispubliDisponiveisHash() =>
-    r'afbc2c2d8b3637debf3775f3b5e6a5bb706c6add';
+    r'7cb0b28e3658d7920c451d38146aab5c8bd6ed66';
 
 /// Provider Computado que atua como Filtro Inteligente.
 /// Observa o estado do fetch da API e os dados locais do usuário,
@@ -68,7 +68,7 @@ final certificadosSispubliDisponiveisProvider =
 typedef CertificadosSispubliDisponiveisRef =
     AutoDisposeProviderRef<List<SispubliCertificadoDto>>;
 String _$filtroSispubliNotifierHash() =>
-    r'79542888cf2d792b07259205b8c17716a45f331c';
+    r'66be902bacda5751c35a1dc57a433ed7c300ef3b';
 
 /// See also [FiltroSispubliNotifier].
 @ProviderFor(FiltroSispubliNotifier)

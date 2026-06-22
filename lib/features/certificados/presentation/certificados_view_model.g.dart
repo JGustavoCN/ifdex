@@ -76,7 +76,7 @@ final tagsAtivasProvider = AutoDisposeProvider<Set<String>>.internal(
 // ignore: unused_element
 typedef TagsAtivasRef = AutoDisposeProviderRef<Set<String>>;
 String _$certificadosFiltradosHash() =>
-    r'3ab391f4b13e6201f40d512f5e4bf7c2b205160a';
+    r'dedd1e8607694365074e2768752ad36f41733945';
 
 /// See also [certificadosFiltrados].
 @ProviderFor(certificadosFiltrados)
@@ -236,7 +236,7 @@ class _CertificadoPorIdProviderElement
 }
 
 String _$filtroCertificadosHash() =>
-    r'034e9e45a721af74a14f1092228caca5004d1364';
+    r'05e745bbf211063f0680e0bdddcf598bd1b37812';
 
 /// See also [FiltroCertificados].
 @ProviderFor(FiltroCertificados)

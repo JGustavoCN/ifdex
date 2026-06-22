@@ -7,12 +7,12 @@ part of 'certificado_repository.dart';
 // **************************************************************************
 
 String _$certificadoRepositoryHash() =>
-    r'3928226f3ae55f2ad0b89a1a6980b347b4a1ebbd';
+    r'e885773db050b1627bc221c93376abc1b44219e4';
 
 /// See also [certificadoRepository].
 @ProviderFor(certificadoRepository)
 final certificadoRepositoryProvider =
-    AutoDisposeProvider<FirestoreCertificadoRepository>.internal(
+    AutoDisposeProvider<CertificadoRepository>.internal(
       certificadoRepository,
       name: r'certificadoRepositoryProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -25,6 +25,6 @@ final certificadoRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CertificadoRepositoryRef =
-    AutoDisposeProviderRef<FirestoreCertificadoRepository>;
+    AutoDisposeProviderRef<CertificadoRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
