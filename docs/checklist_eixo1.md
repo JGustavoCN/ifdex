@@ -74,7 +74,7 @@ grep -n "ListView.builder\|GridView.builder" lib/views/home_mobile_view.dart lib
 
 | Campo | Regra | Local |
 |:----- |:----- |:----- |
-| Título | Obrigatório, máx 100 chars | `certificado_form_view.dart` — validator do `_tituloCtrl` |
+| Título | Obrigatório, máx 255 chars | `certificado_form_view.dart` — validator do `_tituloCtrl` |
 | Ano | 1900 a ano atual | `certificado_form_view.dart` — validator do `_anoCtrl` |
 | Carga Horária | Opcional, 1 a 5000 | `certificado_form_view.dart` — validator do `_cargaHorariaCtrl` |
 | Tags | Máx 5 tags, 20 chars/tag | `certificado_form_view.dart` — validator do `_tagsCtrl` |

@@ -12,14 +12,14 @@ service cloud.firestore {
         
         allow create: if isOwner(userId)
           && request.resource.data.keys().hasAll(['id', 'origem', 'titulo', 'ano', 'instituicao', 'tags'])
-          && request.resource.data.titulo.size() <= 100
+          && request.resource.data.titulo.size() <= 255
           && request.resource.data.ano >= 1900 && request.resource.data.ano <= 2026
           && request.resource.data.tags.size() <= 5;
           
         allow update: if isOwner(userId)
           && request.resource.data.id == resource.data.id
           && request.resource.data.origem == resource.data.origem
-          && request.resource.data.titulo.size() <= 100
+          && request.resource.data.titulo.size() <= 255
           && request.resource.data.ano >= 1900 && request.resource.data.ano <= 2026
           && request.resource.data.tags.size() <= 5;
       }

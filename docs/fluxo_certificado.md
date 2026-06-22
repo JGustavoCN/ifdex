@@ -106,7 +106,7 @@ A flag `_isSispubli` controla o que é renderizado:
 
 | Campo         | Regra de Validação                   | Limite no Modelo |
 | :------------ | :----------------------------------- | :--------------- |
-| Título        | Obrigatório, máx 100 chars          | ✅ max 100       |
+| Título        | Obrigatório, máx 255 chars          | ✅ max 255       |
 | Instituição   | Obrigatório                          | Não-vazio        |
 | Ano           | Obrigatório, entre 1900 e ano atual | ✅ 1900–2026     |
 | Carga Horária | Opcional, 1–5000 se preenchido       | ✅ 1–5000        |
