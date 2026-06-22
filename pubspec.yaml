@@ -46,6 +46,7 @@ dependencies:
   google_sign_in: ^6.2.1
   flutter_image_compress: ^2.4.0
   supabase_flutter: ^2.15.0
+  dio: ^5.9.2
 
 dev_dependencies:
   flutter_test:
