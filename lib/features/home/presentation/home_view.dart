@@ -194,7 +194,7 @@ class _MiniAction extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         FloatingActionButton.small(
-          heroTag: label,
+          heroTag: null,
           onPressed: onTap,
           backgroundColor: AppColors.surface,
           foregroundColor: AppColors.primary,
