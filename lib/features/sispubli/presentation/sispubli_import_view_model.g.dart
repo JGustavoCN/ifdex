@@ -7,7 +7,7 @@ part of 'sispubli_import_view_model.dart';
 // **************************************************************************
 
 String _$sispubliImportViewModelHash() =>
-    r'a6dcd19412bf3554db426fd3b972de9122c45f04';
+    r'6fc0c6bfe23f7f6cc7cad1b617734f0a876225f0';
 
 /// See also [SispubliImportViewModel].
 @ProviderFor(SispubliImportViewModel)

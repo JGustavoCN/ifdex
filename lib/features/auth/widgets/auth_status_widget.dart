@@ -5,6 +5,7 @@ import 'package:ifdex/features/auth/widgets/google_sign_in_button.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/auth/presentation/profile_view.dart';
+import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 class AuthStatusWidget extends ConsumerWidget {
   const AuthStatusWidget({super.key});
@@ -50,10 +51,10 @@ class AuthStatusWidget extends ConsumerWidget {
                           .linkWithGoogle();
                     } catch (e) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Erro ao vincular: ${e.toString()}'),
-                          ),
+                        AppSnackBar.show(
+                          context,
+                          type: SnackType.error,
+                          message: 'Erro ao vincular conta Google.',
                         );
                       }
                     }

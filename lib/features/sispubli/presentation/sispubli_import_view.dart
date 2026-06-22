@@ -11,6 +11,7 @@ import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/shared/widgets/app_error_state.dart';
 import 'package:ifdex/shared/widgets/app_empty_state.dart';
+import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 /// Tela de importação de certificados do Sispubli.
 /// Atua apenas como Controller de View, roteando as fases visuais
@@ -60,35 +61,23 @@ class _SispubliImportViewState extends ConsumerState<SispubliImportView> {
 
   void _mostrarResultado(ImportResult resultado) {
     final buffer = StringBuffer();
+    SnackType type = SnackType.success;
 
-    if (resultado.importados > 0) {
-      buffer.write(
-        '✅ ${resultado.importados} '
-        'importado(s) com sucesso',
-      );
+    if (resultado.erros > 0) {
+      type = SnackType.error;
+      buffer.write('${resultado.erros} com erro');
     }
     if (resultado.semDocumento > 0) {
+      if (type == SnackType.success) type = SnackType.warning;
       if (buffer.isNotEmpty) buffer.write(' | ');
-      buffer.write(
-        '⚠️ ${resultado.semDocumento} '
-        'sem documento',
-      );
+      buffer.write('${resultado.semDocumento} sem documento');
     }
-    if (resultado.erros > 0) {
+    if (resultado.importados > 0) {
       if (buffer.isNotEmpty) buffer.write(' | ');
-      buffer.write(
-        '❌ ${resultado.erros} '
-        'com erro',
-      );
+      buffer.write('${resultado.importados} importado(s) com sucesso');
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(buffer.toString()),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
-      ),
-    );
+    AppSnackBar.show(context, type: type, message: buffer.toString());
 
     Navigator.of(context).pop();
   }
