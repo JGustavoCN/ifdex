@@ -303,8 +303,8 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
                   if (v == null || v.trim().isEmpty) {
                     return 'Obrigatório';
                   }
-                  if (v.length > 100) {
-                    return 'Máx. 100 caracteres';
+                  if (v.length > 255) {
+                    return 'Máx. 255 caracteres';
                   }
                   return null;
                 },
