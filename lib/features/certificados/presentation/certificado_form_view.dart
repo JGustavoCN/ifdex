@@ -12,6 +12,7 @@ import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
 import 'package:ifdex/features/certificados/widgets/info_box.dart';
+import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 /// Formulário para **criar** ou **editar** certificados.
 ///
@@ -111,14 +112,10 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
     final tamanhoMB = file.size / (1024 * 1024);
     if (tamanhoMB > 10) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const AppText(
-            'O arquivo excede o limite de 10MB.',
-            color: AppColors.textOnPrimary,
-          ),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
+      AppSnackBar.show(
+        context,
+        type: SnackType.error,
+        message: 'O arquivo excede o limite de 10MB.',
       );
       return;
     }
@@ -134,7 +131,14 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
 
   Future<void> _salvar() async {
     if (_isLoading) return;
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      AppSnackBar.show(
+        context,
+        type: SnackType.warning,
+        message: 'Corrija os campos destacados.',
+      );
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -196,27 +200,19 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
 
       if (!mounted) return;
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: AppText(
-            widget.id == null
-                ? 'Certificado salvo com sucesso!'
-                : 'Certificado atualizado.',
-            color: AppColors.textOnPrimary,
-          ),
-        ),
+      AppSnackBar.show(
+        context,
+        type: SnackType.success,
+        message: widget.id == null
+            ? 'Certificado salvo com sucesso!'
+            : 'Certificado atualizado.',
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: AppText(
-            e.toString().replaceAll('Exception: ', ''),
-            color: AppColors.textOnPrimary,
-          ),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          duration: const Duration(seconds: 5),
-        ),
+      AppSnackBar.show(
+        context,
+        type: SnackType.error,
+        message: e.toString().replaceAll('Exception: ', ''),
       );
     } finally {
       if (mounted) {

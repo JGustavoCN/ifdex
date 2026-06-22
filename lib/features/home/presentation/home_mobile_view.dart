@@ -14,6 +14,7 @@ import 'package:ifdex/shared/widgets/app_empty_state.dart';
 import 'package:ifdex/shared/widgets/app_search_bar.dart';
 import 'package:ifdex/shared/providers/busca_providers.dart';
 import 'package:ifdex/shared/widgets/app_filtros_bottom_sheet.dart';
+import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 class HomeMobileView extends ConsumerWidget {
   const HomeMobileView({super.key});
@@ -60,10 +61,17 @@ class HomeMobileView extends ConsumerWidget {
                         ),
                       );
                     },
-                    onRemove: () {
-                      ref
+                    onRemove: () async {
+                      await ref
                           .read(certificadosViewModelProvider.notifier)
                           .remover(c.id);
+                      if (context.mounted) {
+                        AppSnackBar.show(
+                          context,
+                          type: SnackType.error,
+                          message: 'Certificado excluído. -50 XP',
+                        );
+                      }
                     },
                   );
                 },

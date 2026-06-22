@@ -138,6 +138,15 @@ class AppTheme {
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.textDisabled),
         ),
+
+        errorStyle: textTheme.bodySmall?.copyWith(
+          color: AppColors.error,
+          fontWeight: FontWeight.w500,
+        ),
+
+        helperStyle: textTheme.bodySmall?.copyWith(
+          color: AppColors.textSecondary,
+        ),
       ),
     );
   }

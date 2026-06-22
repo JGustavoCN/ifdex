@@ -4,6 +4,8 @@ import 'package:ifdex/features/auth/presentation/auth_view_model.dart';
 import 'package:ifdex/features/auth/widgets/google_sign_in_button.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
+import 'package:ifdex/shared/widgets/app_snack_bar.dart';
+import 'package:ifdex/shared/widgets/app_confirm_dialog.dart';
 
 class ProfileView extends ConsumerStatefulWidget {
   const ProfileView({super.key});
@@ -67,17 +69,17 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                               if (context.mounted) {
                                 final erro = e.toString();
                                 if (erro.contains('popup_closed')) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Login com Google cancelado.',
-                                      ),
-                                      duration: Duration(seconds: 2),
-                                    ),
+                                  AppSnackBar.show(
+                                    context,
+                                    type: SnackType.info,
+                                    message: 'Login com Google cancelado.',
                                   );
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Erro: $erro')),
+                                  AppSnackBar.show(
+                                    context,
+                                    type: SnackType.error,
+                                    message:
+                                        'Erro ao vincular conta. Tente novamente.',
                                   );
                                 }
                               }
@@ -131,6 +133,16 @@ class _ProfileViewState extends ConsumerState<ProfileView> {
                         ? null
                         : () async {
                             if (_isLoading) return;
+                            final ok = await AppConfirmDialog.show(
+                              context,
+                              title: 'Sair da Conta',
+                              description: 'Tem certeza que deseja sair?',
+                              confirmLabel: 'Sair',
+                              icon: Icons.logout,
+                            );
+
+                            if (!ok) return;
+
                             setState(() => _isLoading = true);
                             try {
                               await ref

@@ -10,6 +10,7 @@ import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
 import 'package:ifdex/features/certificados/widgets/info_box.dart';
+import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 import 'certificado_form_view.dart';
 
 /// Tela de visualização read-only de um [Certificado].
@@ -264,13 +265,10 @@ class _Content extends ConsumerWidget {
         if (!temUrl && temUpload)
           FilledButton.icon(
             onPressed: () async {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: AppText(
-                    'Baixando arquivo...',
-                    color: AppColors.textOnPrimary,
-                  ),
-                ),
+              AppSnackBar.show(
+                context,
+                type: SnackType.info,
+                message: 'Baixando arquivo...',
               );
               try {
                 final repo = ref.read(certificadoRepositoryProvider);
@@ -278,35 +276,24 @@ class _Content extends ConsumerWidget {
                 if (!context.mounted) return;
 
                 if (bytes != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: AppText(
-                        'Download concluído: ${bytes.length} bytes. (Integração PDF na Fase 3)',
-                        color: AppColors.textOnPrimary,
-                      ),
-                    ),
+                  AppSnackBar.show(
+                    context,
+                    type: SnackType.success,
+                    message: 'Download concluído. (Integração PDF na Fase 3)',
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: AppText(
-                        'Arquivo não encontrado no servidor.',
-                        color: AppColors.textOnPrimary,
-                      ),
-                      backgroundColor: AppColors.error,
-                    ),
+                  AppSnackBar.show(
+                    context,
+                    type: SnackType.error,
+                    message: 'Arquivo não encontrado no servidor.',
                   );
                 }
               } catch (e) {
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: AppText(
-                      'Erro ao baixar: $e',
-                      color: AppColors.textOnPrimary,
-                    ),
-                    backgroundColor: AppColors.error,
-                  ),
+                AppSnackBar.show(
+                  context,
+                  type: SnackType.error,
+                  message: 'Erro ao baixar o arquivo. Tente novamente.',
                 );
               }
             },
@@ -322,13 +309,10 @@ class _Content extends ConsumerWidget {
           OutlinedButton.icon(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: certificado.urlDocumento!));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: AppText(
-                    'Link copiado para a área de transferência',
-                    color: AppColors.textOnPrimary,
-                  ),
-                ),
+              AppSnackBar.show(
+                context,
+                type: SnackType.success,
+                message: 'Link copiado para a área de transferência',
               );
             },
             icon: const Icon(Icons.copy),
@@ -372,13 +356,10 @@ class _Content extends ConsumerWidget {
     if (uri == null) return;
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && ctx.mounted) {
-      ScaffoldMessenger.of(ctx).showSnackBar(
-        const SnackBar(
-          content: AppText(
-            'Não foi possível abrir o link.',
-            color: AppColors.textOnPrimary,
-          ),
-        ),
+      AppSnackBar.show(
+        ctx,
+        type: SnackType.warning,
+        message: 'Não foi possível abrir o link.',
       );
     }
   }
