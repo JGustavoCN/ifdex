@@ -64,7 +64,7 @@ class HomeMobileView extends ConsumerWidget {
                     onRemove: () async {
                       await ref
                           .read(certificadosViewModelProvider.notifier)
-                          .remover(c.id);
+                          .remover(c);
                       if (context.mounted) {
                         AppSnackBar.show(
                           context,

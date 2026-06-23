@@ -24,6 +24,7 @@ class Certificado {
   String? urlDocumento;
   Uint8List? uploadDocumento; // Transitório: usado apenas no upload
   bool temArquivo;
+  String formatoArquivo;
   List<String> tags;
   int notaRelevancia;
 
@@ -39,6 +40,7 @@ class Certificado {
     this.urlDocumento,
     this.uploadDocumento,
     this.temArquivo = false,
+    this.formatoArquivo = '.pdf',
     required this.tags,
     required this.notaRelevancia,
   });
@@ -58,6 +60,7 @@ class Certificado {
     String? urlDocumento,
     Uint8List? uploadDocumento,
     bool temArquivo = false,
+    String formatoArquivo = '.pdf',
     required List<String> tags,
     required int notaRelevancia,
   }) {
@@ -145,6 +148,7 @@ class Certificado {
       urlDocumento: urlDocumento,
       uploadDocumento: uploadDocumento,
       temArquivo: temArquivo,
+      formatoArquivo: formatoArquivo,
       tags: tags,
       notaRelevancia: notaRelevancia,
     );
@@ -162,6 +166,7 @@ class Certificado {
       'cargaHoraria': cargaHoraria,
       'urlDocumento': urlDocumento,
       'temArquivo': temArquivo,
+      'formatoArquivo': formatoArquivo,
       'tags': tags,
       'notaRelevancia': notaRelevancia,
     };
@@ -181,6 +186,7 @@ class Certificado {
       cargaHoraria: map['cargaHoraria'] as int?,
       urlDocumento: map['urlDocumento'] as String?,
       temArquivo: map['temArquivo'] as bool? ?? false,
+      formatoArquivo: map['formatoArquivo'] as String? ?? '.pdf',
       tags: List<String>.from((map['tags'] as List?) ?? []),
       notaRelevancia: map['notaRelevancia'] as int? ?? 1,
     );

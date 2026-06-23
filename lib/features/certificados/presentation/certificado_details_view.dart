@@ -273,7 +273,7 @@ class _Content extends ConsumerWidget {
               );
               try {
                 final repo = ref.read(certificadoRepositoryProvider);
-                final bytes = await repo.carregarArquivo(certificado.id);
+                final bytes = await repo.carregarArquivo(certificado);
                 if (!context.mounted) return;
 
                 if (bytes != null) {
