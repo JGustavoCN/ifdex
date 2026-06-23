@@ -67,28 +67,42 @@ class CertificadoArquivoDatasource {
   }
 
   /// Faz o download do arquivo binário sob demanda do Supabase.
-  Future<Uint8List?> downloadArquivo(
-    String uid,
-    String certificadoId, {
-    String ext = '.pdf',
-  }) async {
-    try {
-      final caminho = '$uid/$certificadoId$ext';
-      return await _supabase.storage.from(_bucket).download(caminho);
-    } catch (e) {
-      return null;
+  Future<Uint8List?> downloadArquivo(String uid, String certificadoId) async {
+    for (final ext in ['.pdf', '.png', '.jpg']) {
+      try {
+        final caminho = '$uid/$certificadoId$ext';
+        return await _supabase.storage.from(_bucket).download(caminho);
+      } catch (e) {
+        continue;
+      }
     }
+    return null;
+  }
+
+  /// Obtém uma URL assinada temporária (válida por 60s) para visualização em stream.
+  Future<String?> obterUrlAssinada(String uid, String certificadoId) async {
+    for (final ext in ['.pdf', '.png', '.jpg']) {
+      try {
+        final caminho = '$uid/$certificadoId$ext';
+        return await _supabase.storage
+            .from(_bucket)
+            .createSignedUrl(caminho, 60);
+      } catch (e) {
+        continue;
+      }
+    }
+    return null;
   }
 
   /// Remove o arquivo do Supabase Storage.
-  Future<void> removerArquivo(
-    String uid,
-    String certificadoId, {
-    String ext = '.pdf',
-  }) async {
+  Future<void> removerArquivo(String uid, String certificadoId) async {
     try {
-      final caminho = '$uid/$certificadoId$ext';
-      await _supabase.storage.from(_bucket).remove([caminho]);
+      final caminhos = [
+        '.pdf',
+        '.png',
+        '.jpg',
+      ].map((ext) => '$uid/$certificadoId$ext').toList();
+      await _supabase.storage.from(_bucket).remove(caminhos);
     } catch (e) {
       // Ignora erro se o arquivo não existir
     }

@@ -12,6 +12,7 @@ import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
 import 'package:ifdex/features/certificados/widgets/info_box.dart';
 import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 import 'certificado_form_view.dart';
+import 'certificado_document_view.dart';
 
 /// Tela de visualização read-only de um [Certificado].
 ///
@@ -268,7 +269,7 @@ class _Content extends ConsumerWidget {
               AppSnackBar.show(
                 context,
                 type: SnackType.info,
-                message: 'Baixando arquivo...',
+                message: 'Obtendo acesso seguro ao documento...',
               );
               try {
                 final repo = ref.read(certificadoRepositoryProvider);
@@ -276,10 +277,15 @@ class _Content extends ConsumerWidget {
                 if (!context.mounted) return;
 
                 if (bytes != null) {
-                  AppSnackBar.show(
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  await Navigator.push(
                     context,
-                    type: SnackType.success,
-                    message: 'Download concluído. (Integração PDF na Fase 3)',
+                    MaterialPageRoute<void>(
+                      builder: (_) => CertificadoDocumentView(
+                        titulo: certificado.titulo,
+                        documentBytes: bytes,
+                      ),
+                    ),
                   );
                 } else {
                   AppSnackBar.show(
@@ -293,7 +299,7 @@ class _Content extends ConsumerWidget {
                 AppSnackBar.show(
                   context,
                   type: SnackType.error,
-                  message: 'Erro ao baixar o arquivo. Tente novamente.',
+                  message: 'Erro ao acessar o arquivo. Tente novamente.',
                 );
               }
             },

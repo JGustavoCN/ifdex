@@ -62,6 +62,11 @@ class CertificadoRepository {
     return _arquivoDatasource.downloadArquivo(_uid, certificadoId);
   }
 
+  /// Retorna uma URL assinada válida por 60 segundos para consumo via streaming.
+  Future<String?> obterUrlAssinada(String certificadoId) async {
+    return _arquivoDatasource.obterUrlAssinada(_uid, certificadoId);
+  }
+
   /// Remove o certificado e seu arquivo binário (se existir).
   Future<void> remover(String certificadoId) async {
     await _firestoreDatasource.remover(_uid, certificadoId);

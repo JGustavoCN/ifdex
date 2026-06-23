@@ -207,90 +207,113 @@ class _TopBar extends ConsumerWidget {
         color: AppColors.surface,
         border: Border(bottom: BorderSide(color: AppColors.divider)),
       ),
-      child: Row(
-        children: [
-          AppText.headline('Dashboard Acadêmico'),
-          const Spacer(),
-          SizedBox(
-            width: 300,
-            child: AppSearchBar(
-              initialValue: ref.read(buscaHomeProvider),
-              onChanged: (val) {
-                ref.read(buscaHomeProvider.notifier).setQuery(val);
-              },
-            ),
-          ),
-          const SizedBox(width: 16),
-          IconButton(
-            onPressed: () {
-              showDialog<void>(
-                context: context,
-                builder: (_) => Dialog(
-                  backgroundColor: Colors.transparent,
-                  insetPadding: const EdgeInsets.all(24),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 450),
-                    child: const AppFiltrosBottomSheet(),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppText.headline('Dashboard Acadêmico'),
+                  Row(
+                    children: [
+                      const SizedBox(width: 16),
+                      SizedBox(
+                        width: 260,
+                        child: AppSearchBar(
+                          initialValue: ref.read(buscaHomeProvider),
+                          onChanged: (val) {
+                            ref.read(buscaHomeProvider.notifier).setQuery(val);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      IconButton(
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (_) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              insetPadding: const EdgeInsets.all(24),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 450,
+                                ),
+                                child: const AppFiltrosBottomSheet(),
+                              ),
+                            ),
+                          );
+                        },
+                        tooltip: 'Filtrar e Ordenar',
+                        icon: const Icon(
+                          Icons.tune,
+                          color: AppColors.primary,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (_) => const CertificadoFormView(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.add, size: 18),
+                        label: const AppText(
+                          'Novo Certificado',
+                          color: AppColors.textOnPrimary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (_) => const SispubliImportView(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.cloud_download_outlined,
+                          size: 18,
+                          color: AppColors.primary,
+                        ),
+                        label: const AppText(
+                          'Importar do IFS',
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (_) => const ProfileView(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.account_circle,
+                          color: AppColors.primary,
+                          size: 32,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              );
-            },
-            tooltip: 'Filtrar e Ordenar',
-            icon: const Icon(Icons.tune, color: AppColors.primary, size: 24),
-          ),
-          const SizedBox(width: 12),
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => const CertificadoFormView(),
-                ),
-              );
-            },
-            icon: const Icon(Icons.add, size: 18),
-            label: const AppText(
-              'Novo Certificado',
-              color: AppColors.textOnPrimary,
-              fontWeight: FontWeight.w500,
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          OutlinedButton.icon(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => const SispubliImportView(),
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.cloud_download_outlined,
-              size: 18,
-              color: AppColors.primary,
-            ),
-            label: const AppText(
-              'Importar do IFS',
-              color: AppColors.primary,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(width: 16),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(builder: (_) => const ProfileView()),
-              );
-            },
-            icon: const Icon(
-              Icons.account_circle,
-              color: AppColors.primary,
-              size: 32,
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
