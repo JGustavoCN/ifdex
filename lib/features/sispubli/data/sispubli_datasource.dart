@@ -107,14 +107,16 @@ class SispubliDatasource {
     }
   }
 
-  /// GET /api/pdf/{ticket}
-  ///
   /// Baixa os bytes crus do PDF via túnel seguro.
   /// O [urlDownload] já contém a URL completa.
   Future<Uint8List> baixarPdf(String urlDownload) async {
     try {
+      final urlFinal = urlDownload.startsWith('http')
+          ? urlDownload
+          : '$baseUrl${urlDownload.startsWith('/') ? '' : '/'}$urlDownload';
+
       final response = await _dio.get<List<int>>(
-        urlDownload,
+        urlFinal,
         options: Options(responseType: ResponseType.bytes),
       );
 

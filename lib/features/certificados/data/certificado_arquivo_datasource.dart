@@ -27,12 +27,11 @@ class CertificadoArquivoDatasource {
 
   /// Faz o upload de um arquivo binário para o Supabase.
   /// Lança [StorageFileSizeException] se exceder 10MB.
-  Future<void> uploadArquivo(
+  Future<String> uploadArquivo(
     String uid,
     String certificadoId,
     Uint8List bytes,
-    String
-    fileName, // Mantido por compatibilidade com a assinatura, mas path é pdf/jpg
+    String fileName,
   ) async {
     if (bytes.lengthInBytes > _maxSizeInBytes) {
       throw StorageFileSizeException(
@@ -62,32 +61,45 @@ class CertificadoArquivoDatasource {
         .uploadBinary(
           caminho,
           bytes,
-          fileOptions: FileOptions(upsert: true, contentType: contentType),
+          fileOptions: FileOptions(contentType: contentType),
         );
+
+    return ext;
   }
 
-  /// Faz o download do arquivo binário sob demanda do Supabase.
   Future<Uint8List?> downloadArquivo(
     String uid,
-    String certificadoId, {
-    String ext = '.pdf',
-  }) async {
+    String certificadoId,
+    String formatoArquivo,
+  ) async {
     try {
-      final caminho = '$uid/$certificadoId$ext';
+      final caminho = '$uid/$certificadoId$formatoArquivo';
       return await _supabase.storage.from(_bucket).download(caminho);
     } catch (e) {
       return null;
     }
   }
 
-  /// Remove o arquivo do Supabase Storage.
+  Future<String?> obterUrlAssinada(
+    String uid,
+    String certificadoId,
+    String formatoArquivo,
+  ) async {
+    try {
+      final caminho = '$uid/$certificadoId$formatoArquivo';
+      return await _supabase.storage.from(_bucket).createSignedUrl(caminho, 60);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<void> removerArquivo(
     String uid,
-    String certificadoId, {
-    String ext = '.pdf',
-  }) async {
+    String certificadoId,
+    String formatoArquivo,
+  ) async {
     try {
-      final caminho = '$uid/$certificadoId$ext';
+      final caminho = '$uid/$certificadoId$formatoArquivo';
       await _supabase.storage.from(_bucket).remove([caminho]);
     } catch (e) {
       // Ignora erro se o arquivo não existir

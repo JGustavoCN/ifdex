@@ -152,13 +152,15 @@ class CertificadosViewModel extends _$CertificadosViewModel {
     }
   }
 
-  Future<void> remover(String id) async {
+  Future<void> remover(Certificado certificado) async {
     final repository = ref.read(certificadoRepositoryProvider);
-    await repository.remover(id);
+    await repository.remover(certificado);
 
     if (state is AsyncData) {
       final listaAtual = state.requireValue;
-      final novaLista = listaAtual.where((c) => c.id != id).toList();
+      final novaLista = listaAtual
+          .where((c) => c.id != certificado.id)
+          .toList();
       state = AsyncData(novaLista);
     }
   }

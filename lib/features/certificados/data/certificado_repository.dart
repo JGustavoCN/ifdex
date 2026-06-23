@@ -44,13 +44,14 @@ class CertificadoRepository {
   Future<void> adicionar(Certificado certificado, {String? fileName}) async {
     // Se há um arquivo transitório, tenta fazer o upload na segunda coleção
     if (certificado.uploadDocumento != null && fileName != null) {
-      await _arquivoDatasource.uploadArquivo(
+      final ext = await _arquivoDatasource.uploadArquivo(
         _uid,
         certificado.id,
         certificado.uploadDocumento!,
         fileName,
       );
       certificado.temArquivo = true;
+      certificado.formatoArquivo = ext;
     }
 
     // Salva metadados (note que uploadDocumento não é salvo no toMap)
@@ -58,14 +59,31 @@ class CertificadoRepository {
   }
 
   /// Faz o download do binário atrelado a este certificado.
-  Future<Uint8List?> carregarArquivo(String certificadoId) async {
-    return _arquivoDatasource.downloadArquivo(_uid, certificadoId);
+  Future<Uint8List?> carregarArquivo(Certificado certificado) async {
+    return _arquivoDatasource.downloadArquivo(
+      _uid,
+      certificado.id,
+      certificado.formatoArquivo,
+    );
+  }
+
+  /// Retorna uma URL assinada válida por 60 segundos para consumo via streaming.
+  Future<String?> obterUrlAssinada(Certificado certificado) async {
+    return _arquivoDatasource.obterUrlAssinada(
+      _uid,
+      certificado.id,
+      certificado.formatoArquivo,
+    );
   }
 
   /// Remove o certificado e seu arquivo binário (se existir).
-  Future<void> remover(String certificadoId) async {
-    await _firestoreDatasource.remover(_uid, certificadoId);
+  Future<void> remover(Certificado certificado) async {
+    await _firestoreDatasource.remover(_uid, certificado.id);
     // Tenta deletar o arquivo sem se importar se havia ou não
-    await _arquivoDatasource.removerArquivo(_uid, certificadoId);
+    await _arquivoDatasource.removerArquivo(
+      _uid,
+      certificado.id,
+      certificado.formatoArquivo,
+    );
   }
 }

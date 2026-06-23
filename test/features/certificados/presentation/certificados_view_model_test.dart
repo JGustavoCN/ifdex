@@ -23,12 +23,14 @@ class FakeCertificadoRepository implements CertificadoRepository {
   }
 
   @override
-  Future<void> remover(String id) async {
-    _items.removeWhere((c) => c.id == id);
+  Future<void> remover(Certificado certificado) async {
+    _items.removeWhere((c) => c.id == certificado.id);
   }
 
   @override
-  Future<Uint8List?> carregarArquivo(String certificadoId) async => null;
+  Future<Uint8List?> carregarArquivo(Certificado certificado) async {
+    return null;
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -132,7 +134,7 @@ void main() {
       final countBefore = stateList.length;
 
       final notifier = container.read(certificadosViewModelProvider.notifier);
-      await notifier.remover(alvo.id);
+      await notifier.remover(alvo);
 
       final countAfter = container
           .read(certificadosViewModelProvider)
