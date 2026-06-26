@@ -8,6 +8,7 @@ import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/shared/utils/file_type_detector.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_saver/file_saver.dart';
+import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 /// Tela dedicada à visualização em tela cheia de Documentos (PDF, JPG, PNG).
 /// Carrega o arquivo a partir dos bytes armazenados em memória e verifica sua assinatura real.
@@ -111,17 +112,8 @@ class CertificadoDocumentView extends StatelessWidget {
             tooltip: 'Compartilhar Arquivo',
           ),
           const SizedBox(width: 4),
-          ElevatedButton.icon(
+          FilledButton.icon(
             onPressed: () => _baixarArquivoFisico(context, extensao),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: AppColors.textOnPrimary,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
             icon: const Icon(Icons.download_rounded, size: 20),
             label: const AppText(
               'Baixar',
@@ -156,14 +148,10 @@ class CertificadoDocumentView extends StatelessWidget {
       await Share.shareXFiles([xFile], text: 'Documento IFdex: $titulo');
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: AppText(
-              'Erro ao compartilhar: $e',
-              color: AppColors.surface,
-            ),
-            backgroundColor: AppColors.error,
-          ),
+        AppSnackBar.show(
+          context,
+          type: SnackType.error,
+          message: 'Erro ao compartilhar: $e',
         );
       }
     }
@@ -200,7 +188,7 @@ class CertificadoDocumentView extends StatelessWidget {
 
       final extLimpa = extensao.replaceAll('.', '');
 
-      await FileSaver.instance.saveFile(
+      await FileSaver.instance.saveAs(
         name: nomeBase,
         bytes: documentBytes,
         fileExtension: extLimpa,
@@ -208,23 +196,18 @@ class CertificadoDocumentView extends StatelessWidget {
       );
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: AppText(
-              'Download iniciado com sucesso.',
-              color: AppColors.surface,
-            ),
-            backgroundColor: AppColors.success,
-          ),
+        AppSnackBar.show(
+          context,
+          type: SnackType.success,
+          message: 'Download iniciado com sucesso.',
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: AppText('Erro ao baixar: $e', color: AppColors.surface),
-            backgroundColor: AppColors.error,
-          ),
+        AppSnackBar.show(
+          context,
+          type: SnackType.error,
+          message: 'Erro ao baixar: $e',
         );
       }
     }
@@ -328,7 +311,7 @@ class CertificadoDocumentView extends StatelessWidget {
                 const AppText(
                   'Arquivo Corrompido ou Inválido',
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
