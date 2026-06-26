@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:ifdex/features/certificados/models/certificado.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
@@ -94,7 +95,18 @@ class CertificadoCover extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: height == null ? MainAxisSize.min : MainAxisSize.max,
           children: [
-            Icon(icone, size: isCompact ? 36 : 56, color: Colors.white70),
+            if (origem == Origem.sispubli)
+              SvgPicture.asset(
+                'assets/logo_ifs.svg',
+                width: isCompact ? 36 : 56,
+                height: isCompact ? 36 : 56,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white70,
+                  BlendMode.srcIn,
+                ),
+              )
+            else
+              Icon(icone, size: isCompact ? 36 : 56, color: Colors.white70),
             const SizedBox(height: 10),
             AppText(
               displayTitulo,

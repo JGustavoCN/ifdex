@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pdfrx/pdfrx.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
@@ -79,8 +80,14 @@ class CertificadoDocumentView extends StatelessWidget {
             'assets/logo_transparent.png',
             height: 28,
             fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.account_balance, color: AppColors.primary),
+            errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+              'assets/logo_ifs.svg',
+              height: 28,
+              colorFilter: const ColorFilter.mode(
+                AppColors.primary,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

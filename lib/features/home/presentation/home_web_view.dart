@@ -373,8 +373,8 @@ class _AreaPrincipal extends ConsumerWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 350,
-                            mainAxisExtent: 320,
+                            maxCrossAxisExtent: 400,
+                            mainAxisExtent: 260,
                             crossAxisSpacing: 20,
                             mainAxisSpacing: 20,
                           ),
@@ -383,6 +383,7 @@ class _AreaPrincipal extends ConsumerWidget {
                         final c = certificadosFiltrados[index];
                         return CertificadoCard(
                           certificado: c,
+                          margin: EdgeInsets.zero,
                           onTap: () {
                             Navigator.push(
                               context,

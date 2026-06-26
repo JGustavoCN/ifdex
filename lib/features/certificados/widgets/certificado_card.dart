@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:ifdex/features/certificados/models/certificado.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
@@ -15,12 +16,14 @@ class CertificadoCard extends StatelessWidget {
   final Certificado certificado;
   final VoidCallback onTap;
   final VoidCallback onRemove;
+  final EdgeInsetsGeometry? margin;
 
   const CertificadoCard({
     super.key,
     required this.certificado,
     required this.onTap,
     required this.onRemove,
+    this.margin,
   });
 
   /// O "Cérebro" que define a paleta de cores e ícones do Mock.
@@ -34,6 +37,7 @@ class CertificadoCard extends StatelessWidget {
     if (certificado.origem == Origem.sispubli) {
       return const _IdentidadeVisual(
         icon: Icons.account_balance,
+        assetPath: 'assets/logo_ifs.svg',
         color: AppColors.primary,
         tagText: 'OFICIAL IFS',
       );
@@ -73,7 +77,7 @@ class CertificadoCard extends StatelessWidget {
     final visual = _getIdentidadeVisual();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 20, left: 16, right: 16),
+      margin: margin ?? const EdgeInsets.only(bottom: 20, left: 16, right: 16),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
@@ -140,10 +144,21 @@ class _PreviewArea extends StatelessWidget {
                 ],
               ),
             ),
-            child: Center(
+            child: Align(
+              alignment: const Alignment(0, -0.4),
               child: Opacity(
-                opacity: 0.1,
-                child: Icon(visual.icon, size: 72, color: visual.color),
+                opacity: visual.assetPath != null ? 0.2 : 0.1,
+                child: visual.assetPath != null
+                    ? SvgPicture.asset(
+                        visual.assetPath!,
+                        width: 72,
+                        height: 72,
+                        colorFilter: ColorFilter.mode(
+                          visual.color,
+                          BlendMode.srcIn,
+                        ),
+                      )
+                    : Icon(visual.icon, size: 72, color: visual.color),
               ),
             ),
           ),
@@ -276,7 +291,8 @@ class _MetadadosArea extends StatelessWidget {
           // Instituição • Ano
           Row(
             children: [
-              Icon(visual.icon, size: 14, color: AppColors.textSecondary),
+              if (visual.icon != null)
+                Icon(visual.icon, size: 14, color: AppColors.textSecondary),
               const SizedBox(width: 4),
               Expanded(
                 child: AppText.label(
@@ -352,12 +368,14 @@ class _RelevanciaStars extends StatelessWidget {
 // ── Modelo de Identidade Visual (Value Object) ─────────────
 
 class _IdentidadeVisual {
-  final IconData icon;
+  final IconData? icon;
+  final String? assetPath;
   final Color color;
   final String tagText;
 
   const _IdentidadeVisual({
-    required this.icon,
+    this.icon,
+    this.assetPath,
     required this.color,
     required this.tagText,
   });

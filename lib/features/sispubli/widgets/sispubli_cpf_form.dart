@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:ifdex/features/sispubli/presentation/sispubli_import_view_model.dart';
@@ -61,10 +62,14 @@ class _SispubliCpfFormState extends ConsumerState<SispubliCpfForm> {
                     color: AppColors.primarySoft,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(
-                    Icons.account_balance,
-                    size: 48,
-                    color: AppColors.primary,
+                  child: SvgPicture.asset(
+                    'assets/logo_ifs.svg',
+                    width: 48,
+                    height: 48,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),
