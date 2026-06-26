@@ -21,9 +21,12 @@ jobs:
       - name: Compilar versão Web
         run: flutter build web
 
+      - name: Setup Node.js (Fix Firebase CLI Network Bug)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
-        env:
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         continue-on-error: true
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
