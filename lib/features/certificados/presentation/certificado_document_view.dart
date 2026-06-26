@@ -194,7 +194,7 @@ class CertificadoDocumentView extends StatelessWidget {
       final extLimpa = extensao.replaceAll('.', '');
 
       await FileSaver.instance.saveFile(
-        name: '$nomeBase.$extLimpa',
+        name: nomeBase,
         bytes: documentBytes,
         fileExtension: extLimpa,
         mimeType: mimeType,

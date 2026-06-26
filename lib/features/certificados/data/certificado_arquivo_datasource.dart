@@ -61,7 +61,7 @@ class CertificadoArquivoDatasource {
         .uploadBinary(
           caminho,
           bytes,
-          fileOptions: FileOptions(contentType: contentType),
+          fileOptions: FileOptions(contentType: contentType, upsert: true),
         );
 
     return ext;
