@@ -9,7 +9,7 @@ import 'package:ifdex/features/certificados/data/certificado_repository.dart';
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
-import 'package:ifdex/features/certificados/widgets/info_box.dart';
+import 'package:ifdex/shared/widgets/app_info_box.dart';
 import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 import 'certificado_form_view.dart';
 import 'certificado_document_view.dart';
@@ -122,7 +122,7 @@ class _Content extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          InfoBox(
+          AppInfoBox(
             title: 'TÍTULO',
             child: AppText(
               certificado.titulo,
@@ -131,7 +131,7 @@ class _Content extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 12),
-          InfoBox(
+          AppInfoBox(
             title: 'INSTITUIÇÃO',
             child: AppText(
               certificado.instituicao,
@@ -142,7 +142,7 @@ class _Content extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-                child: InfoBox(
+                child: AppInfoBox(
                   title: 'TIPO',
                   child: AppText(
                     certificado.tipoDescricao,
@@ -152,7 +152,7 @@ class _Content extends ConsumerWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: InfoBox(
+                child: AppInfoBox(
                   title: 'ANO',
                   child: AppText(
                     certificado.ano.toString(),
@@ -187,7 +187,7 @@ class _Content extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-                child: InfoBox(
+                child: AppInfoBox(
                   title: 'CARGA HORÁRIA',
                   child: AppText(
                     certificado.cargaHoraria != null
@@ -199,7 +199,7 @@ class _Content extends ConsumerWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: InfoBox(
+                child: AppInfoBox(
                   title: 'TAGS',
                   child: certificado.tags.isEmpty
                       ? const AppText(
@@ -220,7 +220,7 @@ class _Content extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           if (certificado.origem == Origem.sispubli)
-            const InfoBox(
+            const AppInfoBox(
               title: 'IDENTIFICADOR DE SEGURANÇA',
               child: Row(
                 children: [

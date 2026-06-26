@@ -9,11 +9,11 @@ import 'package:ifdex/shared/widgets/app_text.dart';
 /// Utiliza [AppColors.surfaceAlt] como fundo e
 /// [AppColors.border] como borda, com cantos arredondados
 /// de 14px (token `rounded.md` do DESIGN.md).
-class InfoBox extends StatelessWidget {
+class AppInfoBox extends StatelessWidget {
   final String? title;
   final Widget child;
 
-  const InfoBox({super.key, this.title, required this.child});
+  const AppInfoBox({super.key, this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {

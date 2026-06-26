@@ -11,7 +11,7 @@ import 'package:ifdex/features/certificados/presentation/certificados_view_model
 import 'package:ifdex/shared/theme/app_theme.dart';
 import 'package:ifdex/shared/widgets/app_text.dart';
 import 'package:ifdex/features/certificados/widgets/certificado_cover.dart';
-import 'package:ifdex/features/certificados/widgets/info_box.dart';
+import 'package:ifdex/shared/widgets/app_info_box.dart';
 import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 /// Formulário para **criar** ou **editar** certificados.
@@ -67,7 +67,18 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
     );
     _tagsCtrl = TextEditingController(text: c?.tags.join(', ') ?? '');
     _linkCtrl = TextEditingController(text: c?.urlDocumento ?? '');
-    _isLink = c?.uploadDocumento == null;
+
+    if (c != null) {
+      if (c.urlDocumento != null && c.urlDocumento!.isNotEmpty) {
+        _isLink = true;
+      } else if (c.temArquivo) {
+        _isLink = false;
+      } else {
+        _isLink = true;
+      }
+    } else {
+      _isLink = true;
+    }
     _notaRelevancia = c?.notaRelevancia ?? 1;
     _arquivoSelecionado = c?.uploadDocumento;
 
@@ -183,6 +194,10 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
       cargaHoraria: cargaHoraria,
       urlDocumento: url,
       uploadDocumento: upload,
+      temArquivo: (!_isSispubli && _isLink)
+          ? false
+          : (_arquivoSelecionado != null || (c?.temArquivo ?? false)),
+      formatoArquivo: c?.formatoArquivo ?? '.pdf',
       tags: tags,
       notaRelevancia: _notaRelevancia,
     );
@@ -284,7 +299,7 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
             const SizedBox(height: 18),
             // ── Título ──────────────────────────────
             if (_isSispubli)
-              InfoBox(
+              AppInfoBox(
                 title: 'TÍTULO (BLOQUEADO)',
                 child: AppText(_tituloCtrl.text, fontWeight: FontWeight.w700),
               )
@@ -308,7 +323,7 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
             const SizedBox(height: 12),
             // ── Instituição ─────────────────────────
             if (_isSispubli)
-              InfoBox(
+              AppInfoBox(
                 title: 'INSTITUIÇÃO (BLOQUEADO)',
                 child: AppText(
                   _instituicaoCtrl.text,
@@ -331,7 +346,7 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
               children: [
                 Expanded(
                   child: _isSispubli
-                      ? InfoBox(
+                      ? AppInfoBox(
                           title: 'TIPO (BLOQUEADO)',
                           child: AppText(
                             _tipoSelecionado,
@@ -365,7 +380,7 @@ class _CertificadoFormViewState extends ConsumerState<CertificadoFormView> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _isSispubli
-                      ? InfoBox(
+                      ? AppInfoBox(
                           title: 'ANO (BLOQUEADO)',
                           child: AppText(
                             _anoCtrl.text,

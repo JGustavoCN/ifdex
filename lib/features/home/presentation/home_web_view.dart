@@ -18,7 +18,7 @@ import 'package:ifdex/shared/widgets/app_error_state.dart';
 import 'package:ifdex/shared/widgets/app_empty_state.dart';
 import 'package:ifdex/shared/widgets/app_search_bar.dart';
 import 'package:ifdex/shared/providers/busca_providers.dart';
-import 'package:ifdex/shared/widgets/app_filtros_bottom_sheet.dart';
+import 'package:ifdex/features/home/widgets/app_filtros_bottom_sheet.dart';
 import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 class HomeWebView extends ConsumerWidget {
