@@ -48,6 +48,9 @@ class CertificadoCard extends StatelessWidget {
     if (inst.contains('aws') || inst.contains('amazon')) {
       return const _IdentidadeVisual(
         icon: Icons.cloud_outlined,
+        assetPath: 'assets/aws.svg',
+        assetWidth: 64,
+        assetHeight: 64,
         color: AppColors.warning,
         tagText: 'AWS CLOUD',
       );
@@ -56,6 +59,9 @@ class CertificadoCard extends StatelessWidget {
     if (inst.contains('udemy')) {
       return const _IdentidadeVisual(
         icon: Icons.play_circle_outline,
+        assetPath: 'assets/udemy.svg',
+        assetWidth: 120,
+        assetHeight: 42,
         color: Color(0xFF8B5CF6),
         tagText: 'UDEMY',
       );
@@ -149,13 +155,18 @@ class _PreviewArea extends StatelessWidget {
               child: Opacity(
                 opacity: visual.assetPath != null ? 0.2 : 0.1,
                 child: visual.assetPath != null
-                    ? SvgPicture.asset(
-                        visual.assetPath!,
-                        width: 72,
-                        height: 72,
-                        colorFilter: ColorFilter.mode(
-                          visual.color,
-                          BlendMode.srcIn,
+                    ? SizedBox(
+                        width: visual.assetWidth,
+                        height: visual.assetHeight,
+                        child: SvgPicture.asset(
+                          visual.assetPath!,
+                          width: visual.assetWidth,
+                          height: visual.assetHeight,
+                          fit: BoxFit.contain,
+                          colorFilter: ColorFilter.mode(
+                            visual.color,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       )
                     : Icon(visual.icon, size: 72, color: visual.color),
@@ -370,12 +381,16 @@ class _RelevanciaStars extends StatelessWidget {
 class _IdentidadeVisual {
   final IconData? icon;
   final String? assetPath;
+  final double assetWidth;
+  final double assetHeight;
   final Color color;
   final String tagText;
 
   const _IdentidadeVisual({
     this.icon,
     this.assetPath,
+    this.assetWidth = 72,
+    this.assetHeight = 72,
     required this.color,
     required this.tagText,
   });

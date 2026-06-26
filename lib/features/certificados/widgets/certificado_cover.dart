@@ -64,6 +64,30 @@ class CertificadoCover extends StatelessWidget {
     return isLink ? Icons.link : Icons.folder_open_outlined;
   }
 
+  String? _getAssetPath() {
+    if (origem == Origem.sispubli) return 'assets/logo_ifs.svg';
+    final inst = instituicao.toLowerCase();
+    if (inst.contains('aws') || inst.contains('amazon')) {
+      return 'assets/aws.svg';
+    }
+    if (inst.contains('udemy')) return 'assets/udemy.svg';
+    return null;
+  }
+
+  Size _getAssetSize(bool isCompact) {
+    if (origem == Origem.sispubli) {
+      return Size(isCompact ? 36 : 56, isCompact ? 36 : 56);
+    }
+    final inst = instituicao.toLowerCase();
+    if (inst.contains('aws') || inst.contains('amazon')) {
+      return Size(isCompact ? 32 : 48, isCompact ? 32 : 48);
+    }
+    if (inst.contains('udemy')) {
+      return Size(isCompact ? 70 : 110, isCompact ? 25 : 38);
+    }
+    return Size(isCompact ? 36 : 56, isCompact ? 36 : 56);
+  }
+
   Color _getColor() {
     if (origem == Origem.sispubli) return AppColors.primary;
     final inst = instituicao.toLowerCase();
@@ -95,14 +119,19 @@ class CertificadoCover extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: height == null ? MainAxisSize.min : MainAxisSize.max,
           children: [
-            if (origem == Origem.sispubli)
-              SvgPicture.asset(
-                'assets/logo_ifs.svg',
-                width: isCompact ? 36 : 56,
-                height: isCompact ? 36 : 56,
-                colorFilter: const ColorFilter.mode(
-                  Colors.white70,
-                  BlendMode.srcIn,
+            if (_getAssetPath() != null)
+              SizedBox(
+                width: _getAssetSize(isCompact).width,
+                height: _getAssetSize(isCompact).height,
+                child: SvgPicture.asset(
+                  _getAssetPath()!,
+                  width: _getAssetSize(isCompact).width,
+                  height: _getAssetSize(isCompact).height,
+                  fit: BoxFit.contain,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white70,
+                    BlendMode.srcIn,
+                  ),
                 ),
               )
             else
