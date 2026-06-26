@@ -25,10 +25,13 @@ jobs:
         run: flutter build web
 
       # AQUI ESTÁ A CORREÇÃO: @v0
+      - name: Setup Node.js (Fix Firebase CLI Network Bug)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
-        env:
-          ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_IFDEX_APP }}'
