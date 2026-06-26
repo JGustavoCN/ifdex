@@ -86,7 +86,6 @@ class _Sidebar extends StatelessWidget {
             label: 'Carteira',
             isActive: true,
           ),
-          const _SidebarItem(icon: Icons.filter_list, label: 'Categorias'),
           const Spacer(),
           _XpSidebarCard(gamification: gamification, progresso: progresso),
         ],
@@ -449,7 +448,6 @@ class _StatsRow extends StatelessWidget {
           iconBgColor: AppColors.secondarySoft,
           iconColor: AppColors.secondary,
         ),
-        _XpStatCard(gamification: gamification),
       ],
     );
   }
@@ -504,53 +502,6 @@ class _StatCard extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Card XP Compacto (Stats Row) ───────────────────
-
-class _XpStatCard extends StatelessWidget {
-  final Gamification gamification;
-
-  const _XpStatCard({required this.gamification});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 260,
-      height: 100,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primaryDark, AppColors.primary],
-        ),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppText.label(
-                  gamification.nomeNivel.toUpperCase(),
-                  color: AppColors.textOnDark.withValues(alpha: 0.8),
-                ),
-                AppText(
-                  '${gamification.totalXp} XP',
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textOnDark,
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.emoji_events, color: AppColors.warning, size: 36),
         ],
       ),
     );
