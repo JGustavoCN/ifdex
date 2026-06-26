@@ -18,7 +18,7 @@ import 'package:ifdex/shared/widgets/app_error_state.dart';
 import 'package:ifdex/shared/widgets/app_empty_state.dart';
 import 'package:ifdex/shared/widgets/app_search_bar.dart';
 import 'package:ifdex/shared/providers/busca_providers.dart';
-import 'package:ifdex/shared/widgets/app_filtros_bottom_sheet.dart';
+import 'package:ifdex/features/home/widgets/app_filtros_bottom_sheet.dart';
 import 'package:ifdex/shared/widgets/app_snack_bar.dart';
 
 class HomeWebView extends ConsumerWidget {
@@ -86,7 +86,6 @@ class _Sidebar extends StatelessWidget {
             label: 'Carteira',
             isActive: true,
           ),
-          const _SidebarItem(icon: Icons.filter_list, label: 'Categorias'),
           const Spacer(),
           _XpSidebarCard(gamification: gamification, progresso: progresso),
         ],
@@ -374,8 +373,8 @@ class _AreaPrincipal extends ConsumerWidget {
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
                           const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 350,
-                            mainAxisExtent: 320,
+                            maxCrossAxisExtent: 400,
+                            mainAxisExtent: 260,
                             crossAxisSpacing: 20,
                             mainAxisSpacing: 20,
                           ),
@@ -384,6 +383,7 @@ class _AreaPrincipal extends ConsumerWidget {
                         final c = certificadosFiltrados[index];
                         return CertificadoCard(
                           certificado: c,
+                          margin: EdgeInsets.zero,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -449,7 +449,6 @@ class _StatsRow extends StatelessWidget {
           iconBgColor: AppColors.secondarySoft,
           iconColor: AppColors.secondary,
         ),
-        _XpStatCard(gamification: gamification),
       ],
     );
   }
@@ -504,53 +503,6 @@ class _StatCard extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Card XP Compacto (Stats Row) ───────────────────
-
-class _XpStatCard extends StatelessWidget {
-  final Gamification gamification;
-
-  const _XpStatCard({required this.gamification});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 260,
-      height: 100,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primaryDark, AppColors.primary],
-        ),
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppText.label(
-                  gamification.nomeNivel.toUpperCase(),
-                  color: AppColors.textOnDark.withValues(alpha: 0.8),
-                ),
-                AppText(
-                  '${gamification.totalXp} XP',
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textOnDark,
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.emoji_events, color: AppColors.warning, size: 36),
         ],
       ),
     );

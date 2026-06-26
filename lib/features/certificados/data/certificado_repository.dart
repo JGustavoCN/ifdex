@@ -52,6 +52,13 @@ class CertificadoRepository {
       );
       certificado.temArquivo = true;
       certificado.formatoArquivo = ext;
+    } else if (!certificado.temArquivo) {
+      // Limpeza de lixo órfão no Storage: se o usuário migrou para Link, o arquivo físico antigo é descartado.
+      await _arquivoDatasource.removerArquivo(
+        _uid,
+        certificado.id,
+        certificado.formatoArquivo,
+      );
     }
 
     // Salva metadados (note que uploadDocumento não é salvo no toMap)
